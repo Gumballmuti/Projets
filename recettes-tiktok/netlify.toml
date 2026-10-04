@@ -1,0 +1,10 @@
+[build]
+  publish = "public"
+
+[functions]
+  node_bundler = "esbuild"
+
+# ffmpeg sert à extraire des images de la vidéo TikTok
+[functions."analyse-background"]
+  external_node_modules = ["ffmpeg-static"]
+  included_files = ["node_modules/ffmpeg-static/ffmpeg"]

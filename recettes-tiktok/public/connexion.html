@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mes recettes</title>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Recettes">
+<link rel="manifest" href="/manifest.json">
+<link rel="apple-touch-icon" href="/icone-180.png">
+<style>
+:root { --fond: #fff8f1; --carte: #fff; --texte: #2b211b; --accent: #e8572a; --bord: #f0e3d7; }
+@media (prefers-color-scheme: dark) { :root { --fond: #1c1714; --carte: #29221d; --texte: #f5ece4; --accent: #ff7a4d; --bord: #3a302a; } }
+body { margin: 0; min-height: 100vh; display: grid; place-items: center; background: var(--fond); color: var(--texte);
+  font: 16px/1.5 -apple-system, BlinkMacSystemFont, system-ui, sans-serif; padding: 16px; box-sizing: border-box; }
+form { background: var(--carte); border: 1px solid var(--bord); border-radius: 20px; padding: 24px; width: 100%; max-width: 340px; text-align: center; }
+h1 { margin: 0 0 16px; font-size: 24px; }
+input, button { font: inherit; width: 100%; padding: 12px; border-radius: 12px; box-sizing: border-box; }
+input { border: 1px solid var(--bord); background: var(--fond); color: var(--texte); margin-bottom: 10px; }
+button { border: 0; background: var(--accent); color: #fff; font-weight: 600; }
+p { color: #c0392b; margin: 10px 0 0; min-height: 1.5em; }
+</style>
+</head>
+<body>
+<form id="f">
+  <h1>Mes recettes 🍳</h1>
+  <input type="password" id="mdp" placeholder="Mot de passe" autofocus autocomplete="current-password">
+  <button>Entrer</button>
+  <p id="erreur"></p>
+</form>
+<script>
+document.getElementById("f").addEventListener("submit", async e => {
+  e.preventDefault();
+  const r = await fetch("/api/connexion", { method: "POST", headers: {"Content-Type": "application/json"},
+    body: JSON.stringify({ mot_de_passe: document.getElementById("mdp").value }) });
+  if (r.ok) {
+    let suite = "";
+    try { suite = sessionStorage.getItem("suite") || ""; sessionStorage.removeItem("suite"); } catch {}
+    location.href = "/" + suite;
+  } else document.getElementById("erreur").textContent = "Mot de passe incorrect";
+});
+</script>
+</body>
+</html>

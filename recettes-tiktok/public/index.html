@@ -1,0 +1,324 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Mes recettes</title>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Recettes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="theme-color" content="#fff8f1" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#1c1714" media="(prefers-color-scheme: dark)">
+<link rel="manifest" href="/manifest.json">
+<link rel="apple-touch-icon" href="/icone-180.png">
+<link rel="icon" href="/icone-192.png">
+<style>
+:root {
+  --fond: #fff8f1; --carte: #ffffff; --texte: #2b211b; --doux: #85766b;
+  --accent: #e8572a; --accent-doux: #fde4d8; --bord: #f0e3d7; --ok: #3d8b5a; --erreur: #c0392b;
+}
+@media (prefers-color-scheme: dark) {
+  :root { --fond: #1c1714; --carte: #29221d; --texte: #f5ece4; --doux: #ab9b8f;
+          --accent: #ff7a4d; --accent-doux: #4a2a1d; --bord: #3a302a; }
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--fond); color: var(--texte);
+  font: 16px/1.5 -apple-system, BlinkMacSystemFont, "SF Pro Text", system-ui, sans-serif;
+  padding: env(safe-area-inset-top) 0 env(safe-area-inset-bottom); -webkit-tap-highlight-color: transparent; }
+main { max-width: 980px; margin: 0 auto; padding: 16px; }
+h1 { font-size: 30px; margin: 8px 0 14px; letter-spacing: -0.5px; }
+button { font: inherit; cursor: pointer; border: 0; border-radius: 12px; padding: 10px 14px;
+  background: var(--accent-doux); color: var(--texte); }
+button.principal { background: var(--accent); color: #fff; font-weight: 600; }
+button:disabled { opacity: .5; }
+input[type=text], input[type=search], textarea { font: inherit; width: 100%; padding: 12px 14px;
+  border-radius: 12px; border: 1px solid var(--bord); background: var(--carte); color: var(--texte); }
+textarea { min-height: 120px; resize: vertical; }
+.ajout { background: var(--carte); border: 1px solid var(--bord); border-radius: 16px; padding: 12px; margin-bottom: 14px; }
+.ajout .ligne { display: flex; gap: 8px; }
+.ajout .ligne input { flex: 1; min-width: 0; }
+.ajout label { display: flex; gap: 8px; align-items: center; color: var(--doux); font-size: 14px; margin-top: 8px; }
+.message { font-size: 14px; margin-top: 8px; color: var(--erreur); min-height: 0; }
+.grille { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 12px; margin-top: 14px; }
+.carte { background: var(--carte); border: 1px solid var(--bord); border-radius: 16px; overflow: hidden;
+  cursor: pointer; display: flex; flex-direction: column; }
+.carte .image { aspect-ratio: 3/4; background: var(--accent-doux) center/cover no-repeat;
+  display: grid; place-items: center; font-size: 40px; }
+.carte .infos { padding: 10px; }
+.carte .titre { font-weight: 600; line-height: 1.25; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+.carte .auteur { color: var(--doux); font-size: 13px; margin-top: 4px; }
+.carte.erreur .titre { color: var(--erreur); }
+.vide { text-align: center; color: var(--doux); padding: 40px 10px; }
+.roue { width: 28px; height: 28px; border: 3px solid var(--bord); border-top-color: var(--accent);
+  border-radius: 50%; animation: tourne 1s linear infinite; }
+@keyframes tourne { to { transform: rotate(360deg); } }
+
+#fiche { position: fixed; inset: 0; background: var(--fond); overflow-y: auto; display: none;
+  padding: env(safe-area-inset-top) 0 env(safe-area-inset-bottom); }
+#fiche.ouverte { display: block; }
+#fiche .barre { position: sticky; top: 0; background: var(--fond); padding: 10px 16px; display: flex;
+  justify-content: space-between; gap: 8px; border-bottom: 1px solid var(--bord); z-index: 1; }
+#fiche article { max-width: 720px; margin: 0 auto; padding: 16px 16px 60px; }
+#fiche h2 { font-size: 28px; line-height: 1.2; margin: 6px 0; }
+.meta { color: var(--doux); font-size: 14px; display: flex; flex-wrap: wrap; gap: 6px 14px; }
+.meta a { color: var(--accent); }
+.puces { display: flex; flex-wrap: wrap; gap: 8px; margin: 14px 0; }
+.puce { background: var(--accent-doux); border-radius: 999px; padding: 4px 12px; font-size: 14px; }
+h3 { margin: 22px 0 8px; font-size: 20px; }
+h4 { margin: 12px 0 4px; color: var(--doux); font-size: 15px; text-transform: uppercase; letter-spacing: .5px; }
+ul.ingredients { list-style: none; padding: 0; margin: 0; }
+ul.ingredients label { display: flex; gap: 10px; padding: 7px 0; border-bottom: 1px solid var(--bord); align-items: flex-start; }
+ul.ingredients input { width: 20px; height: 20px; margin-top: 2px; accent-color: var(--accent); flex: none; }
+ul.ingredients input:checked + span { text-decoration: line-through; color: var(--doux); }
+ol.etapes { padding-left: 0; list-style: none; counter-reset: e; margin: 0; }
+ol.etapes li { counter-increment: e; position: relative; padding: 8px 0 12px 42px; cursor: pointer; }
+ol.etapes li::before { content: counter(e); position: absolute; left: 0; top: 6px; width: 30px; height: 30px;
+  border-radius: 50%; background: var(--accent); color: #fff; display: grid; place-items: center; font-weight: 700; font-size: 14px; }
+ol.etapes li.faite { color: var(--doux); }
+ol.etapes li.faite::before { background: var(--ok); content: "✓"; }
+.remarque { background: var(--accent-doux); border-radius: 12px; padding: 10px 12px; font-size: 14px; margin-top: 16px; }
+.actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 28px; }
+.actions .danger { color: var(--erreur); }
+.edition label { display: block; font-weight: 600; margin: 14px 0 4px; }
+.edition small { color: var(--doux); font-weight: 400; }
+</style>
+</head>
+<body>
+<main>
+  <h1>Mes recettes 🍳</h1>
+
+  <form class="ajout" id="formAjout">
+    <div class="ligne">
+      <input type="text" id="lien" placeholder="Colle le lien TikTok ici" autocomplete="off" inputmode="url">
+      <button type="button" id="coller" title="Coller depuis le presse-papiers">📋</button>
+      <button class="principal" id="ajouter">Ajouter</button>
+    </div>
+    <label><input type="checkbox" id="video"> Regarder la vidéo directement (si la recette n'est pas dans la description)</label>
+    <div class="message" id="message"></div>
+  </form>
+
+  <input type="search" id="recherche" placeholder="Rechercher une recette ou un ingrédient…">
+
+  <div class="grille" id="grille"></div>
+  <div class="vide" id="vide" hidden>Aucune recette pour l'instant.<br>Colle un lien TikTok ci-dessus pour commencer.</div>
+</main>
+
+<div id="fiche"></div>
+
+<script>
+const $ = s => document.querySelector(s);
+const echapper = t => String(t ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+let recettes = [];
+let ficheOuverte = null;
+let minuteur = null;
+const recherchePage = location.search; // garde « ?ajout=… » si on doit d'abord se connecter
+
+async function api(chemin, options = {}) {
+  const r = await fetch(chemin, { headers: {"Content-Type": "application/json"}, ...options });
+  if (r.status === 401) {
+    try { sessionStorage.setItem("suite", recherchePage); } catch {}
+    location.href = "/connexion.html"; throw new Error("Non connecté");
+  }
+  const json = await r.json().catch(() => ({}));
+  if (!r.ok) throw new Error(json.erreur || "Erreur " + r.status);
+  return json;
+}
+
+async function charger() {
+  recettes = await api("/api/recettes");
+  afficherListe();
+  if (ficheOuverte) {
+    const r = recettes.find(x => x.id === ficheOuverte.id);
+    if (r && r.statut !== ficheOuverte.statut) ouvrir(r.id);
+  }
+  clearTimeout(minuteur);
+  if (recettes.some(r => r.statut === "en_cours")) minuteur = setTimeout(charger, 3000);
+}
+
+function texteRecherche(r) {
+  const d = r.donnees || {};
+  return [r.titre, r.auteur, ...(d.ingredients || []).flatMap(g => g.elements)].join(" ").toLowerCase();
+}
+
+function afficherListe() {
+  const q = $("#recherche").value.trim().toLowerCase();
+  const liste = recettes.filter(r => !q || texteRecherche(r).includes(q));
+  $("#vide").hidden = recettes.length > 0;
+  $("#grille").innerHTML = liste.map(r => {
+    const image = r.image ? `style="background-image:url(/api/image/${r.id})"` : "";
+    let titre = echapper(r.titre || "Recette");
+    let contenu = r.image ? "" : "🍲";
+    if (r.statut === "en_cours") { titre = "Analyse en cours…"; contenu = '<div class="roue"></div>'; }
+    if (r.statut === "erreur") { titre = "Échec de l'analyse"; contenu = r.image ? "" : "⚠️"; }
+    return `<div class="carte ${r.statut}" data-id="${r.id}">
+      <div class="image" ${image}>${contenu}</div>
+      <div class="infos"><div class="titre">${titre}</div>
+      <div class="auteur">${echapper(r.auteur ? "@" + r.auteur : "")}</div></div></div>`;
+  }).join("");
+}
+
+async function ajouter(lien, video) {
+  $("#message").textContent = "";
+  $("#ajouter").disabled = true;
+  try {
+    const r = await api("/api/recettes", { method: "POST", body: JSON.stringify({ lien, video }) });
+    $("#lien").value = "";
+    if (r.deja) $("#message").textContent = "Cette recette est déjà dans ta collection.";
+    await charger();
+    if (r.deja) ouvrir(r.id);
+  } catch (e) {
+    $("#message").textContent = e.message;
+  } finally {
+    $("#ajouter").disabled = false;
+  }
+}
+
+function ouvrir(id) {
+  const r = recettes.find(x => x.id === id);
+  if (!r) return;
+  ficheOuverte = r;
+  const f = $("#fiche");
+  const lienTikTok = `<a href="${echapper(r.url)}" target="_blank" rel="noopener">Voir sur TikTok ↗</a>`;
+  let corps;
+  if (r.statut === "en_cours") {
+    corps = `<h2>Analyse en cours…</h2><p class="meta">Je lis la description et, si besoin, je regarde la vidéo. Ça prend environ 30 secondes à 2 minutes — tu peux fermer cette fiche.</p><div class="roue"></div>`;
+  } else if (r.statut === "erreur") {
+    corps = `<h2>L'analyse n'a pas marché</h2>
+      <p class="meta">${lienTikTok}</p>
+      <div class="remarque">${echapper(r.erreur)}</div>
+      <div class="actions">
+        <button class="principal" data-action="video">Réessayer en regardant la vidéo</button>
+        <button data-action="texte">Coller la recette à la main</button>
+        <button class="danger" data-action="supprimer">Supprimer</button>
+      </div>`;
+  } else {
+    const d = r.donnees || {};
+    const puces = [["👥", d.portions], ["🔪", d.temps_preparation && "Prépa " + d.temps_preparation],
+                   ["🔥", d.temps_cuisson && "Cuisson " + d.temps_cuisson]]
+      .filter(p => p[1]).map(p => `<span class="puce">${p[0]} ${echapper(p[1])}</span>`).join("");
+    const ingredients = (d.ingredients || []).map(g =>
+      (g.groupe ? `<h4>${echapper(g.groupe)}</h4>` : "") +
+      `<ul class="ingredients">${g.elements.map(i => `<li><label><input type="checkbox"><span>${echapper(i)}</span></label></li>`).join("")}</ul>`
+    ).join("");
+    const etapes = (d.etapes || []).map(e => `<li>${echapper(e)}</li>`).join("");
+    const astuces = (d.astuces || []).length ? `<h3>Astuces</h3><ul>${d.astuces.map(a => `<li>${echapper(a)}</li>`).join("")}</ul>` : "";
+    corps = `
+      <h2>${echapper(d.titre || r.titre)}</h2>
+      <div class="meta">${r.auteur ? `<span>@${echapper(r.auteur)}</span>` : ""}${lienTikTok}
+        <span>Lu depuis : ${echapper(r.source || "")}</span></div>
+      ${puces ? `<div class="puces">${puces}</div>` : ""}
+      ${ingredients ? `<h3>Ingrédients</h3>${ingredients}` : ""}
+      ${etapes ? `<h3>Préparation</h3><ol class="etapes">${etapes}</ol>` : ""}
+      ${astuces}
+      ${d.remarque ? `<div class="remarque">ℹ️ ${echapper(d.remarque)}</div>` : ""}
+      <div class="actions">
+        <button data-action="copier">Copier le texte</button>
+        <button data-action="modifier">Modifier</button>
+        ${r.source !== "vidéo" ? `<button data-action="video">Réanalyser avec la vidéo</button>` : ""}
+        <button class="danger" data-action="supprimer">Supprimer</button>
+      </div>`;
+  }
+  f.innerHTML = `<div class="barre"><button data-action="fermer">‹ Retour</button></div><article>${corps}</article>`;
+  f.classList.add("ouverte");
+  document.body.style.overflow = "hidden";
+}
+
+function fermer() {
+  ficheOuverte = null;
+  $("#fiche").classList.remove("ouverte");
+  document.body.style.overflow = "";
+}
+
+function enTexte(r) {
+  const d = r.donnees || {};
+  const lignes = [d.titre || r.titre, ""];
+  if (d.portions) lignes.push("Pour " + d.portions);
+  lignes.push("", "INGRÉDIENTS");
+  (d.ingredients || []).forEach(g => { if (g.groupe) lignes.push(g.groupe + " :"); g.elements.forEach(i => lignes.push("- " + i)); });
+  lignes.push("", "PRÉPARATION");
+  (d.etapes || []).forEach((e, i) => lignes.push(`${i + 1}. ${e}`));
+  if ((d.astuces || []).length) { lignes.push("", "ASTUCES"); d.astuces.forEach(a => lignes.push("- " + a)); }
+  lignes.push("", r.url);
+  return lignes.join("\n");
+}
+
+function editer(r) {
+  const d = r.donnees || {};
+  const ingredients = (d.ingredients || []).map(g => (g.groupe ? `# ${g.groupe}\n` : "") + g.elements.join("\n")).join("\n");
+  $("#fiche article").innerHTML = `<div class="edition">
+    <label>Titre</label><input type="text" id="eTitre" value="${echapper(d.titre || r.titre)}">
+    <label>Portions</label><input type="text" id="ePortions" value="${echapper(d.portions)}">
+    <label>Ingrédients <small>(un par ligne, « # Titre » pour un groupe)</small></label><textarea id="eIngredients" rows="10">${echapper(ingredients)}</textarea>
+    <label>Étapes <small>(une par ligne)</small></label><textarea id="eEtapes" rows="10">${echapper((d.etapes || []).join("\n"))}</textarea>
+    <label>Astuces <small>(une par ligne)</small></label><textarea id="eAstuces">${echapper((d.astuces || []).join("\n"))}</textarea>
+    <div class="actions"><button class="principal" data-action="enregistrer">Enregistrer</button><button data-action="annuler">Annuler</button></div></div>`;
+}
+
+async function enregistrer(r) {
+  const lignes = v => v.split("\n").map(l => l.trim()).filter(Boolean);
+  const groupes = [];
+  lignes($("#eIngredients").value).forEach(l => {
+    if (l.startsWith("#")) groupes.push({ groupe: l.slice(1).trim(), elements: [] });
+    else { if (!groupes.length) groupes.push({ groupe: "", elements: [] }); groupes.at(-1).elements.push(l); }
+  });
+  const d = { ...(r.donnees || {}), titre: $("#eTitre").value.trim(), portions: $("#ePortions").value.trim(),
+    ingredients: groupes, etapes: lignes($("#eEtapes").value), astuces: lignes($("#eAstuces").value) };
+  await api(`/api/recettes/${r.id}`, { method: "PUT", body: JSON.stringify(d) });
+  await charger();
+  ouvrir(r.id);
+}
+
+async function relancer(r, corps) {
+  await api(`/api/recettes/${r.id}/relancer`, { method: "POST", body: JSON.stringify(corps) });
+  await charger();
+  ouvrir(r.id);
+}
+
+$("#fiche").addEventListener("click", async e => {
+  const etape = e.target.closest("ol.etapes li");
+  if (etape) etape.classList.toggle("faite");
+  const action = e.target.closest("[data-action]")?.dataset.action;
+  const r = ficheOuverte;
+  if (!action) return;
+  try {
+    if (action === "fermer") fermer();
+    if (action === "copier") { await navigator.clipboard.writeText(enTexte(r)); e.target.textContent = "Copié ✓"; }
+    if (action === "modifier") editer(r);
+    if (action === "annuler") ouvrir(r.id);
+    if (action === "enregistrer") await enregistrer(r);
+    if (action === "video") await relancer(r, { video: true });
+    if (action === "texte") {
+      $("#fiche article").innerHTML = `<div class="edition"><label>Colle ici la description ou la recette</label>
+        <textarea id="eTexte" rows="12"></textarea>
+        <div class="actions"><button class="principal" data-action="envoyerTexte">Rédiger la recette</button><button data-action="annuler">Annuler</button></div></div>`;
+    }
+    if (action === "envoyerTexte") await relancer(r, { video: false, texte: $("#eTexte").value });
+    if (action === "supprimer" && confirm("Supprimer cette recette ?")) {
+      await api(`/api/recettes/${r.id}`, { method: "DELETE" });
+      fermer();
+      await charger();
+    }
+  } catch (err) { alert(err.message); }
+});
+
+$("#grille").addEventListener("click", e => {
+  const carte = e.target.closest(".carte");
+  if (carte) ouvrir(carte.dataset.id);
+});
+$("#formAjout").addEventListener("submit", e => { e.preventDefault(); if ($("#lien").value.trim()) ajouter($("#lien").value, $("#video").checked); });
+$("#coller").addEventListener("click", async () => {
+  try { $("#lien").value = await navigator.clipboard.readText(); } catch { $("#lien").focus(); }
+});
+$("#recherche").addEventListener("input", afficherListe);
+document.addEventListener("keydown", e => { if (e.key === "Escape") fermer(); });
+
+// Raccourci iPhone : ouvrir /?ajout=<lien> ajoute directement la recette
+const params = new URLSearchParams(location.search);
+if (params.get("ajout")) { history.replaceState(null, "", "/"); ajouter(params.get("ajout"), false); }
+
+if ("serviceWorker" in navigator) navigator.serviceWorker.register("/sw.js");
+charger();
+</script>
+</body>
+</html>
