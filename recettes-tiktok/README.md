@@ -30,7 +30,7 @@ Réglages du projet Netlify :
   |---|---|
   | `GEMINI_API_KEY` | clé API Gemini gratuite (https://aistudio.google.com/apikey) |
   | `APP_PASSWORD` | ton mot de passe pour entrer dans l'app (**obligatoire**) |
-  | `GEMINI_MODEL` | facultatif, `gemini-flash-latest` par défaut |
+  | `GEMINI_MODEL` | facultatif : modèle à essayer en premier (sinon `gemini-3.8-flash`, puis d'autres si surchargé) |
 
 ## Installer l'app
 

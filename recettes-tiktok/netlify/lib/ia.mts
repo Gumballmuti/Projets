@@ -1,5 +1,5 @@
 /** Rédaction de la recette par Google Gemini (offre gratuite), qui peut regarder la vidéo avec le son. */
-import { createPartFromUri, FileState, GoogleGenAI, type Part } from "@google/genai";
+import { type ApiError, createPartFromUri, FileState, GoogleGenAI, type Part } from "@google/genai";
 import { ErreurExtraction, type InfosVideo } from "./tiktok.mts";
 
 export interface Recette {
@@ -68,20 +68,39 @@ export async function redigerRecette(infos: InfosVideo, video: Buffer | null, te
   if (video) parties.push(await partieVideo(ai, video));
   parties.push({ text: sources.join("\n\n") });
 
-  const reponse = await ai.models.generateContent({
-    model: Netlify.env.get("GEMINI_MODEL") || "gemini-flash-latest",
-    contents: [{ role: "user", parts: parties }],
-    config: {
-      systemInstruction: CONSIGNES,
-      responseMimeType: "application/json",
-      responseJsonSchema: SCHEMA,
-    },
-  });
+  const reponse = await generer(ai, parties);
   try {
     return JSON.parse(reponse.text ?? "") as Recette;
   } catch {
     throw new ErreurExtraction("Gemini n'a pas pu rédiger cette recette.");
   }
+}
+
+// Si un modèle est surchargé (503), au bout de son quota gratuit (429) ou retiré (404), on passe au suivant.
+const MODELES = ["gemini-3.8-flash", "gemini-flash-latest", "gemini-3.5-flash", "gemini-flash-lite-latest"];
+
+async function generer(ai: GoogleGenAI, parties: Part[]) {
+  const choisi = Netlify.env.get("GEMINI_MODEL");
+  const modeles = choisi ? [choisi, ...MODELES.filter((m) => m !== choisi)] : MODELES;
+  let derniere: unknown;
+  for (const model of modeles) {
+    try {
+      return await ai.models.generateContent({
+        model,
+        contents: [{ role: "user", parts: parties }],
+        config: { systemInstruction: CONSIGNES, responseMimeType: "application/json", responseJsonSchema: SCHEMA },
+      });
+    } catch (e) {
+      derniere = e;
+      if (![404, 429, 500, 503].includes((e as ApiError).status)) break;
+    }
+  }
+  const statut = (derniere as ApiError)?.status;
+  throw new ErreurExtraction(
+    statut === 429 ? "Quota gratuit de Gemini atteint pour aujourd'hui, réessaie plus tard."
+      : statut === 503 ? "Gemini est surchargé en ce moment, réessaie dans quelques minutes."
+      : `Gemini a renvoyé une erreur : ${String((derniere as Error)?.message ?? derniere).slice(0, 200)}`,
+  );
 }
 
 async function partieVideo(ai: GoogleGenAI, video: Buffer): Promise<Part> {
