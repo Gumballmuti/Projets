@@ -25,7 +25,7 @@ export default async (req: Request, context: Context) => {
   if (ressource === "connexion" && req.method === "POST") {
     const { mot_de_passe } = await req.json().catch(() => ({}));
     const attendu = Netlify.env.get("APP_PASSWORD");
-    if (!attendu || !egal(String(mot_de_passe ?? ""), attendu)) return json({ erreur: "Mot de passe incorrect" }, 401);
+    if (!attendu || !egal(String(mot_de_passe ?? "").trim(), attendu.trim())) return json({ erreur: "Mot de passe incorrect" }, 401);
     return new Response(JSON.stringify({ ok: true }), {
       headers: {
         "content-type": "application/json",
