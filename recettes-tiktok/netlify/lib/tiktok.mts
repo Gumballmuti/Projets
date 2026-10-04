@@ -1,15 +1,9 @@
 /** Lecture d'une vidéo TikTok : description, sous-titres, miniature et fichier vidéo. */
-import { spawn } from "node:child_process";
-import { mkdtemp, readdir, readFile, rm, writeFile } from "node:fs/promises";
-import { tmpdir } from "node:os";
-import { join } from "node:path";
-
 const NAVIGATEUR = {
   "User-Agent":
     "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.0 Safari/605.1.15",
   "Accept-Language": "fr-FR,fr;q=0.9,en;q=0.8",
 };
-const MAX_IMAGES = 16;
 
 export class ErreurExtraction extends Error {}
 
@@ -111,38 +105,16 @@ export function nettoyerVtt(texte: string): string {
   return lignes.join(" ");
 }
 
-/** Télécharge la vidéo et en extrait jusqu'à MAX_IMAGES images JPEG réparties sur sa durée. */
-export async function imagesDeLaVideo(infos: InfosVideo, ffmpeg: string): Promise<Buffer[]> {
+const TAILLE_MAX = 100 * 1024 * 1024;
+
+/** Télécharge le fichier vidéo (avec les cookies de la page, sinon TikTok refuse). */
+export async function telechargerVideo(infos: InfosVideo): Promise<Buffer> {
   if (!infos.videoUrl) throw new ErreurExtraction("TikTok ne donne pas accès au fichier vidéo.");
   const r = await fetch(infos.videoUrl, {
     headers: { ...NAVIGATEUR, Referer: "https://www.tiktok.com/", Cookie: infos.cookies },
   });
   if (!r.ok) throw new ErreurExtraction(`Impossible de télécharger la vidéo (erreur ${r.status}).`);
-
-  const dossier = await mkdtemp(join(tmpdir(), "recette-"));
-  try {
-    const fichier = join(dossier, "video.mp4");
-    await writeFile(fichier, Buffer.from(await r.arrayBuffer()));
-    const intervalle = Math.max((infos.duree || 60) / MAX_IMAGES, 1);
-    await executer(ffmpeg, [
-      "-loglevel", "error", "-i", fichier,
-      "-vf", `fps=1/${intervalle.toFixed(2)},scale=640:-2`,
-      "-frames:v", String(MAX_IMAGES), "-q:v", "4",
-      join(dossier, "img_%02d.jpg"),
-    ]);
-    const noms = (await readdir(dossier)).filter((n) => n.startsWith("img_")).sort();
-    return Promise.all(noms.map((n) => readFile(join(dossier, n))));
-  } finally {
-    await rm(dossier, { recursive: true, force: true });
-  }
-}
-
-function executer(commande: string, args: string[]): Promise<void> {
-  return new Promise((ok, echec) => {
-    const p = spawn(commande, args, { stdio: ["ignore", "ignore", "pipe"] });
-    let erreurs = "";
-    p.stderr.on("data", (d) => (erreurs += d));
-    p.on("error", echec);
-    p.on("close", (code) => (code === 0 ? ok() : echec(new ErreurExtraction(`ffmpeg a échoué : ${erreurs.slice(0, 200)}`))));
-  });
+  const video = Buffer.from(await r.arrayBuffer());
+  if (video.length > TAILLE_MAX) throw new ErreurExtraction("La vidéo est trop lourde.");
+  return video;
 }

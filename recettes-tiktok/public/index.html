@@ -94,7 +94,6 @@ ol.etapes li.faite::before { background: var(--ok); content: "✓"; }
       <button type="button" id="coller" title="Coller depuis le presse-papiers">📋</button>
       <button class="principal" id="ajouter">Ajouter</button>
     </div>
-    <label><input type="checkbox" id="video"> Regarder la vidéo directement (si la recette n'est pas dans la description)</label>
     <div class="message" id="message"></div>
   </form>
 
@@ -133,6 +132,7 @@ async function charger() {
     if (r && r.statut !== ficheOuverte.statut) ouvrir(r.id);
   }
   clearTimeout(minuteur);
+  recettes.filter(enAttenteTropLongtemps).forEach(lancerIci);
   if (recettes.some(r => r.statut === "en_cours")) minuteur = setTimeout(charger, 3000);
 }
 
@@ -158,11 +158,21 @@ function afficherListe() {
   }).join("");
 }
 
-async function ajouter(lien, video) {
+// Si l'analyse en arrière-plan n'a pas démarré (selon le plan Netlify), on la lance d'ici.
+const lancees = new Set();
+const enAttenteTropLongtemps = r =>
+  r.statut === "en_cours" && r.etape === "attente" && Date.now() - Date.parse(r.maj_le || r.cree_le) > 12000;
+function lancerIci(r) {
+  if (lancees.has(r.id + r.maj_le)) return;
+  lancees.add(r.id + r.maj_le);
+  api(`/api/recettes/${r.id}/analyser`, { method: "POST" }).catch(() => {}).finally(charger);
+}
+
+async function ajouter(lien) {
   $("#message").textContent = "";
   $("#ajouter").disabled = true;
   try {
-    const r = await api("/api/recettes", { method: "POST", body: JSON.stringify({ lien, video }) });
+    const r = await api("/api/recettes", { method: "POST", body: JSON.stringify({ lien }) });
     $("#lien").value = "";
     if (r.deja) $("#message").textContent = "Cette recette est déjà dans ta collection.";
     await charger();
@@ -182,13 +192,13 @@ function ouvrir(id) {
   const lienTikTok = `<a href="${echapper(r.url)}" target="_blank" rel="noopener">Voir sur TikTok ↗</a>`;
   let corps;
   if (r.statut === "en_cours") {
-    corps = `<h2>Analyse en cours…</h2><p class="meta">Je lis la description et, si besoin, je regarde la vidéo. Ça prend environ 30 secondes à 2 minutes — tu peux fermer cette fiche.</p><div class="roue"></div>`;
+    corps = `<h2>Analyse en cours…</h2><p class="meta">Je lis la description et je regarde la vidéo. Ça prend environ 30 secondes à 2 minutes — tu peux fermer cette fiche.</p><div class="roue"></div>`;
   } else if (r.statut === "erreur") {
     corps = `<h2>L'analyse n'a pas marché</h2>
       <p class="meta">${lienTikTok}</p>
       <div class="remarque">${echapper(r.erreur)}</div>
       <div class="actions">
-        <button class="principal" data-action="video">Réessayer en regardant la vidéo</button>
+        <button class="principal" data-action="relancer">Réessayer</button>
         <button data-action="texte">Coller la recette à la main</button>
         <button class="danger" data-action="supprimer">Supprimer</button>
       </div>`;
@@ -215,7 +225,7 @@ function ouvrir(id) {
       <div class="actions">
         <button data-action="copier">Copier le texte</button>
         <button data-action="modifier">Modifier</button>
-        ${r.source !== "vidéo" ? `<button data-action="video">Réanalyser avec la vidéo</button>` : ""}
+        <button data-action="relancer">Réanalyser</button>
         <button class="danger" data-action="supprimer">Supprimer</button>
       </div>`;
   }
@@ -287,13 +297,13 @@ $("#fiche").addEventListener("click", async e => {
     if (action === "modifier") editer(r);
     if (action === "annuler") ouvrir(r.id);
     if (action === "enregistrer") await enregistrer(r);
-    if (action === "video") await relancer(r, { video: true });
+    if (action === "relancer") await relancer(r, {});
     if (action === "texte") {
       $("#fiche article").innerHTML = `<div class="edition"><label>Colle ici la description ou la recette</label>
         <textarea id="eTexte" rows="12"></textarea>
         <div class="actions"><button class="principal" data-action="envoyerTexte">Rédiger la recette</button><button data-action="annuler">Annuler</button></div></div>`;
     }
-    if (action === "envoyerTexte") await relancer(r, { video: false, texte: $("#eTexte").value });
+    if (action === "envoyerTexte") await relancer(r, { texte: $("#eTexte").value });
     if (action === "supprimer" && confirm("Supprimer cette recette ?")) {
       await api(`/api/recettes/${r.id}`, { method: "DELETE" });
       fermer();
@@ -306,7 +316,7 @@ $("#grille").addEventListener("click", e => {
   const carte = e.target.closest(".carte");
   if (carte) ouvrir(carte.dataset.id);
 });
-$("#formAjout").addEventListener("submit", e => { e.preventDefault(); if ($("#lien").value.trim()) ajouter($("#lien").value, $("#video").checked); });
+$("#formAjout").addEventListener("submit", e => { e.preventDefault(); if ($("#lien").value.trim()) ajouter($("#lien").value); });
 $("#coller").addEventListener("click", async () => {
   try { $("#lien").value = await navigator.clipboard.readText(); } catch { $("#lien").focus(); }
 });
@@ -315,7 +325,7 @@ document.addEventListener("keydown", e => { if (e.key === "Escape") fermer(); })
 
 // Raccourci iPhone : ouvrir /?ajout=<lien> ajoute directement la recette
 const params = new URLSearchParams(location.search);
-if (params.get("ajout")) { history.replaceState(null, "", "/"); ajouter(params.get("ajout"), false); }
+if (params.get("ajout")) { history.replaceState(null, "", "/"); ajouter(params.get("ajout")); }
 
 if ("serviceWorker" in navigator) navigator.serviceWorker.register("/sw.js");
 charger();

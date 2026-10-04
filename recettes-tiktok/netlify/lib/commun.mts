@@ -16,6 +16,8 @@ export interface Fiche {
   image: boolean;
   cree_le: string;
   maj_le?: string;
+  etape?: "attente" | "analyse"; // « analyse » dès qu'une fonction a commencé le travail
+  texte?: string; // recette collée à la main, le cas échéant
 }
 
 // Les recettes de production restent séparées des tests (deploy previews).
