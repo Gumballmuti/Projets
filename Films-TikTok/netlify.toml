@@ -1,0 +1,6 @@
+[build]
+  publish = "public"
+
+[build.environment]
+  # Node 22 : fetch et Response.getSetCookie() natifs
+  NODE_VERSION = "22"

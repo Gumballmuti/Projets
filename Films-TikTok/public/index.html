@@ -1,0 +1,402 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Mes films</title>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Films">
+<meta name="theme-color" content="#f6f4fb" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#16131f" media="(prefers-color-scheme: dark)">
+<link rel="manifest" href="/manifest.json">
+<link rel="apple-touch-icon" href="/icone-180.png">
+<link rel="icon" href="/icone-192.png">
+<style>
+:root {
+  --fond: #f6f4fb; --carte: #ffffff; --texte: #1f1a2e; --doux: #77708a;
+  --accent: #6c4cf0; --accent-doux: #e7e1ff; --bord: #e6e1f2; --ok: #2f9e6b; --erreur: #c0392b;
+}
+@media (prefers-color-scheme: dark) {
+  :root { --fond: #16131f; --carte: #221d30; --texte: #f1eefa; --doux: #a59fba;
+          --accent: #9b85ff; --accent-doux: #342a5c; --bord: #322b45; }
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--fond); color: var(--texte);
+  font: 16px/1.5 -apple-system, BlinkMacSystemFont, "SF Pro Text", system-ui, sans-serif;
+  padding: env(safe-area-inset-top) 0 env(safe-area-inset-bottom); -webkit-tap-highlight-color: transparent; }
+main { max-width: 1040px; margin: 0 auto; padding: 16px; }
+h1 { font-size: 30px; margin: 8px 0 14px; letter-spacing: -0.5px; }
+h2 { font-size: 22px; margin: 26px 0 10px; display: flex; align-items: baseline; gap: 8px; }
+h2 small { color: var(--doux); font-size: 15px; font-weight: 500; }
+button, select { font: inherit; cursor: pointer; border: 0; border-radius: 12px; padding: 10px 14px;
+  background: var(--accent-doux); color: var(--texte); }
+button.principal { background: var(--accent); color: #fff; font-weight: 600; }
+button:disabled { opacity: .5; }
+input[type=text], input[type=search], textarea { font: inherit; width: 100%; padding: 12px 14px;
+  border-radius: 12px; border: 1px solid var(--bord); background: var(--carte); color: var(--texte); }
+textarea { min-height: 120px; resize: vertical; }
+.ajout { background: var(--carte); border: 1px solid var(--bord); border-radius: 16px; padding: 12px; margin-bottom: 14px; }
+.ajout .ligne { display: flex; gap: 8px; }
+.ajout .ligne input { flex: 1; min-width: 0; }
+.message { font-size: 14px; margin-top: 8px; color: var(--erreur); }
+.message:empty { display: none; }
+.onglets { display: flex; gap: 6px; flex-wrap: wrap; margin: 12px 0; }
+.onglets button { padding: 8px 14px; border-radius: 999px; background: var(--carte); border: 1px solid var(--bord); }
+.onglets button.actif { background: var(--accent); color: #fff; border-color: var(--accent); }
+.filtres { display: flex; gap: 8px; }
+.filtres input { flex: 1; min-width: 0; }
+.filtres select { background: var(--carte); border: 1px solid var(--bord); max-width: 45%; }
+.grille { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 12px; }
+.oeuvre { background: var(--carte); border: 1px solid var(--bord); border-radius: 16px; overflow: hidden;
+  cursor: pointer; display: flex; flex-direction: column; position: relative; }
+.oeuvre .affiche { aspect-ratio: 2/3; display: flex; flex-direction: column; justify-content: flex-end;
+  padding: 12px; color: #fff; text-shadow: 0 1px 3px rgba(0,0,0,.35); }
+.oeuvre .affiche .titre { font-weight: 700; font-size: 18px; line-height: 1.2; display: -webkit-box;
+  -webkit-line-clamp: 4; -webkit-box-orient: vertical; overflow: hidden; }
+.oeuvre .affiche .emoji { font-size: 30px; margin-bottom: auto; }
+.oeuvre .infos { padding: 8px 10px 10px; font-size: 13px; color: var(--doux); }
+.oeuvre.vu .affiche { filter: grayscale(.85) brightness(.85); }
+.coche { position: absolute; top: 8px; right: 8px; width: 34px; height: 34px; border-radius: 50%; padding: 0;
+  background: rgba(0,0,0,.35); color: #fff; font-size: 17px; display: grid; place-items: center; }
+.oeuvre.vu .coche { background: var(--ok); }
+.vide { text-align: center; color: var(--doux); padding: 30px 10px; }
+.videos { display: grid; gap: 10px; }
+.video { background: var(--carte); border: 1px solid var(--bord); border-radius: 14px; padding: 10px;
+  display: flex; gap: 12px; align-items: center; cursor: pointer; }
+.video .vignette { width: 54px; height: 72px; border-radius: 10px; background: var(--accent-doux) center/cover;
+  flex: none; display: grid; place-items: center; }
+.video .titre { font-weight: 600; }
+.video .detail { font-size: 13px; color: var(--doux); }
+.video.erreur .detail { color: var(--erreur); }
+.roue { width: 24px; height: 24px; border: 3px solid var(--bord); border-top-color: var(--accent);
+  border-radius: 50%; animation: tourne 1s linear infinite; }
+@keyframes tourne { to { transform: rotate(360deg); } }
+
+#fiche { position: fixed; inset: 0; background: var(--fond); overflow-y: auto; display: none;
+  padding: env(safe-area-inset-top) 0 env(safe-area-inset-bottom); }
+#fiche.ouverte { display: block; }
+#fiche .barre { position: sticky; top: 0; background: var(--fond); padding: 10px 16px;
+  border-bottom: 1px solid var(--bord); z-index: 1; }
+#fiche article { max-width: 680px; margin: 0 auto; padding: 16px 16px 60px; }
+#fiche h3 { font-size: 28px; line-height: 1.2; margin: 6px 0 2px; }
+.meta { color: var(--doux); font-size: 14px; }
+.puces { display: flex; flex-wrap: wrap; gap: 8px; margin: 14px 0; }
+.puce { background: var(--accent-doux); border-radius: 999px; padding: 4px 12px; font-size: 14px; }
+.bloc { background: var(--carte); border: 1px solid var(--bord); border-radius: 14px; padding: 12px 14px; margin-top: 12px; }
+.bloc b { display: block; font-size: 13px; color: var(--doux); text-transform: uppercase; letter-spacing: .4px; margin-bottom: 2px; }
+.bloc a { color: var(--accent); }
+.actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 22px; }
+.actions .danger { color: var(--erreur); }
+.edition label { display: block; font-weight: 600; margin: 14px 0 4px; }
+.edition small { color: var(--doux); font-weight: 400; }
+</style>
+</head>
+<body>
+<main>
+  <h1>Mes films & séries 🎬</h1>
+
+  <form class="ajout" id="formAjout">
+    <div class="ligne">
+      <input type="text" id="lien" placeholder="Colle le lien TikTok ici" autocomplete="off" inputmode="url">
+      <button type="button" id="coller" title="Coller depuis le presse-papiers">📋</button>
+      <button class="principal" id="ajouter">Ajouter</button>
+    </div>
+    <div class="message" id="message"></div>
+  </form>
+
+  <div class="onglets" id="vues">
+    <button data-vue="avoir" class="actif">À voir</button>
+    <button data-vue="vus">Déjà vus</button>
+    <button data-vue="videos">Vidéos TikTok</button>
+  </div>
+  <div class="filtres" id="filtres">
+    <input type="search" id="recherche" placeholder="Rechercher un titre, un genre…">
+    <select id="genre"><option value="">Tous les genres</option></select>
+  </div>
+
+  <div id="contenu"></div>
+</main>
+
+<div id="fiche"></div>
+
+<script>
+const $ = s => document.querySelector(s);
+const echapper = t => String(t ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+let oeuvres = [];
+let videos = [];
+let vue = "avoir";
+let ouverte = null; // { type: "oeuvre" | "video", cle }
+let minuteur = null;
+const recherchePage = location.search; // garde « ?ajout=… » si on doit d'abord se connecter
+
+async function api(chemin, options = {}) {
+  const r = await fetch(chemin, { headers: {"Content-Type": "application/json"}, ...options });
+  if (r.status === 401) {
+    try { sessionStorage.setItem("suite", recherchePage); } catch {}
+    location.href = "/connexion.html"; throw new Error("Non connecté");
+  }
+  const json = await r.json().catch(() => ({}));
+  if (!r.ok) throw new Error(json.erreur || "Erreur " + r.status);
+  return json;
+}
+
+// Si l'analyse en arrière-plan n'a pas démarré (selon le plan Netlify), on la lance d'ici.
+const lancees = new Set();
+const enAttenteTropLongtemps = v =>
+  v.statut === "en_cours" && v.etape === "attente" && Date.now() - Date.parse(v.maj_le || v.cree_le) > 12000;
+function lancerIci(v) {
+  if (lancees.has(v.id + v.maj_le)) return;
+  lancees.add(v.id + v.maj_le);
+  api(`/api/videos/${v.id}/analyser`, { method: "POST" }).catch(() => {}).finally(charger);
+}
+
+async function charger() {
+  [oeuvres, videos] = await Promise.all([api("/api/oeuvres"), api("/api/videos")]);
+  remplirGenres();
+  afficher();
+  if (ouverte) rouvrir();
+  videos.filter(enAttenteTropLongtemps).forEach(lancerIci);
+  clearTimeout(minuteur);
+  if (videos.some(v => v.statut === "en_cours")) minuteur = setTimeout(charger, 3000);
+}
+
+function remplirGenres() {
+  const choisi = $("#genre").value;
+  const genres = [...new Set(oeuvres.flatMap(o => o.genres))].sort((a, b) => a.localeCompare(b, "fr"));
+  $("#genre").innerHTML = `<option value="">Tous les genres</option>` +
+    genres.map(g => `<option ${g === choisi ? "selected" : ""}>${echapper(g)}</option>`).join("");
+}
+
+// Une couleur stable par titre, pour des « affiches » toutes différentes.
+function couleurs(texte) {
+  let h = 0;
+  for (const c of texte) h = (h * 31 + c.charCodeAt(0)) % 360;
+  return `linear-gradient(160deg, hsl(${h} 65% 55%), hsl(${(h + 40) % 360} 70% 32%))`;
+}
+
+function carteOeuvre(o) {
+  const infos = [o.annee, o.genres.slice(0, 2).join(", ")].filter(Boolean).join(" · ");
+  return `<div class="oeuvre ${o.vu ? "vu" : ""}" data-cle="${echapper(o.cle)}">
+    <div class="affiche" style="background:${couleurs(o.titre)}">
+      <div class="emoji">${o.type === "serie" ? "📺" : "🎬"}</div>
+      <div class="titre">${echapper(o.titre)}</div>
+    </div>
+    <button class="coche" data-action="vu" title="${o.vu ? "Remettre à voir" : "Marquer comme vu"}">${o.vu ? "✓" : "○"}</button>
+    <div class="infos">${echapper(infos)}${o.plateformes.length ? "<br>" + echapper(o.plateformes.join(", ")) : ""}</div>
+  </div>`;
+}
+
+function afficher() {
+  $("#filtres").hidden = vue === "videos";
+  if (vue === "videos") return afficherVideos();
+  const q = $("#recherche").value.trim().toLowerCase();
+  const genre = $("#genre").value;
+  const liste = oeuvres
+    .filter(o => (vue === "vus") === o.vu)
+    .filter(o => !genre || o.genres.includes(genre))
+    .filter(o => !q || [o.titre, o.titre_original, o.resume, ...o.genres, ...o.plateformes].join(" ").toLowerCase().includes(q))
+    .sort((a, b) => b.ajoute_le.localeCompare(a.ajoute_le));
+  const enCours = videos.filter(v => v.statut === "en_cours").length;
+  let html = enCours && vue === "avoir"
+    ? `<div class="video" data-vue-videos><div class="roue"></div><div>${enCours} vidéo${enCours > 1 ? "s" : ""} en cours d'analyse…</div></div>` : "";
+  for (const [type, nom] of [["film", "Films"], ["serie", "Séries"]]) {
+    const partie = liste.filter(o => o.type === type);
+    if (partie.length) html += `<h2>${nom} <small>${partie.length}</small></h2><div class="grille">${partie.map(carteOeuvre).join("")}</div>`;
+  }
+  if (!liste.length) {
+    html += `<div class="vide">${vue === "vus" ? "Aucun film ni série marqué comme vu."
+      : oeuvres.length ? "Rien ne correspond à ta recherche." : "Ta liste est vide.<br>Colle le lien d'une vidéo TikTok qui recommande des films ou des séries."}</div>`;
+  }
+  $("#contenu").innerHTML = html;
+}
+
+function afficherVideos() {
+  if (!videos.length) { $("#contenu").innerHTML = `<div class="vide">Aucune vidéo ajoutée.</div>`; return; }
+  $("#contenu").innerHTML = `<div class="videos">${videos.map(v => {
+    const vignette = v.image ? `style="background-image:url(/api/image/${v.id})"` : "";
+    let titre = echapper(v.sujet || "Vidéo TikTok"), detail = "";
+    if (v.statut === "en_cours") { titre = "Analyse en cours…"; detail = "Je regarde la vidéo"; }
+    else if (v.statut === "erreur" || v.erreur) detail = echapper(v.erreur);
+    else detail = `${v.oeuvres.length} titre${v.oeuvres.length > 1 ? "s" : ""}${v.auteur ? " · @" + echapper(v.auteur) : ""}`;
+    return `<div class="video ${v.statut === "erreur" || v.erreur ? "erreur" : ""}" data-id="${v.id}">
+      <div class="vignette" ${vignette}>${v.statut === "en_cours" ? '<div class="roue"></div>' : v.image ? "" : "🎞️"}</div>
+      <div><div class="titre">${titre}</div><div class="detail">${detail}</div></div></div>`;
+  }).join("")}</div>`;
+}
+
+async function ajouter(lien) {
+  $("#message").textContent = "";
+  $("#ajouter").disabled = true;
+  try {
+    const r = await api("/api/videos", { method: "POST", body: JSON.stringify({ lien }) });
+    $("#lien").value = "";
+    if (r.deja) $("#message").textContent = "Cette vidéo est déjà dans ta bibliothèque.";
+    await charger();
+  } catch (e) {
+    $("#message").textContent = e.message;
+  } finally {
+    $("#ajouter").disabled = false;
+  }
+}
+
+// ---------- Fiches ----------
+
+function ouvrirFiche(html) {
+  $("#fiche").innerHTML = `<div class="barre"><button data-action="fermer">‹ Retour</button></div><article>${html}</article>`;
+  $("#fiche").classList.add("ouverte");
+  document.body.style.overflow = "hidden";
+}
+
+function fermer() {
+  ouverte = null;
+  $("#fiche").classList.remove("ouverte");
+  document.body.style.overflow = "";
+}
+
+function rouvrir() {
+  if (document.querySelector("#fiche .edition")) return; // ne pas effacer une modification en cours
+  if (ouverte.type === "oeuvre") ouvrirOeuvre(ouverte.cle); else ouvrirVideo(ouverte.cle);
+}
+
+function ouvrirOeuvre(cle) {
+  const o = oeuvres.find(x => x.cle === cle);
+  if (!o) return fermer();
+  ouverte = { type: "oeuvre", cle };
+  const recherche = encodeURIComponent(o.titre_original || o.titre);
+  const sources = videos.filter(v => o.videos.includes(v.id));
+  ouvrirFiche(`
+    <div class="meta">${o.type === "serie" ? "📺 Série" : "🎬 Film"}${o.annee ? " · " + echapper(o.annee) : ""}</div>
+    <h3>${echapper(o.titre)}</h3>
+    ${o.titre_original && o.titre_original !== o.titre ? `<div class="meta">${echapper(o.titre_original)}</div>` : ""}
+    <div class="puces">${[...o.genres, ...o.plateformes.map(p => "▶ " + p)].map(g => `<span class="puce">${echapper(g)}</span>`).join("")}</div>
+    ${o.resume ? `<div class="bloc"><b>Résumé</b>${echapper(o.resume)}</div>` : ""}
+    ${o.pourquoi ? `<div class="bloc"><b>Ce qu'en dit le TikTok</b>${echapper(o.pourquoi)}</div>` : ""}
+    <div class="bloc"><b>Où le regarder</b>
+      <a href="https://www.justwatch.com/fr/recherche?q=${recherche}" target="_blank" rel="noopener">Chercher sur JustWatch ↗</a> ·
+      <a href="https://www.youtube.com/results?search_query=${recherche}+bande+annonce" target="_blank" rel="noopener">Bande-annonce ↗</a></div>
+    ${sources.length ? `<div class="bloc"><b>Recommandé dans</b>${sources.map(v =>
+      `<a href="${echapper(v.url)}" target="_blank" rel="noopener">${echapper(v.sujet || "Vidéo TikTok")}${v.auteur ? " (@" + echapper(v.auteur) + ")" : ""} ↗</a>`).join("<br>")}</div>` : ""}
+    <div class="actions">
+      <button class="principal" data-action="vu">${o.vu ? "Remettre dans « À voir »" : "✓ Marquer comme vu"}</button>
+      <button data-action="modifier">Modifier</button>
+      <button class="danger" data-action="supprimerOeuvre">Supprimer</button>
+    </div>`);
+}
+
+function ouvrirVideo(id) {
+  const v = videos.find(x => x.id === id);
+  if (!v) return fermer();
+  ouverte = { type: "video", cle: id };
+  const lien = `<a href="${echapper(v.url)}" target="_blank" rel="noopener">Voir sur TikTok ↗</a>`;
+  let corps;
+  if (v.statut === "en_cours") {
+    corps = `<h3>Analyse en cours…</h3><p class="meta">Je regarde la vidéo pour repérer les films et séries. Ça prend 30 secondes à 2 minutes — tu peux fermer cette fiche.</p><div class="roue"></div>`;
+  } else {
+    const trouvees = oeuvres.filter(o => v.oeuvres.includes(o.cle));
+    corps = `<h3>${echapper(v.sujet || "Vidéo TikTok")}</h3>
+      <div class="meta">${v.auteur ? "@" + echapper(v.auteur) + " · " : ""}${lien}</div>
+      ${v.erreur ? `<div class="bloc" style="color:var(--erreur)">${echapper(v.erreur)}</div>` : ""}
+      ${trouvees.length ? `<h2>Titres trouvés <small>${trouvees.length}</small></h2><div class="grille">${trouvees.map(carteOeuvre).join("")}</div>` : ""}
+      <div class="actions">
+        <button data-action="relancer">${v.statut === "erreur" ? "Réessayer" : "Réanalyser"}</button>
+        <button data-action="texte">Coller la liste à la main</button>
+        <button class="danger" data-action="supprimerVideo">Supprimer la vidéo</button>
+      </div>`;
+  }
+  ouvrirFiche(corps);
+}
+
+function editer(o) {
+  $("#fiche article").innerHTML = `<div class="edition">
+    <label>Titre</label><input type="text" id="eTitre" value="${echapper(o.titre)}">
+    <label>Type</label><select id="eType"><option value="film">Film</option><option value="serie" ${o.type === "serie" ? "selected" : ""}>Série</option></select>
+    <label>Année</label><input type="text" id="eAnnee" value="${echapper(o.annee)}" inputmode="numeric">
+    <label>Genres <small>(séparés par des virgules)</small></label><input type="text" id="eGenres" value="${echapper(o.genres.join(", "))}">
+    <label>Plateformes <small>(séparées par des virgules)</small></label><input type="text" id="ePlateformes" value="${echapper(o.plateformes.join(", "))}">
+    <label>Résumé</label><textarea id="eResume">${echapper(o.resume)}</textarea>
+    <div class="actions"><button class="principal" data-action="enregistrer">Enregistrer</button><button data-action="annuler">Annuler</button></div></div>`;
+}
+
+const liste = v => v.split(",").map(x => x.trim()).filter(Boolean);
+
+async function basculerVu(cle) {
+  const o = oeuvres.find(x => x.cle === cle);
+  await api(`/api/oeuvres/${encodeURIComponent(cle)}`, { method: "PATCH", body: JSON.stringify({ vu: !o.vu }) });
+  await charger();
+}
+
+$("#fiche").addEventListener("click", async e => {
+  const carte = e.target.closest(".oeuvre");
+  const action = e.target.closest("[data-action]")?.dataset.action;
+  try {
+    if (carte && action === "vu") return await basculerVu(carte.dataset.cle);
+    if (carte) return ouvrirOeuvre(carte.dataset.cle);
+    if (!action) return;
+    const o = ouverte?.type === "oeuvre" ? oeuvres.find(x => x.cle === ouverte.cle) : null;
+    const v = ouverte?.type === "video" ? videos.find(x => x.id === ouverte.cle) : null;
+    if (action === "fermer") fermer();
+    if (action === "vu") await basculerVu(o.cle);
+    if (action === "modifier") editer(o);
+    if (action === "annuler") rouvrir();
+    if (action === "enregistrer") {
+      await api(`/api/oeuvres/${encodeURIComponent(o.cle)}`, { method: "PATCH", body: JSON.stringify({
+        titre: $("#eTitre").value.trim(), type: $("#eType").value, annee: $("#eAnnee").value.trim(),
+        genres: liste($("#eGenres").value), plateformes: liste($("#ePlateformes").value), resume: $("#eResume").value.trim() }) });
+      $("#fiche article").innerHTML = "";
+      await charger();
+    }
+    if (action === "supprimerOeuvre" && confirm(`Retirer « ${o.titre} » de ta bibliothèque ?`)) {
+      await api(`/api/oeuvres/${encodeURIComponent(o.cle)}`, { method: "DELETE" });
+      fermer(); await charger();
+    }
+    if (action === "relancer") { await api(`/api/videos/${v.id}/relancer`, { method: "POST", body: "{}" }); await charger(); }
+    if (action === "texte") {
+      $("#fiche article").innerHTML = `<div class="edition"><label>Colle ici la liste de films ou la description de la vidéo</label>
+        <textarea id="eTexte" rows="12"></textarea>
+        <div class="actions"><button class="principal" data-action="envoyerTexte">Ajouter ces titres</button><button data-action="annuler">Annuler</button></div></div>`;
+    }
+    if (action === "envoyerTexte") {
+      await api(`/api/videos/${v.id}/relancer`, { method: "POST", body: JSON.stringify({ texte: $("#eTexte").value }) });
+      $("#fiche article").innerHTML = "";
+      await charger();
+    }
+    if (action === "supprimerVideo" && confirm("Supprimer cette vidéo ? Les titres qu'elle seule recommandait (et pas encore vus) seront retirés.")) {
+      await api(`/api/videos/${v.id}`, { method: "DELETE" });
+      fermer(); await charger();
+    }
+  } catch (err) { alert(err.message); }
+});
+
+$("#contenu").addEventListener("click", async e => {
+  const carte = e.target.closest(".oeuvre");
+  if (carte && e.target.closest("[data-action=vu]")) return basculerVu(carte.dataset.cle).catch(err => alert(err.message));
+  if (carte) return ouvrirOeuvre(carte.dataset.cle);
+  if (e.target.closest("[data-vue-videos]")) return choisirVue("videos");
+  const video = e.target.closest(".video");
+  if (video) ouvrirVideo(video.dataset.id);
+});
+
+function choisirVue(v) {
+  vue = v;
+  document.querySelectorAll("#vues button").forEach(b => b.classList.toggle("actif", b.dataset.vue === v));
+  afficher();
+}
+$("#vues").addEventListener("click", e => { const b = e.target.closest("button"); if (b) choisirVue(b.dataset.vue); });
+$("#formAjout").addEventListener("submit", e => { e.preventDefault(); if ($("#lien").value.trim()) ajouter($("#lien").value); });
+$("#coller").addEventListener("click", async () => {
+  try { $("#lien").value = await navigator.clipboard.readText(); } catch { $("#lien").focus(); }
+});
+$("#recherche").addEventListener("input", afficher);
+$("#genre").addEventListener("change", afficher);
+document.addEventListener("keydown", e => { if (e.key === "Escape") fermer(); });
+
+// Raccourci iPhone : ouvrir /?ajout=<lien> ajoute directement la vidéo
+const params = new URLSearchParams(location.search);
+if (params.get("ajout")) { history.replaceState(null, "", "/"); ajouter(params.get("ajout")); }
+
+if ("serviceWorker" in navigator) navigator.serviceWorker.register("/sw.js");
+charger();
+</script>
+</body>
+</html>
