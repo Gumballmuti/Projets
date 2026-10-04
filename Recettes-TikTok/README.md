@@ -24,7 +24,7 @@ modification, copie du texte, « Réanalyser », et « Coller la recette à la m
   Si le plan Netlify ne la lance pas, la page déclenche l'analyse elle-même (`/api/recettes/:id/analyser`).
 
 Réglages du projet Netlify :
-- **Base directory** : `recettes-tiktok` (les autres réglages sont dans `netlify.toml`).
+- **Base directory** : `Recettes-TikTok` (les autres réglages sont dans `netlify.toml`).
 - Variables d'environnement :
   | Nom | Valeur |
   |---|---|
