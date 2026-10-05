@@ -32,7 +32,7 @@ export const viewport: Viewport = {
 };
 
 // Applique le thème choisi (clair/sombre) avant l'affichage, pour éviter un flash.
-const themeScript = `try{var t=JSON.parse(localStorage.getItem("sport-mental:v1")||"{}");var th=t&&t.data&&t.data.profil&&t.data.profil.theme;if(th==="light"||th==="dark")document.documentElement.dataset.theme=th}catch(e){}`;
+const themeScript = `try{var t=JSON.parse(localStorage.getItem("sport-mental")||"{}");var th=t&&t.data&&t.data.profil&&t.data.profil.theme;if(th==="light"||th==="dark")document.documentElement.dataset.theme=th}catch(e){}`;
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
