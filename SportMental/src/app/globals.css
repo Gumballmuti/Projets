@@ -1,5 +1,8 @@
 @import "tailwindcss";
 
+/* Écrans assez hauts (au-delà de l'iPhone SE) : textes du mode match plus grands. */
+@custom-variant tall (@media (min-height: 740px));
+
 /*
  * Design system Sport Mental — tokens de couleur.
  * Contrastes vérifiés (WCAG AA) : texte ≥ 4.5:1, bordures d'éléments interactifs ≥ 3:1.
