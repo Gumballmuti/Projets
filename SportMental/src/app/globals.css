@@ -1,5 +1,145 @@
 @import "tailwindcss";
 
+/*
+ * Design system Sport Mental — tokens de couleur.
+ * Contrastes vérifiés (WCAG AA) : texte ≥ 4.5:1, bordures d'éléments interactifs ≥ 3:1.
+ * Clair par défaut, sombre selon le système ou le choix fait dans le profil (data-theme).
+ */
+:root {
+  color-scheme: light;
+  --bg: #f5faf6;
+  --surface: #ffffff;
+  --soft: #e6f3ea; /* vert très clair */
+  --mint: #bfe8d0; /* menthe, décoratif */
+  --line: #d3e3d9; /* séparateurs décoratifs */
+  --line-strong: #7c9a88; /* bordures de champs (3:1) */
+  --ink: #14261c;
+  --muted: #4a5f53;
+  --primary: #1f5f3f; /* vert forêt */
+  --primary-hover: #174a31;
+  --on-primary: #ffffff;
+  --accent: #0b7550; /* émeraude (texte) */
+  --danger: #9b3b2f;
+  --focus: #0b7550;
+  /* Mode match : lisibilité maximale en plein soleil (texte presque noir sur blanc) */
+  --match-bg: #ffffff;
+  --match-ink: #0b1a12;
+  --match-muted: #33473b;
+  --match-btn: #1a5236;
+  --match-on-btn: #ffffff;
+  --match-soft: #e6f3ea;
+  --shadow: 0 1px 2px rgb(20 38 28 / 0.06), 0 4px 16px rgb(20 38 28 / 0.06);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --bg: #0f1a15;
+    --surface: #17251e;
+    --soft: #1e3229;
+    --mint: #2c4a3b;
+    --line: #26392f;
+    --line-strong: #5d7d6b;
+    --ink: #e3efe7;
+    --muted: #a6bcae;
+    --primary: #7fd3a8;
+    --primary-hover: #95dcb7;
+    --on-primary: #0d1f16;
+    --accent: #8fdcb5;
+    --danger: #f0a597;
+    --focus: #8fdcb5;
+    --match-bg: #08130d;
+    --match-ink: #ffffff;
+    --match-muted: #c4d6cb;
+    --match-btn: #8ee6b8;
+    --match-on-btn: #08130d;
+    --match-soft: #15271d;
+    --shadow: 0 1px 2px rgb(0 0 0 / 0.3);
+  }
+}
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --bg: #0f1a15;
+  --surface: #17251e;
+  --soft: #1e3229;
+  --mint: #2c4a3b;
+  --line: #26392f;
+  --line-strong: #5d7d6b;
+  --ink: #e3efe7;
+  --muted: #a6bcae;
+  --primary: #7fd3a8;
+  --primary-hover: #95dcb7;
+  --on-primary: #0d1f16;
+  --accent: #8fdcb5;
+  --danger: #f0a597;
+  --focus: #8fdcb5;
+  --match-bg: #08130d;
+  --match-ink: #ffffff;
+  --match-muted: #c4d6cb;
+  --match-btn: #8ee6b8;
+  --match-on-btn: #08130d;
+  --match-soft: #15271d;
+  --shadow: 0 1px 2px rgb(0 0 0 / 0.3);
+}
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-soft: var(--soft);
+  --color-mint: var(--mint);
+  --color-line: var(--line);
+  --color-line-strong: var(--line-strong);
+  --color-ink: var(--ink);
+  --color-muted: var(--muted);
+  --color-primary: var(--primary);
+  --color-primary-hover: var(--primary-hover);
+  --color-on-primary: var(--on-primary);
+  --color-accent: var(--accent);
+  --color-danger: var(--danger);
+  --color-focus: var(--focus);
+  --color-match-bg: var(--match-bg);
+  --color-match-ink: var(--match-ink);
+  --color-match-muted: var(--match-muted);
+  --color-match-btn: var(--match-btn);
+  --color-match-on-btn: var(--match-on-btn);
+  --color-match-soft: var(--match-soft);
+  --font-sans: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --shadow-card: var(--shadow);
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  -webkit-tap-highlight-color: transparent;
+}
+
 body {
-  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-sans);
+}
+
+:focus-visible {
+  outline: 3px solid var(--focus);
+  outline-offset: 2px;
+  border-radius: 6px;
+}
+
+/* Barre inférieure et zones sûres de l'iPhone */
+.pb-safe {
+  padding-bottom: max(env(safe-area-inset-bottom), 0px);
+}
+.pt-safe {
+  padding-top: max(env(safe-area-inset-top), 0px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }
