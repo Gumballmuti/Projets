@@ -1,6 +1,9 @@
 import type { NextConfig } from "next";
 
 const isDev = process.env.NODE_ENV !== "production";
+// `npm run build:static` : export 100 % statique (dossier out/) pour Cloudflare Pages, Netlify ou tout hébergeur statique.
+// Les en-têtes de sécurité sont alors fournis par public/_headers.
+const isStaticExport = process.env.STATIC_EXPORT === "1";
 
 // CSP volontairement simple : tout est servi par le site lui-même, aucun service tiers.
 // 'unsafe-inline' est nécessaire pour les scripts d'hydratation des pages statiques Next.js.
@@ -35,18 +38,20 @@ const nextConfig: NextConfig = {
   env: { APP_VERSION: process.env.VERCEL_GIT_COMMIT_SHA?.slice(0, 12) || String(Date.now()) },
   poweredByHeader: false,
   reactStrictMode: true,
-  async headers() {
-    return [
-      { source: "/:path*", headers: securityHeaders },
-      {
-        source: "/sw.js",
-        headers: [
-          { key: "Cache-Control", value: "no-cache, no-store, must-revalidate" },
-          { key: "Service-Worker-Allowed", value: "/" },
-        ],
-      },
-    ];
-  },
+  ...(isStaticExport ? { output: "export" as const, images: { unoptimized: true } } : { headers }),
 };
+
+async function headers() {
+  return [
+    { source: "/:path*", headers: securityHeaders },
+    {
+      source: "/sw.js",
+      headers: [
+        { key: "Cache-Control", value: "no-cache, no-store, must-revalidate" },
+        { key: "Service-Worker-Allowed", value: "/" },
+      ],
+    },
+  ];
+}
 
 export default nextConfig;
