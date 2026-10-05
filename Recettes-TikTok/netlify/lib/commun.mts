@@ -15,7 +15,9 @@ export interface Fiche {
   image: boolean;
   cree_le: string;
   maj_le?: string;
-  etape?: "attente" | "analyse"; // « analyse » dès qu'une fonction a commencé le travail
+  etape?: "televersement" | "attente" | "analyse"; // « analyse » dès qu'une fonction a commencé le travail
+  fichier?: boolean; // vidéo envoyée en fichier plutôt qu'un lien
+  plateforme?: string;
   texte?: string; // recette collée à la main, le cas échéant
 }
 

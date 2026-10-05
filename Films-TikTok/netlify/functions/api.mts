@@ -6,7 +6,8 @@ import {
   lireOeuvre, lireVideo, magasin, toutLire,
 } from "../lib/commun.mts";
 import { cleInterne, migrerAnciennesDonnees, pour, routesComptes, sessionDe } from "../lib/comptes.mts";
-import { ErreurExtraction, extraireUrl } from "../lib/tiktok.mts";
+import { effacerFichier, recevoirMorceau } from "../lib/fichiers.mts";
+import { ErreurExtraction, extraireUrl } from "../lib/sources.mts";
 
 async function lancerAnalyse(req: Request, proprio: string, id: string) {
   // Une fonction « -background » répond tout de suite (202) et continue à travailler.
@@ -28,7 +29,7 @@ export default async (req: Request, _context: Context) => {
   return pour(session.identifiant, () => routesBibliotheque(req, chemin, session.identifiant));
 };
 
-async function routesBibliotheque(req: Request, [ressource, id, action]: string[], proprio: string) {
+async function routesBibliotheque(req: Request, [ressource, id, action, numero]: string[], proprio: string) {
   const store = magasin();
 
   if (ressource === "image" && id) {
@@ -80,7 +81,7 @@ async function routesBibliotheque(req: Request, [ressource, id, action]: string[
     } catch (e) {
       return json({ erreur: (e as ErreurExtraction).message }, 400);
     }
-    const deja = (await toutLire<Video>("v/")).find((v) => v.url === url || v.lien === url);
+    const deja = (await toutLire<Video>("v/")).find((v) => v.url && (v.url === url || v.lien === url));
     if (deja) return json({ id: deja.id, deja: true });
     const maintenant = new Date().toISOString();
     const video: Video = {
@@ -93,10 +94,43 @@ async function routesBibliotheque(req: Request, [ressource, id, action]: string[
     return json({ id: video.id }, 201);
   }
 
+  // Vidéo envoyée en fichier : on crée l'entrée, la page envoie ensuite les morceaux
+  if (id === "fichier" && !action && req.method === "POST") {
+    const maintenant = new Date().toISOString();
+    const video: Video = {
+      id: Date.now().toString(36) + randomBytes(3).toString("hex"),
+      lien: "", url: "", statut: "en_cours", erreur: null, sujet: "", auteur: "", oeuvres: [], image: false, fichier: true,
+      cree_le: maintenant, maj_le: maintenant, etape: "televersement",
+    };
+    await ecrireVideo(video);
+    return json({ id: video.id }, 201);
+  }
+
   const video = await lireVideo(id);
   if (!video) return json({ erreur: "Introuvable" }, 404);
 
-  if (req.method === "GET") return json(video);
+  if (action === "morceau" && req.method === "PUT") {
+    try {
+      await recevoirMorceau(id, Number(numero) || 0, req);
+    } catch (e) {
+      return json({ erreur: (e as Error).message }, 413);
+    }
+    return json({ ok: true });
+  }
+
+  if (action === "miniature" && req.method === "PUT") {
+    await store.set(cleImage(id), await req.arrayBuffer(), { metadata: { type: "image/jpeg" } });
+    await ecrireVideo({ ...video, image: true });
+    return json({ ok: true });
+  }
+
+  if (action === "televerse" && req.method === "POST") {
+    await ecrireVideo({ ...video, etape: "attente", maj_le: new Date().toISOString() });
+    await lancerAnalyse(req, proprio, id);
+    return json({ ok: true });
+  }
+
+  if (!action && req.method === "GET") return json(video);
 
   if (action === "relancer" && req.method === "POST") {
     const corps = await req.json().catch(() => ({}));
@@ -115,7 +149,7 @@ async function routesBibliotheque(req: Request, [ressource, id, action]: string[
   }
 
   // Supprimer une vidéo retire aussi les films qu'elle seule recommandait (sauf ceux déjà vus).
-  if (req.method === "DELETE") {
+  if (!action && req.method === "DELETE") {
     for (const cle of video.oeuvres) {
       const oeuvre = await lireOeuvre(cle);
       if (!oeuvre) continue;
@@ -125,6 +159,7 @@ async function routesBibliotheque(req: Request, [ressource, id, action]: string[
     }
     await store.delete(cleVideo(id));
     await store.delete(cleImage(id));
+    await effacerFichier(id);
     return json({ ok: true });
   }
 

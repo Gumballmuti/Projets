@@ -1,9 +1,9 @@
-/** Analyse complète d'une vidéo : lecture TikTok, repérage par Gemini, ajout à la bibliothèque. */
+/** Analyse complète d'une vidéo : lecture (lien ou fichier), repérage par Gemini, ajout à la bibliothèque. */
 import {
   type Oeuvre, cleDe, cleImage, ecrireOeuvre, ecrireVideo, lireOeuvre, lireVideo, magasin,
 } from "./commun.mts";
 import { reperer } from "./ia.mts";
-import { infosVideo, telechargerVideo } from "./tiktok.mts";
+import { effacerFichier, preparerVideo } from "./fichiers.mts";
 
 export async function analyser(id: string) {
   const video = await lireVideo(id);
@@ -11,13 +11,7 @@ export async function analyser(id: string) {
   await ecrireVideo({ ...video, etape: "analyse" });
 
   try {
-    const infos = await infosVideo(video.url);
-    let fichier: Buffer | null = null;
-    try {
-      fichier = await telechargerVideo(infos);
-    } catch {
-      // on se contente de la description et des sous-titres
-    }
+    const { infos, video: fichier } = await preparerVideo(video);
     const analyse = await reperer(infos, fichier, video.texte ?? "");
 
     const cles: string[] = [];
@@ -45,12 +39,15 @@ export async function analyser(id: string) {
       statut: "ok",
       etape: undefined,
       erreur: cles.length ? null : "Aucun film ni série trouvé dans cette vidéo.",
-      url: infos.url,
+      url: infos.url || video.url,
+      plateforme: infos.plateforme,
       sujet: analyse.sujet,
-      auteur: infos.auteur,
+      auteur: infos.auteur || video.auteur,
       oeuvres: cles,
       image: video.image || !!infos.miniature,
     });
+    // La vidéo envoyée n'est plus utile une fois analysée (place limitée chez Netlify).
+    if (video.fichier) await effacerFichier(id);
   } catch (e) {
     await ecrireVideo({ ...video, statut: "erreur", etape: undefined, erreur: String((e as Error)?.message ?? e).slice(0, 500) });
   }

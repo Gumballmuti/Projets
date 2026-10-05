@@ -3,7 +3,8 @@ import { randomBytes } from "node:crypto";
 import { type Fiche, cleFiche, cleImage, ecrireFiche, json, lireFiche, magasin } from "../lib/commun.mts";
 import { cleInterne, migrerAnciennesDonnees, pour, routesComptes, sessionDe } from "../lib/comptes.mts";
 import { analyser } from "../lib/analyse.mts";
-import { ErreurExtraction, extraireUrl } from "../lib/tiktok.mts";
+import { effacerFichier, recevoirMorceau } from "../lib/fichiers.mts";
+import { ErreurExtraction, extraireUrl } from "../lib/sources.mts";
 
 async function lancerAnalyse(req: Request, proprio: string, id: string) {
   // Une fonction « -background » répond tout de suite (202) et continue à travailler.
@@ -25,7 +26,7 @@ export default async (req: Request, _context: Context) => {
   return pour(session.identifiant, () => routesRecettes(req, chemin, session.identifiant));
 };
 
-async function routesRecettes(req: Request, [ressource, id, action]: string[], proprio: string) {
+async function routesRecettes(req: Request, [ressource, id, action, numero]: string[], proprio: string) {
   const store = magasin();
 
   if (ressource === "image" && id) {
@@ -75,10 +76,43 @@ async function routesRecettes(req: Request, [ressource, id, action]: string[], p
     return json({ id: fiche.id }, 201);
   }
 
+  // Vidéo envoyée en fichier : on crée la fiche, la page envoie ensuite les morceaux
+  if (id === "fichier" && !action && req.method === "POST") {
+    const maintenant = new Date().toISOString();
+    const fiche: Fiche = {
+      id: Date.now().toString(36) + randomBytes(3).toString("hex"),
+      url: "", lien: "", statut: "en_cours", erreur: null, titre: "", auteur: "", source: "", fichier: true,
+      donnees: null, image: false, cree_le: maintenant, maj_le: maintenant, etape: "televersement",
+    };
+    await ecrireFiche(fiche);
+    return json({ id: fiche.id }, 201);
+  }
+
   const fiche = await lireFiche(id);
   if (!fiche) return json({ erreur: "Introuvable" }, 404);
 
-  if (req.method === "GET") return json(fiche);
+  if (action === "morceau" && req.method === "PUT") {
+    try {
+      await recevoirMorceau(id, Number(numero) || 0, req);
+    } catch (e) {
+      return json({ erreur: (e as Error).message }, 413);
+    }
+    return json({ ok: true });
+  }
+
+  if (action === "miniature" && req.method === "PUT") {
+    await store.set(cleImage(id), await req.arrayBuffer(), { metadata: { type: "image/jpeg" } });
+    await ecrireFiche({ ...fiche, image: true });
+    return json({ ok: true });
+  }
+
+  if (action === "televerse" && req.method === "POST") {
+    await ecrireFiche({ ...fiche, etape: "attente", maj_le: new Date().toISOString() });
+    await lancerAnalyse(req, proprio, id);
+    return json({ ok: true });
+  }
+
+  if (!action && req.method === "GET") return json(fiche);
 
   if (action === "relancer" && req.method === "POST") {
     const corps = await req.json().catch(() => ({}));
@@ -96,15 +130,16 @@ async function routesRecettes(req: Request, [ressource, id, action]: string[], p
     return json(await lireFiche(id));
   }
 
-  if (req.method === "PUT") {
+  if (!action && req.method === "PUT") {
     const donnees = await req.json();
     await ecrireFiche({ ...fiche, titre: String(donnees.titre ?? ""), donnees });
     return json({ ok: true });
   }
 
-  if (req.method === "DELETE") {
+  if (!action && req.method === "DELETE") {
     await store.delete(cleFiche(id));
     await store.delete(cleImage(id));
+    await effacerFichier(id);
     return json({ ok: true });
   }
 

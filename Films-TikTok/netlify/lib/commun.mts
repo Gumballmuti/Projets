@@ -2,7 +2,7 @@ import { magasin, nommerMagasin } from "./comptes.mts";
 
 export type Statut = "en_cours" | "ok" | "erreur";
 
-/** Une vidéo TikTok ajoutée, et son analyse. */
+/** Une vidéo ajoutée (lien de n'importe quelle plateforme, ou fichier envoyé), et son analyse. */
 export interface Video {
   id: string;
   lien: string; // lien tel que collé (sert à repérer les doublons)
@@ -15,7 +15,9 @@ export interface Video {
   image: boolean;
   cree_le: string;
   maj_le?: string;
-  etape?: "attente" | "analyse"; // « analyse » dès qu'une fonction a commencé le travail
+  etape?: "televersement" | "attente" | "analyse"; // « analyse » dès qu'une fonction a commencé le travail
+  fichier?: boolean; // vidéo envoyée en fichier plutôt qu'un lien
+  plateforme?: string;
   texte?: string; // liste collée à la main, le cas échéant
 }
 

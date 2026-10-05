@@ -34,6 +34,15 @@ Réglages du projet Netlify :
 Raccourci iPhone pour ajouter depuis TikTok : même principe que l'app recettes,
 avec l'URL `https://TON-ADRESSE/?ajout=` suivie du *Texte encodé*.
 
+## Toutes les plateformes
+
+- **Lien** : TikTok, YouTube (Shorts compris), Instagram (Reels publics), Facebook, Pinterest, X… et n'importe quelle page web
+  (ex. un blog de recettes). L'app lit la description, la page et, quand c'est possible, la vidéo elle-même ;
+  pour YouTube, Gemini regarde la vidéo directement à partir du lien.
+- **Fichier** : bouton « 🎞️ Envoyer une vidéo enregistrée » — pour une vidéo enregistrée sur le téléphone
+  ou un enregistrement d'écran (150 Mo max). Ça marche quelle que soit la plateforme, même quand elle bloque les liens
+  (compte privé, Snapchat…). La vidéo est effacée une fois analysée.
+
 ## Comptes
 
 - Le compte **admin** se connecte avec l'identifiant `admin` et le mot de passe `APP_PASSWORD` (variable Netlify).

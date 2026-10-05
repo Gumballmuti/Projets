@@ -1,7 +1,7 @@
-/** Analyse complète d'une fiche : lecture TikTok, rédaction par Gemini, enregistrement. */
+/** Analyse complète d'une fiche : lecture de la vidéo, rédaction par Gemini, enregistrement. */
 import { cleImage, ecrireFiche, lireFiche, magasin } from "./commun.mts";
+import { effacerFichier, preparerVideo } from "./fichiers.mts";
 import { redigerRecette } from "./ia.mts";
-import { infosVideo, telechargerVideo } from "./tiktok.mts";
 
 export async function analyser(id: string) {
   const fiche = await lireFiche(id);
@@ -9,17 +9,12 @@ export async function analyser(id: string) {
   await ecrireFiche({ ...fiche, etape: "analyse" });
 
   try {
-    const infos = await infosVideo(fiche.url);
-    let video: Buffer | null = null;
-    let remarqueVideo = "";
-    try {
-      video = await telechargerVideo(infos);
-    } catch {
-      remarqueVideo = "La vidéo n'a pas pu être regardée, seule la description a été lue.";
-    }
+    const { infos, video } = await preparerVideo(fiche);
+    const vue = !!video || !!infos.youtube;
     const recette = await redigerRecette(infos, video, fiche.texte ?? "");
-    if (remarqueVideo && !recette.complete) {
-      recette.remarque = [recette.remarque, remarqueVideo].filter(Boolean).join(" ");
+    if (!vue && !fiche.fichier && !recette.complete) {
+      recette.remarque = [recette.remarque, "La vidéo n'a pas pu être regardée, seule la description a été lue."]
+        .filter(Boolean).join(" ");
     }
     if (infos.miniature) {
       await magasin().set(cleImage(id), infos.miniature.donnees, { metadata: { type: infos.miniature.type } });
@@ -29,13 +24,16 @@ export async function analyser(id: string) {
       statut: "ok",
       etape: undefined,
       erreur: null,
-      url: infos.url,
+      url: infos.url || fiche.url,
+      plateforme: infos.plateforme,
       titre: recette.titre,
-      auteur: infos.auteur,
-      source: video ? "description + vidéo" : "description",
+      auteur: infos.auteur || fiche.auteur,
+      source: fiche.fichier ? "vidéo envoyée" : vue ? "description + vidéo" : "description",
       donnees: recette as unknown as Record<string, unknown>,
       image: fiche.image || !!infos.miniature,
     });
+    // La vidéo envoyée n'est plus utile une fois la recette écrite (place limitée chez Netlify).
+    if (fiche.fichier) await effacerFichier(id);
   } catch (e) {
     await ecrireFiche({ ...fiche, statut: "erreur", etape: undefined, erreur: String((e as Error)?.message ?? e).slice(0, 500) });
   }

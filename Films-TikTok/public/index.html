@@ -41,6 +41,8 @@ textarea { min-height: 120px; resize: vertical; }
 .ajout .ligne input { flex: 1; min-width: 0; }
 .message { font-size: 14px; margin-top: 8px; color: var(--erreur); }
 .message:empty { display: none; }
+.message.info { color: var(--doux); }
+.fichier { margin-top: 8px; width: 100%; }
 .onglets { display: flex; gap: 6px; flex-wrap: wrap; margin: 12px 0; }
 .onglets button { padding: 8px 14px; border-radius: 999px; background: var(--carte); border: 1px solid var(--bord); }
 .onglets button.actif { background: var(--accent); color: #fff; border-color: var(--accent); }
@@ -98,17 +100,19 @@ textarea { min-height: 120px; resize: vertical; }
 
   <form class="ajout" id="formAjout">
     <div class="ligne">
-      <input type="text" id="lien" placeholder="Colle le lien TikTok ici" autocomplete="off" inputmode="url">
+      <input type="text" id="lien" placeholder="Colle un lien (TikTok, Instagram, YouTube…)" autocomplete="off" inputmode="url">
       <button type="button" id="coller" title="Coller depuis le presse-papiers">📋</button>
       <button class="principal" id="ajouter">Ajouter</button>
     </div>
+    <button type="button" class="fichier" id="choisirVideo">🎞️ Envoyer une vidéo enregistrée</button>
+    <input type="file" id="fichierVideo" accept="video/*" hidden>
     <div class="message" id="message"></div>
   </form>
 
   <div class="onglets" id="vues">
     <button data-vue="avoir" class="actif">À voir</button>
     <button data-vue="vus">Déjà vus</button>
-    <button data-vue="videos">Vidéos TikTok</button>
+    <button data-vue="videos">Vidéos</button>
   </div>
   <div class="filtres" id="filtres">
     <input type="search" id="recherche" placeholder="Rechercher un titre, un genre…">
@@ -206,7 +210,7 @@ function afficher() {
   }
   if (!liste.length) {
     html += `<div class="vide">${vue === "vus" ? "Aucun film ni série marqué comme vu."
-      : oeuvres.length ? "Rien ne correspond à ta recherche." : "Ta liste est vide.<br>Colle le lien d'une vidéo TikTok qui recommande des films ou des séries."}</div>`;
+      : oeuvres.length ? "Rien ne correspond à ta recherche." : "Ta liste est vide.<br>Colle le lien d'une vidéo qui recommande des films ou des séries<br>(TikTok, Instagram, YouTube…), ou envoie une vidéo depuis ton téléphone."}</div>`;
   }
   $("#contenu").innerHTML = html;
 }
@@ -215,7 +219,7 @@ function afficherVideos() {
   if (!videos.length) { $("#contenu").innerHTML = `<div class="vide">Aucune vidéo ajoutée.</div>`; return; }
   $("#contenu").innerHTML = `<div class="videos">${videos.map(v => {
     const vignette = v.image ? `style="background-image:url(/api/image/${v.id})"` : "";
-    let titre = echapper(v.sujet || "Vidéo TikTok"), detail = "";
+    let titre = echapper(v.sujet || "Vidéo"), detail = "";
     if (v.statut === "en_cours") { titre = "Analyse en cours…"; detail = "Je regarde la vidéo"; }
     else if (v.statut === "erreur" || v.erreur) detail = echapper(v.erreur);
     else detail = `${v.oeuvres.length} titre${v.oeuvres.length > 1 ? "s" : ""}${v.auteur ? " · @" + echapper(v.auteur) : ""}`;
@@ -227,6 +231,7 @@ function afficherVideos() {
 
 async function ajouter(lien) {
   $("#message").textContent = "";
+  $("#message").className = "message";
   $("#ajouter").disabled = true;
   try {
     const r = await api("/api/videos", { method: "POST", body: JSON.stringify({ lien }) });
@@ -271,12 +276,12 @@ function ouvrirOeuvre(cle) {
     ${o.titre_original && o.titre_original !== o.titre ? `<div class="meta">${echapper(o.titre_original)}</div>` : ""}
     <div class="puces">${[...o.genres, ...o.plateformes.map(p => "▶ " + p)].map(g => `<span class="puce">${echapper(g)}</span>`).join("")}</div>
     ${o.resume ? `<div class="bloc"><b>Résumé</b>${echapper(o.resume)}</div>` : ""}
-    ${o.pourquoi ? `<div class="bloc"><b>Ce qu'en dit le TikTok</b>${echapper(o.pourquoi)}</div>` : ""}
+    ${o.pourquoi ? `<div class="bloc"><b>Ce qu'en dit la vidéo</b>${echapper(o.pourquoi)}</div>` : ""}
     <div class="bloc"><b>Où le regarder</b>
       <a href="https://www.justwatch.com/fr/recherche?q=${recherche}" target="_blank" rel="noopener">Chercher sur JustWatch ↗</a> ·
       <a href="https://www.youtube.com/results?search_query=${recherche}+bande+annonce" target="_blank" rel="noopener">Bande-annonce ↗</a></div>
     ${sources.length ? `<div class="bloc"><b>Recommandé dans</b>${sources.map(v =>
-      `<a href="${echapper(v.url)}" target="_blank" rel="noopener">${echapper(v.sujet || "Vidéo TikTok")}${v.auteur ? " (@" + echapper(v.auteur) + ")" : ""} ↗</a>`).join("<br>")}</div>` : ""}
+      `<a href="${echapper(v.url)}" target="_blank" rel="noopener">${echapper(v.sujet || "Vidéo")}${v.auteur ? " (@" + echapper(v.auteur) + ")" : ""} ↗</a>`).join("<br>")}</div>` : ""}
     <div class="actions">
       <button class="principal" data-action="vu">${o.vu ? "Remettre dans « À voir »" : "✓ Marquer comme vu"}</button>
       <button data-action="modifier">Modifier</button>
@@ -288,13 +293,13 @@ function ouvrirVideo(id) {
   const v = videos.find(x => x.id === id);
   if (!v) return fermer();
   ouverte = { type: "video", cle: id };
-  const lien = `<a href="${echapper(v.url)}" target="_blank" rel="noopener">Voir sur TikTok ↗</a>`;
+  const lien = v.url ? `<a href="${echapper(v.url)}" target="_blank" rel="noopener">Voir sur ${echapper(v.plateforme || "la plateforme")} ↗</a>` : "Vidéo envoyée";
   let corps;
   if (v.statut === "en_cours") {
     corps = `<h3>Analyse en cours…</h3><p class="meta">Je regarde la vidéo pour repérer les films et séries. Ça prend 30 secondes à 2 minutes — tu peux fermer cette fiche.</p><div class="roue"></div>`;
   } else {
     const trouvees = oeuvres.filter(o => v.oeuvres.includes(o.cle));
-    corps = `<h3>${echapper(v.sujet || "Vidéo TikTok")}</h3>
+    corps = `<h3>${echapper(v.sujet || "Vidéo")}</h3>
       <div class="meta">${v.auteur ? "@" + echapper(v.auteur) + " · " : ""}${lien}</div>
       ${v.erreur ? `<div class="bloc" style="color:var(--erreur)">${echapper(v.erreur)}</div>` : ""}
       ${trouvees.length ? `<h2>Titres trouvés <small>${trouvees.length}</small></h2><div class="grille">${trouvees.map(carteOeuvre).join("")}</div>` : ""}
@@ -384,6 +389,25 @@ function choisirVue(v) {
 }
 $("#vues").addEventListener("click", e => { const b = e.target.closest("button"); if (b) choisirVue(b.dataset.vue); });
 $("#formAjout").addEventListener("submit", e => { e.preventDefault(); if ($("#lien").value.trim()) ajouter($("#lien").value); });
+$("#choisirVideo").addEventListener("click", () => $("#fichierVideo").click());
+$("#fichierVideo").addEventListener("change", async e => {
+  const fichier = e.target.files[0];
+  e.target.value = "";
+  if (!fichier) return;
+  const message = $("#message");
+  message.className = "message info";
+  $("#choisirVideo").disabled = true;
+  try {
+    await envoyerVideo(fichier, "/api/videos", p => { message.textContent = `Envoi de la vidéo… ${p} %`; });
+    message.textContent = "";
+    await charger();
+  } catch (err) {
+    message.className = "message";
+    message.textContent = err.message;
+  } finally {
+    $("#choisirVideo").disabled = false;
+  }
+});
 $("#coller").addEventListener("click", async () => {
   try { $("#lien").value = await navigator.clipboard.readText(); } catch { $("#lien").focus(); }
 });
@@ -398,6 +422,7 @@ if (params.get("ajout")) { history.replaceState(null, "", "/"); ajouter(params.g
 if ("serviceWorker" in navigator) navigator.serviceWorker.register("/sw.js");
 charger();
 </script>
+<script src="/televersement.js"></script>
 <script src="/compte.js"></script>
 </body>
 </html>

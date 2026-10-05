@@ -1,6 +1,6 @@
 /** Repérage des films et séries par Google Gemini (offre gratuite), qui regarde la vidéo avec le son. */
-import { type ApiError, createPartFromUri, FileState, GoogleGenAI, type Part } from "@google/genai";
-import { ErreurExtraction, type InfosVideo } from "./tiktok.mts";
+import { demanderAGemini } from "./gemini.mts";
+import type { InfosVideo } from "./sources.mts";
 
 export interface OeuvreTrouvee {
   titre: string;
@@ -45,8 +45,8 @@ const SCHEMA = {
   required: ["sujet", "oeuvres"],
 };
 
-const CONSIGNES = `Tu aides une personne à se constituer une liste de films et de séries à voir, à partir de vidéos TikTok de recommandations.
-On te donne les informations d'une vidéo : la description du créateur, ses sous-titres, et souvent la vidéo elle-même (images et son).
+const CONSIGNES = `Tu aides une personne à se constituer une liste de films et de séries à voir, à partir de vidéos de recommandations (TikTok, Instagram, YouTube…) ou de pages web.
+On te donne les informations d'une vidéo ou d'une page : la description du créateur, ses sous-titres, le contenu de la page, et souvent la vidéo elle-même (images et son).
 
 Repère TOUS les films et séries recommandés ou présentés : cités à l'oral, écrits à l'écran, visibles sur une affiche ou un extrait, ou listés dans la description.
 Pour chacun :
@@ -62,68 +62,6 @@ Ne liste pas une œuvre seulement mentionnée en comparaison (« dans le style d
 sujet : le thème de la vidéo en quelques mots (ex. « Thrillers psychologiques à voir sur Netflix »).
 Si la vidéo ne recommande aucun film ni série, renvoie une liste vide.`;
 
-const LIMITE_EN_LIGNE = 14 * 1024 * 1024; // au-delà, la vidéo passe par l'envoi de fichiers de Gemini
-
 export async function reperer(infos: InfosVideo, video: Buffer | null, texteManuel = ""): Promise<Analyse> {
-  const cle = Netlify.env.get("GEMINI_API_KEY");
-  if (!cle) throw new ErreurExtraction("La clé GEMINI_API_KEY n'est pas configurée dans Netlify.");
-  const ai = new GoogleGenAI({ apiKey: cle });
-
-  const sources = [
-    `Créateur : ${infos.auteur || "inconnu"}`,
-    `Description de la vidéo :\n${infos.description || "(vide)"}`,
-    `Sous-titres de la vidéo :\n${infos.sousTitres || "(aucun)"}`,
-  ];
-  if (texteManuel) sources.push(`Texte ajouté à la main :\n${texteManuel}`);
-
-  const parties: Part[] = [];
-  if (video) parties.push(await partieVideo(ai, video));
-  parties.push({ text: sources.join("\n\n") });
-
-  const reponse = await generer(ai, parties);
-  try {
-    return JSON.parse(reponse.text ?? "") as Analyse;
-  } catch {
-    throw new ErreurExtraction("Gemini n'a pas pu lire cette vidéo.");
-  }
-}
-
-// Si un modèle est surchargé (503), au bout de son quota gratuit (429) ou retiré (404), on passe au suivant.
-const MODELES = ["gemini-3.8-flash", "gemini-flash-latest", "gemini-3.5-flash", "gemini-flash-lite-latest"];
-
-async function generer(ai: GoogleGenAI, parties: Part[]) {
-  const choisi = Netlify.env.get("GEMINI_MODEL");
-  const modeles = choisi ? [choisi, ...MODELES.filter((m) => m !== choisi)] : MODELES;
-  let derniere: unknown;
-  for (const model of modeles) {
-    try {
-      return await ai.models.generateContent({
-        model,
-        contents: [{ role: "user", parts: parties }],
-        config: { systemInstruction: CONSIGNES, responseMimeType: "application/json", responseJsonSchema: SCHEMA },
-      });
-    } catch (e) {
-      derniere = e;
-      if (![404, 429, 500, 503].includes((e as ApiError).status)) break;
-    }
-  }
-  const statut = (derniere as ApiError)?.status;
-  throw new ErreurExtraction(
-    statut === 429 ? "Quota gratuit de Gemini atteint pour aujourd'hui, réessaie plus tard."
-      : statut === 503 ? "Gemini est surchargé en ce moment, réessaie dans quelques minutes."
-      : `Gemini a renvoyé une erreur : ${String((derniere as Error)?.message ?? derniere).slice(0, 200)}`,
-  );
-}
-
-async function partieVideo(ai: GoogleGenAI, video: Buffer): Promise<Part> {
-  if (video.length <= LIMITE_EN_LIGNE) {
-    return { inlineData: { mimeType: "video/mp4", data: video.toString("base64") } };
-  }
-  let fichier = await ai.files.upload({ file: new Blob([new Uint8Array(video)], { type: "video/mp4" }), config: { mimeType: "video/mp4" } });
-  for (let i = 0; i < 30 && fichier.state === FileState.PROCESSING; i++) {
-    await new Promise((ok) => setTimeout(ok, 2000));
-    fichier = await ai.files.get({ name: fichier.name! });
-  }
-  if (fichier.state !== FileState.ACTIVE) throw new ErreurExtraction("Gemini n'a pas réussi à lire la vidéo.");
-  return createPartFromUri(fichier.uri!, "video/mp4");
+  return demanderAGemini<Analyse>({ consignes: CONSIGNES, schema: SCHEMA, infos, video, texteManuel });
 }

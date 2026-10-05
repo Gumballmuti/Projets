@@ -40,6 +40,8 @@ textarea { min-height: 120px; resize: vertical; }
 .ajout .ligne input { flex: 1; min-width: 0; }
 .ajout label { display: flex; gap: 8px; align-items: center; color: var(--doux); font-size: 14px; margin-top: 8px; }
 .message { font-size: 14px; margin-top: 8px; color: var(--erreur); min-height: 0; }
+.message.info { color: var(--doux); }
+.fichier { margin-top: 8px; width: 100%; }
 .grille { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 12px; margin-top: 14px; }
 .carte { background: var(--carte); border: 1px solid var(--bord); border-radius: 16px; overflow: hidden;
   cursor: pointer; display: flex; flex-direction: column; }
@@ -90,17 +92,19 @@ ol.etapes li.faite::before { background: var(--ok); content: "✓"; }
 
   <form class="ajout" id="formAjout">
     <div class="ligne">
-      <input type="text" id="lien" placeholder="Colle le lien TikTok ici" autocomplete="off" inputmode="url">
+      <input type="text" id="lien" placeholder="Colle un lien (TikTok, Instagram, YouTube…)" autocomplete="off" inputmode="url">
       <button type="button" id="coller" title="Coller depuis le presse-papiers">📋</button>
       <button class="principal" id="ajouter">Ajouter</button>
     </div>
+    <button type="button" class="fichier" id="choisirVideo">🎞️ Envoyer une vidéo enregistrée</button>
+    <input type="file" id="fichierVideo" accept="video/*" hidden>
     <div class="message" id="message"></div>
   </form>
 
   <input type="search" id="recherche" placeholder="Rechercher une recette ou un ingrédient…">
 
   <div class="grille" id="grille"></div>
-  <div class="vide" id="vide" hidden>Aucune recette pour l'instant.<br>Colle un lien TikTok ci-dessus pour commencer.</div>
+  <div class="vide" id="vide" hidden>Aucune recette pour l'instant.<br>Colle le lien d'une vidéo (TikTok, Instagram, YouTube, Facebook…)<br>ou envoie une vidéo depuis ton téléphone.</div>
 </main>
 
 <div id="fiche"></div>
@@ -170,6 +174,7 @@ function lancerIci(r) {
 
 async function ajouter(lien) {
   $("#message").textContent = "";
+  $("#message").className = "message";
   $("#ajouter").disabled = true;
   try {
     const r = await api("/api/recettes", { method: "POST", body: JSON.stringify({ lien }) });
@@ -189,7 +194,7 @@ function ouvrir(id) {
   if (!r) return;
   ficheOuverte = r;
   const f = $("#fiche");
-  const lienTikTok = `<a href="${echapper(r.url)}" target="_blank" rel="noopener">Voir sur TikTok ↗</a>`;
+  const lienTikTok = r.url ? `<a href="${echapper(r.url)}" target="_blank" rel="noopener">Voir sur ${echapper(r.plateforme || "la plateforme")} ↗</a>` : "<span>Vidéo envoyée</span>";
   let corps;
   if (r.statut === "en_cours") {
     corps = `<h2>Analyse en cours…</h2><p class="meta">Je lis la description et je regarde la vidéo. Ça prend environ 30 secondes à 2 minutes — tu peux fermer cette fiche.</p><div class="roue"></div>`;
@@ -317,6 +322,25 @@ $("#grille").addEventListener("click", e => {
   if (carte) ouvrir(carte.dataset.id);
 });
 $("#formAjout").addEventListener("submit", e => { e.preventDefault(); if ($("#lien").value.trim()) ajouter($("#lien").value); });
+$("#choisirVideo").addEventListener("click", () => $("#fichierVideo").click());
+$("#fichierVideo").addEventListener("change", async e => {
+  const fichier = e.target.files[0];
+  e.target.value = "";
+  if (!fichier) return;
+  const message = $("#message");
+  message.className = "message info";
+  $("#choisirVideo").disabled = true;
+  try {
+    await envoyerVideo(fichier, "/api/recettes", p => { message.textContent = `Envoi de la vidéo… ${p} %`; });
+    message.textContent = "";
+    await charger();
+  } catch (err) {
+    message.className = "message";
+    message.textContent = err.message;
+  } finally {
+    $("#choisirVideo").disabled = false;
+  }
+});
 $("#coller").addEventListener("click", async () => {
   try { $("#lien").value = await navigator.clipboard.readText(); } catch { $("#lien").focus(); }
 });
@@ -330,6 +354,7 @@ if (params.get("ajout")) { history.replaceState(null, "", "/"); ajouter(params.g
 if ("serviceWorker" in navigator) navigator.serviceWorker.register("/sw.js");
 charger();
 </script>
+<script src="/televersement.js"></script>
 <script src="/compte.js"></script>
 </body>
 </html>
