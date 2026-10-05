@@ -58,9 +58,9 @@ export function AppShell({ children }: { children: ReactNode }) {
               key={u.href}
               href={u.href}
               aria-label={u.label}
-              className="flex min-h-12 items-center justify-center gap-1.5 rounded-2xl bg-primary px-2 text-sm font-semibold text-on-primary hover:bg-primary-hover"
+              className="flex min-h-12 items-center justify-center gap-1.5 whitespace-nowrap rounded-2xl bg-primary px-1 text-sm font-semibold text-on-primary hover:bg-primary-hover"
             >
-              <Icon name={u.icon} size={18} />
+              <Icon name={u.icon} size={18} className="hidden min-[440px]:block" />
               {u.court}
             </Link>
           ))}
