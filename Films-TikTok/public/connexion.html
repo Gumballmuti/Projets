@@ -26,7 +26,9 @@ p { color: #c0392b; margin: 10px 0 0; min-height: 1.5em; }
 <body>
 <form id="f">
   <h1>Mes films & séries 🎬</h1>
-  <input type="password" id="mdp" placeholder="Mot de passe" autofocus autocomplete="current-password"
+  <input type="text" id="identifiant" placeholder="Identifiant" autofocus autocomplete="username"
+    autocapitalize="none" autocorrect="off" spellcheck="false">
+  <input type="password" id="mdp" placeholder="Mot de passe" autocomplete="current-password"
     autocapitalize="none" autocorrect="off" spellcheck="false">
   <label class="voir"><input type="checkbox" id="voir"> Afficher le mot de passe</label>
   <button>Entrer</button>
@@ -36,12 +38,12 @@ p { color: #c0392b; margin: 10px 0 0; min-height: 1.5em; }
 document.getElementById("f").addEventListener("submit", async e => {
   e.preventDefault();
   const r = await fetch("/api/connexion", { method: "POST", headers: {"Content-Type": "application/json"},
-    body: JSON.stringify({ mot_de_passe: document.getElementById("mdp").value.trim() }) });
+    body: JSON.stringify({ identifiant: document.getElementById("identifiant").value.trim(), mot_de_passe: document.getElementById("mdp").value }) });
   if (r.ok) {
     let suite = "";
     try { suite = sessionStorage.getItem("suite") || ""; sessionStorage.removeItem("suite"); } catch {}
     location.href = "/" + suite;
-  } else document.getElementById("erreur").textContent = "Mot de passe incorrect";
+  } else document.getElementById("erreur").textContent = "Identifiant ou mot de passe incorrect";
 });
 document.getElementById("voir").addEventListener("change", e => {
   document.getElementById("mdp").type = e.target.checked ? "text" : "password";

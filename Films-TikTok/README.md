@@ -33,3 +33,11 @@ Réglages du projet Netlify :
 
 Raccourci iPhone pour ajouter depuis TikTok : même principe que l'app recettes,
 avec l'URL `https://TON-ADRESSE/?ajout=` suivie du *Texte encodé*.
+
+## Comptes
+
+- Le compte **admin** se connecte avec l'identifiant `admin` et le mot de passe `APP_PASSWORD` (variable Netlify).
+- Avec le bouton 👤 en haut à droite, l'admin crée les comptes (identifiant + mot de passe), en change le mot de passe
+  ou les supprime. Chaque personne a sa propre collection, que les autres ne voient pas.
+- Les autres comptes peuvent changer leur mot de passe depuis le même bouton 👤.
+- Les deux apps ont chacune leurs comptes : une personne qui doit utiliser les deux a besoin d'un compte dans chacune.

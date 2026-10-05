@@ -2,42 +2,33 @@ import type { Config, Context } from "@netlify/functions";
 import { randomBytes } from "node:crypto";
 import { analyser } from "../lib/analyse.mts";
 import {
-  type Oeuvre, type Video, cleImage, cleOeuvre, cleVideo, egal, ecrireOeuvre, ecrireVideo, estConnecte, jeton, json,
+  type Oeuvre, type Video, cleImage, cleOeuvre, cleVideo, ecrireOeuvre, ecrireVideo, json,
   lireOeuvre, lireVideo, magasin, toutLire,
 } from "../lib/commun.mts";
+import { cleInterne, migrerAnciennesDonnees, pour, routesComptes, sessionDe } from "../lib/comptes.mts";
 import { ErreurExtraction, extraireUrl } from "../lib/tiktok.mts";
 
-const UN_AN = 60 * 60 * 24 * 365;
-
-async function lancerAnalyse(req: Request, id: string) {
+async function lancerAnalyse(req: Request, proprio: string, id: string) {
   // Une fonction « -background » répond tout de suite (202) et continue à travailler.
   // Si elle ne démarre pas (selon le plan Netlify), la page appelle /analyser à la place.
   await fetch(new URL("/.netlify/functions/analyse-background", req.url), {
     method: "POST",
-    headers: { "content-type": "application/json", "x-cle": jeton() },
-    body: JSON.stringify({ id }),
+    headers: { "content-type": "application/json", "x-cle": cleInterne() },
+    body: JSON.stringify({ proprio, id }),
   }).catch(() => null);
 }
 
 export default async (req: Request, _context: Context) => {
-  const chemin = new URL(req.url).pathname.replace(/^\/api\/?/, "");
-  const [ressource, id, action] = chemin.split("/").map(decodeURIComponent);
+  const chemin = new URL(req.url).pathname.replace(/^\/api\/?/, "").split("/").map(decodeURIComponent);
+  const session = await sessionDe(req);
+  const reponse = await routesComptes(req, chemin, session);
+  if (reponse) return reponse;
+  if (!session) return json({ erreur: "Non connecté" }, 401);
+  if (session.admin) await migrerAnciennesDonnees(["v/", "o/", "img/"]);
+  return pour(session.identifiant, () => routesBibliotheque(req, chemin, session.identifiant));
+};
 
-  if (ressource === "connexion" && req.method === "POST") {
-    const { mot_de_passe } = await req.json().catch(() => ({}));
-    const attendu = Netlify.env.get("APP_PASSWORD");
-    if (!attendu || !egal(String(mot_de_passe ?? "").trim(), attendu.trim())) {
-      return json({ erreur: "Mot de passe incorrect" }, 401);
-    }
-    return new Response(JSON.stringify({ ok: true }), {
-      headers: {
-        "content-type": "application/json",
-        "set-cookie": `session=${jeton()}; Path=/; Max-Age=${UN_AN}; HttpOnly; Secure; SameSite=Lax`,
-      },
-    });
-  }
-
-  if (!estConnecte(req)) return json({ erreur: "Non connecté" }, 401);
+async function routesBibliotheque(req: Request, [ressource, id, action]: string[], proprio: string) {
   const store = magasin();
 
   if (ressource === "image" && id) {
@@ -98,7 +89,7 @@ export default async (req: Request, _context: Context) => {
       cree_le: maintenant, maj_le: maintenant, etape: "attente",
     };
     await ecrireVideo(video);
-    await lancerAnalyse(req, video.id);
+    await lancerAnalyse(req, proprio, video.id);
     return json({ id: video.id }, 201);
   }
 
@@ -113,7 +104,7 @@ export default async (req: Request, _context: Context) => {
       ...video, statut: "en_cours", erreur: null, maj_le: new Date().toISOString(), etape: "attente",
       texte: corps.texte ?? video.texte ?? "",
     });
-    await lancerAnalyse(req, id);
+    await lancerAnalyse(req, proprio, id);
     return json({ ok: true });
   }
 
@@ -138,6 +129,6 @@ export default async (req: Request, _context: Context) => {
   }
 
   return json({ erreur: "Méthode non gérée" }, 405);
-};
+}
 
 export const config: Config = { path: "/api/*" };

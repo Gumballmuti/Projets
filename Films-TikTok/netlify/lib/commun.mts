@@ -1,5 +1,4 @@
-import { createHmac, timingSafeEqual } from "node:crypto";
-import { getDeployStore, getStore } from "@netlify/blobs";
+import { magasin, nommerMagasin } from "./comptes.mts";
 
 export type Statut = "en_cours" | "ok" | "erreur";
 
@@ -36,13 +35,9 @@ export interface Oeuvre {
   ajoute_le: string;
 }
 
-// Les données de production restent séparées des tests (deploy previews).
-export function magasin() {
-  if (Netlify.context?.deploy?.context === "production") {
-    return getStore({ name: "films", consistency: "strong" });
-  }
-  return getDeployStore({ name: "films", consistency: "strong" });
-}
+// Chaque compte a sa bibliothèque : magasin() ne donne accès qu'à celle de l'utilisateur connecté.
+nommerMagasin("films");
+export { magasin };
 
 export const cleVideo = (id: string) => `v/${id}`;
 export const cleOeuvre = (cle: string) => `o/${cle}`;
@@ -75,32 +70,12 @@ export async function toutLire<T>(prefixe: string): Promise<T[]> {
 export function cleDe(o: { type: string; titre: string; titre_original: string; annee: string }): string {
   const nom = (o.titre_original || o.titre)
     .normalize("NFD")
-    .replace(/[̀-ͯ]/g, "")
+    .replace(/[\u0300-\u036f]/g, "")
     .toLowerCase()
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/^-|-$/g, "")
     .slice(0, 80);
   return `${o.type}-${nom}-${(o.annee || "").slice(0, 4)}`.replace(/-$/, "");
-}
-
-// ---------- Authentification : un cookie signé avec le mot de passe ----------
-
-export function jeton(): string {
-  const motDePasse = Netlify.env.get("APP_PASSWORD") ?? "";
-  return createHmac("sha256", motDePasse).update("mes-films").digest("hex");
-}
-
-export function egal(a: string, b: string): boolean {
-  const x = Buffer.from(a);
-  const y = Buffer.from(b);
-  return x.length === y.length && timingSafeEqual(x, y);
-}
-
-export function estConnecte(req: Request): boolean {
-  if (!Netlify.env.get("APP_PASSWORD")) return false;
-  const cookie = req.headers.get("cookie") ?? "";
-  const m = cookie.match(/(?:^|;\s*)session=([a-f0-9]+)/);
-  return !!m && egal(m[1], jeton());
 }
 
 export function json(donnees: unknown, status = 200) {
