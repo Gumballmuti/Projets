@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useRef, useState, type ChangeEvent } from "react";
+import { InstallHint } from "@/components/layout/InstallHint";
 import { Button } from "@/components/ui/Button";
 import { Card, CardTitle } from "@/components/ui/Card";
 import { ChoiceList } from "@/components/ui/ChoiceList";
@@ -187,6 +188,8 @@ export function Profil() {
           ]}
         />
       </Card>
+
+      <InstallHint />
 
       <Card className="flex flex-col gap-4">
         <CardTitle>Mes données</CardTitle>

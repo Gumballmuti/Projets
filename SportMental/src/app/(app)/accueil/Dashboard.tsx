@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { URGENCES } from "@/components/layout/AppShell";
+import { InstallHint } from "@/components/layout/InstallHint";
 import { Icon, type IconName } from "@/components/ui/Icon";
 import { ProgressBar } from "@/components/ui/ProgressBar";
 import { DIMENSIONS } from "@/content/bilan";
@@ -68,6 +69,7 @@ export function Dashboard() {
       </section>
 
       <DashboardCards />
+      <InstallHint dismissible />
     </div>
   );
 }

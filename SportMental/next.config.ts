@@ -31,6 +31,8 @@ const securityHeaders = [
 ];
 
 const nextConfig: NextConfig = {
+  // Version de build : sert au service worker pour savoir quand rafraîchir son cache.
+  env: { APP_VERSION: process.env.VERCEL_GIT_COMMIT_SHA?.slice(0, 12) || String(Date.now()) },
   poweredByHeader: false,
   reactStrictMode: true,
   async headers() {
