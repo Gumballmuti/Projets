@@ -1,4 +1,4 @@
-# Mes recettes TikTok 🍳
+# Mes recettes 🍳
 
 Petite app personnelle pour iPhone et Mac : tu colles le lien d'une vidéo TikTok,
 et l'app te range une recette écrite (titre donné par le créateur, ingrédients, étapes, astuces).

@@ -1,6 +1,6 @@
 {
-  "name": "Mes films & séries",
-  "short_name": "Films",
+  "name": "Mes films",
+  "short_name": "Mes films",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#f6f4fb",

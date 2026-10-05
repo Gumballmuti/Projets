@@ -1,6 +1,6 @@
 {
-  "name": "Mes recettes TikTok",
-  "short_name": "Recettes",
+  "name": "Mes recettes",
+  "short_name": "Mes recettes",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#fff8f1",

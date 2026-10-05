@@ -1,4 +1,4 @@
-# Mes films & séries TikTok 🎬
+# Mes films 🎬
 
 Petite app personnelle pour iPhone et Mac : tu colles le lien d'une vidéo TikTok qui recommande des films
 ou des séries, et chaque titre rejoint ta bibliothèque, classée en **Films** et **Séries**.
