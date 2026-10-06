@@ -1,0 +1,184 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
+  <title>Ma Route</title>
+  <meta name="description" content="Carte, GPS et zones de danger, pour moi seule.">
+  <meta name="theme-color" content="#111318">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Ma Route">
+  <link rel="manifest" href="/manifest.json">
+  <link rel="apple-touch-icon" href="/icone-180.png">
+  <link rel="icon" href="/icone-192.png">
+  <link rel="stylesheet" href="/vendor/maplibre-gl.css">
+  <link rel="stylesheet" href="/app.css">
+</head>
+<body>
+  <div id="carte"></div>
+
+  <!-- Haut : recherche ou consigne de navigation -->
+  <header id="haut">
+    <form id="recherche" autocomplete="off">
+      <span class="loupe" aria-hidden="true">⌕</span>
+      <input id="champ" type="search" placeholder="Où va-t-on ?" enterkeyhint="search" aria-label="Rechercher une adresse">
+      <button type="button" id="effacer" class="discret" hidden aria-label="Effacer">✕</button>
+    </form>
+    <ul id="resultats" hidden></ul>
+
+    <div id="consigne" hidden>
+      <div class="fleche" id="consigne-fleche">↑</div>
+      <div class="texte">
+        <div class="dist" id="consigne-dist"></div>
+        <div class="phrase" id="consigne-texte"></div>
+      </div>
+    </div>
+    <div id="alerte" hidden role="alert">
+      <div class="icone" id="alerte-icone">⚠️</div>
+      <div class="texte">
+        <div class="titre" id="alerte-titre">Zone de danger</div>
+        <div class="sous" id="alerte-sous"></div>
+      </div>
+      <div class="panneau petit" id="alerte-limite" hidden></div>
+    </div>
+  </header>
+
+  <!-- Côté droit -->
+  <div id="boutons-droite">
+    <button id="btn-reglages" class="rond" aria-label="Réglages">⚙︎</button>
+    <button id="btn-son" class="rond" aria-label="Couper la voix">🔊</button>
+    <button id="btn-recentrer" class="rond" aria-label="Recentrer" hidden>◎</button>
+  </div>
+
+  <!-- Bas : vitesse, limitation, signaler -->
+  <div id="bas-gauche">
+    <div id="vitesse" class="compteur"><span id="vitesse-val">–</span><small>km/h</small></div>
+    <div id="limite" class="panneau" hidden></div>
+  </div>
+  <button id="btn-signaler" aria-label="Signaler">
+    <span>＋</span>
+  </button>
+  <div id="route-actuelle" hidden></div>
+
+  <!-- Barre de navigation -->
+  <div id="barre-nav" hidden>
+    <div class="infos">
+      <strong id="nav-arrivee">–</strong>
+      <span id="nav-reste">–</span>
+    </div>
+    <div id="nav-zones" class="pastille"></div>
+    <button id="btn-arreter" class="danger">Arrêter</button>
+  </div>
+
+  <!-- Feuilles (panneaux du bas) -->
+  <section id="feuille-itineraire" class="feuille" hidden>
+    <div class="poignee"></div>
+    <h2 id="iti-titre">Itinéraire</h2>
+    <p id="iti-detail" class="gris"></p>
+    <div id="iti-liste"></div>
+    <label class="interrupteur"><input type="checkbox" id="iti-peages"> Éviter les péages</label>
+    <div class="actions">
+      <button class="secondaire" data-fermer>Annuler</button>
+      <button id="btn-demarrer" class="principal">Démarrer</button>
+    </div>
+  </section>
+
+  <section id="feuille-signaler" class="feuille" hidden>
+    <div class="poignee"></div>
+    <h2>Signaler ici</h2>
+    <p id="sig-ou" class="gris">À ta position actuelle</p>
+    <label id="sig-vitesse-ligne" class="ligne haut-grille">Limitation
+      <select id="sig-vitesse">
+        <option value="">inconnue</option>
+        <option>30</option><option>50</option><option>70</option><option>80</option>
+        <option>90</option><option>110</option><option>130</option>
+      </select>
+    </label>
+    <div class="grille">
+      <button data-type="mobile"><span>🚓</span>Radar mobile</button>
+      <button data-type="police"><span>👮</span>Contrôle</button>
+      <button data-type="fixe"><span>📷</span>Radar fixe</button>
+      <button data-type="feu"><span>🚦</span>Radar feu rouge</button>
+      <button data-type="danger"><span>⚠️</span>Danger</button>
+      <button data-type="bouchon"><span>🚗</span>Bouchon</button>
+    </div>
+    <div class="actions"><button class="secondaire" data-fermer>Annuler</button></div>
+  </section>
+
+  <section id="feuille-point" class="feuille" hidden>
+    <div class="poignee"></div>
+    <h2 id="pt-titre"></h2>
+    <p id="pt-detail" class="gris"></p>
+    <div class="actions">
+      <button class="secondaire" data-fermer>Fermer</button>
+      <button id="pt-confirmer" class="secondaire">Toujours là</button>
+      <button id="pt-supprimer" class="danger">Supprimer</button>
+    </div>
+  </section>
+
+  <section id="feuille-reglages" class="feuille haute" hidden>
+    <div class="poignee"></div>
+    <h2>Réglages</h2>
+    <label class="interrupteur"><input type="checkbox" id="r-voix" checked> Annonces vocales</label>
+    <label class="interrupteur"><input type="checkbox" id="r-bip" checked> Bip si je dépasse la limitation</label>
+    <label class="ligne">Tolérance avant le bip
+      <select id="r-marge">
+        <option value="0">0 km/h</option><option value="3" selected>3 km/h</option>
+        <option value="5">5 km/h</option><option value="10">10 km/h</option>
+      </select>
+    </label>
+    <label class="interrupteur"><input type="checkbox" id="r-peages"> Éviter les péages par défaut</label>
+    <label class="ligne">Thème de la carte
+      <select id="r-theme">
+        <option value="auto">Auto (sombre la nuit)</option>
+        <option value="clair">Clair</option><option value="sombre">Sombre</option>
+      </select>
+    </label>
+    <label class="interrupteur"><input type="checkbox" id="r-zones" checked> Afficher les zones de danger sur la carte</label>
+
+    <h3>Mes signalements</h3>
+    <ul id="mes-signalements" class="liste"></ul>
+    <div class="actions gauche">
+      <button id="btn-exporter" class="secondaire">Exporter</button>
+      <button id="btn-importer" class="secondaire">Importer</button>
+      <input type="file" id="fichier-import" accept="application/json,.json" hidden>
+    </div>
+
+    <h3>Données</h3>
+    <p class="gris" id="info-cache"></p>
+    <div class="actions gauche"><button id="btn-vider" class="secondaire">Recharger les radars</button></div>
+
+    <p class="petit-texte">
+      Les alertes indiquent des <strong>zones de danger</strong>, comme Coyote et Waze, et pas l'emplacement exact des radars : c'est ce que la loi française autorise
+      (les détecteurs de radars sont interdits, art. R413-15 du Code de la route).
+      Radars fixes : © contributeurs <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a>.
+      Carte : <a href="https://openfreemap.org" target="_blank" rel="noopener">OpenFreeMap</a>.
+      Itinéraires : <a href="https://project-osrm.org" target="_blank" rel="noopener">OSRM</a>.
+      Adresses : Géoplateforme IGN, Photon.
+      Reste attentive à la route et aux panneaux : ils font toujours foi.
+    </p>
+    <div class="actions"><button class="principal" data-fermer>OK</button></div>
+  </section>
+
+  <div id="toast" hidden></div>
+
+  <div id="accueil" hidden>
+    <div class="carte-accueil">
+      <div class="logo">🛣️</div>
+      <h1>Ma Route</h1>
+      <p>Ta carte GPS avec les zones de danger, ta vitesse et la limitation en temps réel.</p>
+      <ul>
+        <li>📍 Autorise la localisation pour voir ta vitesse et recevoir les alertes.</li>
+        <li>📱 Laisse l'écran allumé pendant que tu roules (l'app le garde allumé si possible).</li>
+        <li>＋ Le bouton orange sert à signaler un radar mobile ou un contrôle.</li>
+      </ul>
+      <button id="btn-commencer" class="principal large">C'est parti</button>
+    </div>
+  </div>
+
+  <script src="/vendor/maplibre-gl.js"></script>
+  <script type="module" src="/js/app.js"></script>
+</body>
+</html>
