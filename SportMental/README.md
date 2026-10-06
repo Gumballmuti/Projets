@@ -24,7 +24,7 @@ Sans compte, gratuite, utilisable hors connexion : les données restent sur le t
 6. [Données, compte et Supabase](#6-données-compte-et-supabase)
 7. [Déploiement](#7-déploiement)
 8. [Installer l'app sur iPhone et Android](#8-installer-lapp-sur-iphone-et-android)
-9. [Hébergement gratuit et usage commercial : à lire](#9-hébergement-gratuit-et-usage-commercial--à-lire)
+9. [Hébergement gratuit](#9-hébergement-gratuit)
 10. [Qualité et tests](#10-qualité-et-tests)
 
 ---
@@ -73,7 +73,7 @@ Aucun secret, aucune clé d'API : l'app n'appelle aucun service externe.
 SportMental/
 ├── src/
 │   ├── app/
-│   │   ├── (site)/          landing + pages légales (avec pied de page)
+│   │   ├── (site)/          landing (avec pied de page)
 │   │   ├── (app)/           app : accueil, routine, exercices, programmes, progression, bilan, preuves, profil
 │   │   ├── (bare)/          plein écran : première ouverture et modes match
 │   │   ├── manifest.ts      manifest PWA
@@ -125,13 +125,13 @@ Chaque élément a un champ `principe` (usage interne) qui indique lequel des 13
 
 Le profil propose l'**export JSON** (sauvegarde, changement de téléphone), l'**import** (validé et nettoyé) et la **suppression complète**.
 
-**Ajouter une synchronisation plus tard (Supabase Free)** : créer un projet Supabase, une table `matchs` avec Row Level Security (`user_id = auth.uid()`), ajouter `NEXT_PUBLIC_SUPABASE_URL` et `NEXT_PUBLIC_SUPABASE_ANON_KEY`, ajouter le domaine Supabase à `connect-src` dans la CSP, et brancher la synchro sur `updateData` dans `src/lib/store.ts`. Il faudra obligatoirement demander un **consentement explicite** avant le premier envoi et mettre à jour la politique de confidentialité.
+**Ajouter une synchronisation plus tard (Supabase Free)** : créer un projet Supabase, une table `matchs` avec Row Level Security (`user_id = auth.uid()`), ajouter `NEXT_PUBLIC_SUPABASE_URL` et `NEXT_PUBLIC_SUPABASE_ANON_KEY`, ajouter le domaine Supabase à `connect-src` dans la CSP, et brancher la synchro sur `updateData` dans `src/lib/store.ts`. Il faudra obligatoirement demander un **consentement explicite** avant le premier envoi et expliquer clairement ce qui est envoyé.
 
 ## 7. Déploiement
 
 Le dépôt contient plusieurs projets : **pense à indiquer `SportMental` comme dossier racine** sur chaque hébergeur.
 
-### Vercel (le plus simple, usage personnel uniquement : voir §9)
+### Vercel (recommandé)
 
 1. Va sur <https://vercel.com/new> et connecte-toi avec GitHub.
 2. Importe le dépôt.
@@ -165,18 +165,10 @@ Le dépôt contient plusieurs projets : **pense à indiquer `SportMental` comme 
 
 À savoir : sur iPhone, les vibrations ne sont pas disponibles pour les sites web. Si l'app installée n'est pas ouverte pendant plusieurs semaines, iOS peut effacer ses données : exporte-les régulièrement depuis le profil.
 
-## 9. Hébergement gratuit et usage commercial : à lire
+## 9. Hébergement gratuit
 
-Vérifié en octobre 2026, à revérifier avant toute mise en production commerciale :
-
-- **Vercel Hobby (gratuit)** est réservé à un **usage personnel et non commercial**. Les *Fair Use Guidelines* de Vercel considèrent comme commercial tout déploiement servant le gain financier d'une personne impliquée dans le projet. Tout usage commercial demande le plan **Pro** (payant) ou Enterprise. Sources : [Vercel Hobby](https://vercel.com/docs/plans/hobby), [Fair Use Guidelines](https://vercel.com/docs/limits/fair-use-guidelines).
-- **Netlify Free** autorise l'usage commercial, dans la limite de **300 crédits par mois** (un déploiement de production ≈ 15 crédits, 1 Go de bande passante ≈ 20 crédits). Le service s'arrête jusqu'au mois suivant si les crédits sont épuisés : pas de facture surprise. Source : [netlify.com/pricing](https://www.netlify.com/pricing/).
-- **Cloudflare Pages Free** : 500 builds par mois, requêtes et bande passante statiques illimitées. Les conditions de Cloudflare ne comportent pas de clause « non commercial » comparable à celle de Vercel (à confirmer dans leurs conditions au moment de la mise en production). Source : [Limites Cloudflare Pages](https://developers.cloudflare.com/pages/platform/limits/).
-
-**Quand migrer ?**
-- **Tant que Sport Mental est un projet personnel, gratuit et sans revenus** : Vercel Hobby convient.
-- **Dès que le projet sert une activité rémunérée** (offre premium, publicité, coaching payant qui l'utilise, ou développement payé par un client) : passer sur **Cloudflare Pages** ou **Netlify Free** avec `npm run build:static`, sans changer le code, ou prendre **Vercel Pro**.
-- **Si le trafic dépasse les quotas gratuits de Netlify** : Cloudflare Pages (bande passante illimitée) ou un plan payant.
+Sport Mental est destinée à un **usage personnel** : le plan gratuit **Vercel Hobby** convient (il est réservé aux projets personnels et non commerciaux).
+Si un jour le projet devenait commercial, `npm run build:static` permet de passer sur Netlify Free ou Cloudflare Pages sans changer le code (voir §7).
 
 ## 10. Qualité et tests
 

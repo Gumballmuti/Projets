@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useRef, useState, type ChangeEvent } from "react";
 import { InstallHint } from "@/components/layout/InstallHint";
@@ -234,11 +233,6 @@ export function Profil() {
 
       <Card className="flex flex-col gap-3">
         <Disclaimer />
-        <nav aria-label="Informations légales" className="flex flex-wrap gap-x-2 text-sm">
-          <Link href="/confidentialite" className="inline-flex min-h-12 items-center px-1 text-accent underline">Confidentialité</Link>
-          <Link href="/conditions" className="inline-flex min-h-12 items-center px-1 text-accent underline">Conditions</Link>
-          <Link href="/mentions-legales" className="inline-flex min-h-12 items-center px-1 text-accent underline">Mentions légales</Link>
-        </nav>
       </Card>
     </div>
   );
