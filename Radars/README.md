@@ -29,12 +29,14 @@ Limites à connaître :
 - Les radars et limitations viennent d'OpenStreetMap : c'est très complet en France, mais il peut manquer une installation récente. Je peux l'ajouter avec ＋ › Radar fixe. Les panneaux sur la route font toujours foi.
 - Sur iPhone, une web app ne tourne pas en arrière-plan : **l'écran doit rester allumé** et l'app au premier plan (elle demande à garder l'écran allumé quand je roule). Mieux vaut brancher le téléphone en voiture.
 
-## Hébergement (Netlify, gratuit)
+## Hébergement (Vercel ou Netlify, gratuit)
 
 C'est un site 100 % statique (dossier `public/`), sans build ni clé d'API.
 
-Projet Netlify : **Base directory** `Radars`, **Publish directory** `public` (déjà dans `netlify.toml`).
-Il faut du HTTPS pour que le GPS fonctionne : Netlify le fournit.
+- **Vercel** : Add New › Project › importer le dépôt `Projets` › **Root Directory** `Radars`, Framework Preset **Other** (le reste est dans `vercel.json`).
+- **Netlify** : **Base directory** `Radars` (le reste est dans `netlify.toml`).
+
+Il faut du HTTPS pour que le GPS fonctionne : les deux le fournissent.
 
 ## Installer l'app sur l'iPhone
 
