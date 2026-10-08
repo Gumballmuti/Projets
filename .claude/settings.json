@@ -1,7 +1,8 @@
 {
   "enabledPlugins": {
     "ui-ux-pro-max@ui-ux-pro-max-skill": true,
-    "taste-skill@taste-skill": true
+    "taste-skill@taste-skill": true,
+    "hyperframes@hyperframes": true
   },
   "extraKnownMarketplaces": {
     "ui-ux-pro-max-skill": {
@@ -14,6 +15,12 @@
       "source": {
         "source": "github",
         "repo": "Leonxlnx/taste-skill"
+      }
+    },
+    "hyperframes": {
+      "source": {
+        "source": "github",
+        "repo": "heygen-com/hyperframes"
       }
     }
   }
