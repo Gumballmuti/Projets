@@ -2,8 +2,7 @@
   "enabledPlugins": {
     "ui-ux-pro-max@ui-ux-pro-max-skill": true,
     "taste-skill@taste-skill": true,
-    "hyperframes@hyperframes": true,
-    "21st@21st": true
+    "hyperframes@hyperframes": true
   },
   "extraKnownMarketplaces": {
     "ui-ux-pro-max-skill": {
@@ -22,12 +21,6 @@
       "source": {
         "source": "github",
         "repo": "heygen-com/hyperframes"
-      }
-    },
-    "21st": {
-      "source": {
-        "source": "github",
-        "repo": "21st-dev/claude-code-plugin"
       }
     }
   }
