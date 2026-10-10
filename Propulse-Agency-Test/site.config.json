@@ -1,0 +1,39 @@
+{
+  "name": "Propulse Agency",
+  "shortName": "Propulse",
+  "tagline": "Agence de design & développement web",
+  "url": "https://propulse-agency-test.vercel.app",
+  "lang": "fr-BE",
+  "contact": {
+    "email": "contact@propulse-agency.be",
+    "phone": "+32 4XX XX XX XX",
+    "phoneHref": "+324XXXXXXXX",
+    "city": "Belgique",
+    "hours": "Du lundi au vendredi, 9h – 18h"
+  },
+  "legal": {
+    "company": "[Dénomination sociale ou nom et prénom de l'exploitant]",
+    "form": "[Forme juridique : personne physique, SRL, …]",
+    "address": "[Adresse complète du siège / de l'établissement]",
+    "bce": "[Numéro d'entreprise BCE : 0XXX.XXX.XXX]",
+    "vat": "[Numéro de TVA : BE0XXX.XXX.XXX]",
+    "publisher": "[Nom du responsable de la publication]",
+    "dpoEmail": "contact@propulse-agency.be",
+    "updated": "10 octobre 2026"
+  },
+  "hosting": {
+    "name": "Vercel Inc.",
+    "address": "440 N Barranca Ave #4133, Covina, CA 91723, États-Unis",
+    "url": "https://vercel.com"
+  },
+  "mail": {
+    "name": "Resend (Plus Five Five, Inc.)",
+    "address": "2261 Market Street #5039, San Francisco, CA 94114, États-Unis",
+    "url": "https://resend.com"
+  },
+  "social": {
+    "instagram": "https://www.instagram.com/",
+    "linkedin": "https://www.linkedin.com/",
+    "behance": "https://www.behance.net/"
+  }
+}

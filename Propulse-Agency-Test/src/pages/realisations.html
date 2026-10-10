@@ -1,0 +1,35 @@
+<!--meta {"id":"work","path":"/realisations","title":"Réalisations — Portfolio | Propulse Agency","description":"Découvrez le portfolio de Propulse Agency : sites vitrines, boutiques en ligne, identités visuelles et plateformes sur mesure.","bodyClass":"is-inner"}-->
+    <section class="page-hero container" aria-labelledby="page-title">
+      <p class="eyebrow mono"><span class="dot"></span> Portfolio</p>
+      <h1 id="page-title" class="page-hero__title" data-split>Des projets qui<br>ont du <em>caractère</em>.</h1>
+      <div class="page-hero__foot">
+        <p class="page-hero__lead">Une sélection de concepts et d'études de cas qui illustrent notre approche : un design sur mesure, une technique irréprochable et une obsession pour l'expérience utilisateur.</p>
+      </div>
+    </section>
+
+    <section class="work container" aria-label="Projets">
+      <div class="work__bar">
+        <div class="filters" role="group" aria-label="Filtrer les projets">
+          <button type="button" class="filter is-active" data-filter-btn="all" aria-pressed="true">Tous</button>
+          <button type="button" class="filter" data-filter-btn="vitrine" aria-pressed="false">Sites vitrines</button>
+          <button type="button" class="filter" data-filter-btn="ecommerce" aria-pressed="false">E-commerce</button>
+          <button type="button" class="filter" data-filter-btn="webapp" aria-pressed="false">Applications</button>
+          <button type="button" class="filter" data-filter-btn="branding" aria-pressed="false">Branding</button>
+        </div>
+        <div class="view-toggle" role="group" aria-label="Affichage">
+          <button type="button" class="view-btn is-active" data-view="grid" aria-pressed="true">Grille</button>
+          <button type="button" class="view-btn" data-view="list" aria-pressed="false">Liste</button>
+        </div>
+      </div>
+
+      <div class="work__grid" data-work-grid>
+        {{blocks.projectGrid}}
+      </div>
+
+      <div class="work__list" data-work-list hidden>
+        {{blocks.projectRows}}
+      </div>
+      <div class="preview-follow" aria-hidden="true"><img alt="" width="1200" height="800"></div>
+
+      <p class="work__note mono">Les projets présentés sont des concepts créés pour illustrer notre savoir-faire.</p>
+    </section>

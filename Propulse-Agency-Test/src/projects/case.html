@@ -1,0 +1,55 @@
+<!--meta {"id":"case","bodyClass":"is-inner is-case"}-->
+    <section class="case-hero" style="--c0:{{p.c0}};--c1:{{p.c1}};--c2:{{p.c2}}" aria-labelledby="page-title">
+      <div class="container">
+        <a href="/realisations" class="link-arrow link-arrow--back mono"><span aria-hidden="true">←</span> Toutes les réalisations</a>
+        <p class="eyebrow mono"><span class="dot"></span> Projet {{p.index}} — {{p.category}}</p>
+        <h1 id="page-title" class="case-hero__title" data-split>{{p.name}}</h1>
+        <p class="case-hero__tagline">{{p.tagline}}</p>
+        <dl class="case-meta">
+          <div><dt class="mono">Année</dt><dd>{{p.year}}</dd></div>
+          <div><dt class="mono">Type</dt><dd>{{p.category}}</dd></div>
+          <div><dt class="mono">Statut</dt><dd>Projet conceptuel</dd></div>
+        </dl>
+      </div>
+      <div class="case-hero__media container" data-parallax-wrap>
+        <img src="/assets/img/projets/{{p.slug}}.svg" alt="Maquette du site {{p.name}}" width="1200" height="800" data-parallax="-8">
+      </div>
+    </section>
+
+    <section class="case-body container">
+      <div class="case-body__intro">
+        <p class="eyebrow mono">Le projet</p>
+        <p class="case-body__summary">{{p.summary}}</p>
+      </div>
+      <div class="case-body__cols">
+        <div>
+          <h2 class="mono case-body__h">Le défi</h2>
+          {{p.challenge}}
+        </div>
+        <div>
+          <h2 class="mono case-body__h">Prestations</h2>
+          <ul class="tag-list">{{p.services}}</ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="case-gallery container" aria-label="Visuels du projet">
+      <figure class="case-gallery__wide reveal-clip"><img src="/assets/img/projets/{{p.slug}}-detail.svg" alt="Système visuel de {{p.name}} : typographie, couleurs et composants" width="1200" height="800" loading="lazy"></figure>
+      <div class="case-gallery__row">
+        <figure class="reveal-clip"><img src="/assets/img/projets/{{p.slug}}-mobile.svg" alt="Version mobile du site {{p.name}}" width="800" height="1000" loading="lazy"></figure>
+        <div class="case-palette">
+          <p class="eyebrow mono">Palette</p>
+          <div class="swatches">{{p.palette}}</div>
+          <div class="case-stats">{{p.results}}</div>
+          <p class="mono case-stats__note">Objectifs de conception du concept.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="next-case" aria-label="Projet suivant">
+      <a href="/realisations/{{next.slug}}" class="next-case__link container" data-cursor="Suivant">
+        <span class="eyebrow mono">Projet suivant</span>
+        <span class="next-case__name">{{next.name}}</span>
+        <span class="next-case__cat">{{next.category}}</span>
+      </a>
+    </section>

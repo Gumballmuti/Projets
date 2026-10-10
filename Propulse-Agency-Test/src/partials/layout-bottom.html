@@ -1,0 +1,75 @@
+  </main>
+
+  <footer class="footer">
+    <section class="footer__cta" aria-labelledby="footer-cta-title">
+      <p class="eyebrow mono"><span class="dot"></span> Disponible pour de nouveaux projets</p>
+      <h2 id="footer-cta-title" class="footer__title" data-split>
+        Prêt à <em>décoller</em>&nbsp;?
+      </h2>
+      <a href="/contact" class="btn-orb" data-magnetic data-cursor-hide>
+        <span class="btn-orb__label">Parlons de votre projet</span>
+        <svg viewBox="0 0 24 24" width="28" height="28" aria-hidden="true"><path d="M6 18L18 6M18 6H8M18 6v10" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </a>
+    </section>
+
+    <div class="footer__grid">
+      <div class="footer__col">
+        <a class="logo logo--footer" href="/" aria-label="{{site.name}} — accueil">
+          {{> logo}}
+          <span class="logo__word">propulse<span class="logo__dot">.</span></span>
+        </a>
+        <p class="footer__baseline">{{site.tagline}}.<br>Des sites qui marquent, qui convertissent et qui durent.</p>
+      </div>
+      <div class="footer__col">
+        <p class="mono footer__head">Navigation</p>
+        <ul>
+          <li><a href="/" class="link-line">Accueil</a></li>
+          <li><a href="/services" class="link-line">Services</a></li>
+          <li><a href="/realisations" class="link-line">Réalisations</a></li>
+          <li><a href="/agence" class="link-line">Agence</a></li>
+          <li><a href="/contact" class="link-line">Contact</a></li>
+        </ul>
+      </div>
+      <div class="footer__col">
+        <p class="mono footer__head">Contact</p>
+        <ul>
+          <li><a href="mailto:{{site.contact.email}}" class="link-line">{{site.contact.email}}</a></li>
+          <li><a href="tel:{{site.contact.phoneHref}}" class="link-line">{{site.contact.phone}}</a></li>
+          <li>{{site.contact.city}}</li>
+        </ul>
+      </div>
+      <div class="footer__col">
+        <p class="mono footer__head">Réseaux</p>
+        <ul>
+          <li><a href="{{site.social.instagram}}" class="link-line" target="_blank" rel="noopener noreferrer">Instagram</a></li>
+          <li><a href="{{site.social.linkedin}}" class="link-line" target="_blank" rel="noopener noreferrer">LinkedIn</a></li>
+          <li><a href="{{site.social.behance}}" class="link-line" target="_blank" rel="noopener noreferrer">Behance</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="footer__giant" aria-hidden="true"><span>propulse</span></div>
+
+    <div class="footer__legal">
+      <p>© {{year}} {{site.name}} — {{site.legal.bce}}</p>
+      <nav aria-label="Informations légales">
+        <a href="/mentions-legales" class="link-line">Mentions légales</a>
+        <a href="/confidentialite" class="link-line">Politique de confidentialité</a>
+        <a href="/cookies" class="link-line">Politique cookies</a>
+        <button type="button" class="link-line" data-cookie-open>Gérer mes cookies</button>
+      </nav>
+      <button type="button" class="to-top mono" data-to-top>Haut de page ↑</button>
+    </div>
+  </footer>
+
+  {{> cookie-banner}}
+
+  <script src="/assets/vendor/gsap.min.js" defer></script>
+  <script src="/assets/vendor/ScrollTrigger.min.js" defer></script>
+  <script src="/assets/vendor/SplitText.min.js" defer></script>
+  <script src="/assets/vendor/lenis.min.js" defer></script>
+  <script src="/assets/js/consent.js" defer></script>
+  <script src="/assets/js/gl.js" defer></script>
+  <script src="/assets/js/main.js" defer></script>
+</body>
+</html>

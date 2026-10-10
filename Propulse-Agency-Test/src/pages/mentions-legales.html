@@ -1,0 +1,69 @@
+<!--meta {"id":"legal","path":"/mentions-legales","title":"Mentions légales | Propulse Agency","description":"Mentions légales du site Propulse Agency : éditeur, hébergeur, propriété intellectuelle et conditions d'utilisation.","bodyClass":"is-inner is-legal"}-->
+    <section class="page-hero page-hero--legal container" aria-labelledby="page-title">
+      <p class="eyebrow mono"><span class="dot"></span> Informations légales</p>
+      <h1 id="page-title" class="page-hero__title" data-split>Mentions <em>légales</em></h1>
+      <p class="legal-updated mono">Dernière mise à jour : {{site.legal.updated}}</p>
+    </section>
+
+    <div class="legal container">
+      <nav class="legal__toc" aria-label="Sommaire">
+        <p class="mono">Sommaire</p>
+        <ol>
+          <li><a href="#editeur">Éditeur du site</a></li>
+          <li><a href="#hebergement">Hébergement</a></li>
+          <li><a href="#propriete">Propriété intellectuelle</a></li>
+          <li><a href="#responsabilite">Responsabilité</a></li>
+          <li><a href="#liens">Liens hypertextes</a></li>
+          <li><a href="#donnees">Données personnelles &amp; cookies</a></li>
+          <li><a href="#litiges">Droit applicable &amp; litiges</a></li>
+          <li><a href="#credits">Crédits</a></li>
+        </ol>
+      </nav>
+
+      <article class="prose">
+        <p>Conformément au Code de droit économique belge (notamment ses articles III.74 et XII.6), les informations suivantes sont portées à la connaissance des utilisateurs du site <strong>{{site.url}}</strong> (ci-après « le site »).</p>
+
+        <h2 id="editeur">1. Éditeur du site</h2>
+        <dl class="legal-card">
+          <div><dt>Dénomination</dt><dd>{{site.legal.company}}</dd></div>
+          <div><dt>Nom commercial</dt><dd>{{site.name}}</dd></div>
+          <div><dt>Forme juridique</dt><dd>{{site.legal.form}}</dd></div>
+          <div><dt>Siège / établissement</dt><dd>{{site.legal.address}}</dd></div>
+          <div><dt>Numéro d'entreprise (BCE)</dt><dd>{{site.legal.bce}}</dd></div>
+          <div><dt>Numéro de TVA</dt><dd>{{site.legal.vat}}</dd></div>
+          <div><dt>E-mail</dt><dd><a href="mailto:{{site.contact.email}}">{{site.contact.email}}</a></dd></div>
+          <div><dt>Téléphone</dt><dd><a href="tel:{{site.contact.phoneHref}}">{{site.contact.phone}}</a></dd></div>
+          <div><dt>Responsable de la publication</dt><dd>{{site.legal.publisher}}</dd></div>
+        </dl>
+
+        <h2 id="hebergement">2. Hébergement</h2>
+        <p>Le site est hébergé par <strong>{{site.hosting.name}}</strong>, {{site.hosting.address}} — <a href="{{site.hosting.url}}" target="_blank" rel="noopener noreferrer">{{site.hosting.url}}</a>.</p>
+
+        <h2 id="propriete">3. Propriété intellectuelle</h2>
+        <p>L'ensemble des éléments composant le site (structure, textes, graphismes, logos, illustrations, animations, code source, etc.) est la propriété exclusive de {{site.name}}, sauf mention contraire, et est protégé par le droit d'auteur et le droit des marques.</p>
+        <p>Toute reproduction, représentation, modification, publication ou adaptation, totale ou partielle, de ces éléments, quel que soit le moyen ou le procédé utilisé, est interdite sans l'autorisation écrite préalable de {{site.name}}.</p>
+        <p>Les projets présentés dans la rubrique « Réalisations » sont des projets conceptuels créés pour illustrer le savoir-faire de l'agence. Les noms de marques qui y figurent sont fictifs ; toute ressemblance avec une entreprise existante serait fortuite.</p>
+
+        <h2 id="responsabilite">4. Responsabilité</h2>
+        <p>{{site.name}} s'efforce d'assurer l'exactitude et la mise à jour des informations diffusées sur le site, mais ne peut garantir qu'elles soient complètes, exactes ou exemptes d'erreurs. Les informations sont fournies à titre indicatif et ne constituent pas une offre contractuelle.</p>
+        <p>{{site.name}} ne saurait être tenue responsable des dommages directs ou indirects résultant de l'accès au site ou de son utilisation, y compris de l'indisponibilité du site, de la présence de virus ou de l'utilisation d'informations qui y figurent.</p>
+
+        <h2 id="liens">5. Liens hypertextes</h2>
+        <p>Le site peut contenir des liens vers des sites tiers. {{site.name}} n'exerce aucun contrôle sur ces sites et décline toute responsabilité quant à leur contenu ou à leurs pratiques en matière de protection des données.</p>
+
+        <h2 id="donnees">6. Données personnelles &amp; cookies</h2>
+        <p>Le traitement de vos données personnelles est décrit dans notre <a href="/confidentialite">politique de confidentialité</a>. L'utilisation des cookies et traceurs est détaillée dans notre <a href="/cookies">politique cookies</a>.</p>
+
+        <h2 id="litiges">7. Droit applicable &amp; litiges</h2>
+        <p>Les présentes mentions légales sont régies par le droit belge. En cas de litige, et à défaut de solution amiable, les tribunaux de l'arrondissement judiciaire du siège de l'éditeur sont seuls compétents, sous réserve des règles impératives applicables aux consommateurs.</p>
+        <p>Si vous êtes consommateur, vous pouvez également vous adresser gratuitement au <a href="https://mediationconsommateur.be" target="_blank" rel="noopener noreferrer">Service de Médiation pour le Consommateur</a> (North Gate II, boulevard du Roi Albert II 8 boîte 1, 1000 Bruxelles).</p>
+
+        <h2 id="credits">8. Crédits</h2>
+        <ul>
+          <li>Conception, design et développement : {{site.name}}</li>
+          <li>Typographies : Syne, Manrope et JetBrains Mono (licence SIL Open Font License), hébergées localement</li>
+          <li>Animations : GSAP (licence standard GreenSock) et Lenis (licence MIT), hébergés localement</li>
+          <li>Illustrations des projets : {{site.name}}</li>
+        </ul>
+      </article>
+    </div>

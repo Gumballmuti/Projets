@@ -1,0 +1,37 @@
+  <section class="cookies" role="dialog" aria-modal="false" aria-labelledby="cookies-title" aria-describedby="cookies-desc" hidden>
+    <div class="cookies__main">
+      <p class="cookies__title" id="cookies-title"><span class="cookies__icon" aria-hidden="true">◐</span> Vos données, vos choix</p>
+      <p class="cookies__desc" id="cookies-desc">
+        Nous utilisons uniquement les traceurs strictement nécessaires au fonctionnement du site. Avec votre accord,
+        nous pouvons aussi mesurer l'audience de manière anonymisée pour améliorer nos pages. Votre choix est conservé
+        6 mois et modifiable à tout moment. <a href="/cookies" class="link-line">En savoir plus</a>
+      </p>
+      <div class="cookies__actions">
+        <button type="button" class="btn btn--small btn--ghost" data-cookie-reject>Tout refuser</button>
+        <button type="button" class="btn btn--small btn--ghost" data-cookie-custom aria-expanded="false" aria-controls="cookies-prefs">Personnaliser</button>
+        <button type="button" class="btn btn--small btn--accent" data-cookie-accept>Tout accepter</button>
+      </div>
+    </div>
+    <form class="cookies__prefs" id="cookies-prefs" hidden>
+      <fieldset>
+        <legend class="sr-only">Catégories de traceurs</legend>
+        <div class="toggle-row">
+          <div>
+            <p class="toggle-row__title">Strictement nécessaires</p>
+            <p class="toggle-row__desc">Mémorisation de vos choix en matière de cookies. Toujours actifs, ils ne nécessitent pas de consentement.</p>
+          </div>
+          <label class="switch"><input type="checkbox" checked disabled><span class="switch__ui"></span><span class="sr-only">Toujours actifs</span></label>
+        </div>
+        <div class="toggle-row">
+          <div>
+            <p class="toggle-row__title">Mesure d'audience</p>
+            <p class="toggle-row__desc">Statistiques de fréquentation anonymisées (pages vues, provenance). Désactivé par défaut.</p>
+          </div>
+          <label class="switch"><input type="checkbox" name="analytics"><span class="switch__ui"></span><span class="sr-only">Autoriser la mesure d'audience</span></label>
+        </div>
+      </fieldset>
+      <div class="cookies__actions">
+        <button type="submit" class="btn btn--small btn--accent">Enregistrer mes choix</button>
+      </div>
+    </form>
+  </section>

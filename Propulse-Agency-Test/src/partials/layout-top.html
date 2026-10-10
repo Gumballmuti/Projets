@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="{{site.lang}}" class="no-js">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>{{page.title}}</title>
+  <meta name="description" content="{{page.description}}">
+  <meta name="robots" content="{{page.robots}}">
+  <meta name="author" content="{{site.name}}">
+  <meta name="theme-color" content="#0B0B0E">
+  <link rel="canonical" href="{{page.canonical}}">
+  <meta property="og:type" content="website">
+  <meta property="og:locale" content="fr_BE">
+  <meta property="og:site_name" content="{{site.name}}">
+  <meta property="og:title" content="{{page.title}}">
+  <meta property="og:description" content="{{page.description}}">
+  <meta property="og:url" content="{{page.canonical}}">
+  <meta property="og:image" content="{{site.url}}/assets/img/og.png">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="icon" href="/assets/img/favicon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="/assets/img/apple-touch-icon.png">
+  <link rel="manifest" href="/site.webmanifest">
+  <link rel="preload" href="/assets/fonts/syne-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="/assets/fonts/manrope-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="/assets/css/main.css">
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"ProfessionalService","name":"{{site.name}}","description":"{{site.tagline}}","url":"{{site.url}}","email":"{{site.contact.email}}","areaServed":"BE","knowsLanguage":"fr"}</script>
+</head>
+<body class="{{page.bodyClass}}" data-page="{{page.id}}">
+  <a class="skip-link" href="#contenu">Aller au contenu</a>
+
+  <div class="preloader" aria-hidden="true">
+    <div class="preloader__inner">
+      <span class="preloader__word">Propulse</span>
+      <span class="preloader__count mono"><span data-count>0</span>%</span>
+    </div>
+    <div class="preloader__bar"><span></span></div>
+  </div>
+
+  <div class="transition" aria-hidden="true">
+    <div class="transition__panel"></div>
+    <div class="transition__panel"></div>
+    <div class="transition__panel"></div>
+    <div class="transition__panel"></div>
+    <div class="transition__panel"></div>
+  </div>
+
+  <div class="cursor" aria-hidden="true"><span class="cursor__dot"></span><span class="cursor__ring"><span class="cursor__label"></span></span></div>
+  <div class="grain" aria-hidden="true"></div>
+  <div class="scroll-progress" aria-hidden="true"><span></span></div>
+
+  <header class="header">
+    <a class="logo" href="/" aria-label="{{site.name}} — accueil" data-magnetic>
+      {{> logo}}
+      <span class="logo__word">propulse<span class="logo__dot">.</span></span>
+    </a>
+    <nav class="header__nav" aria-label="Navigation principale">
+      <a href="/services" class="link-roll"{{nav.services}}><span data-text="Services">Services</span></a>
+      <a href="/realisations" class="link-roll"{{nav.work}}><span data-text="Réalisations">Réalisations</span></a>
+      <a href="/agence" class="link-roll"{{nav.agency}}><span data-text="Agence">Agence</span></a>
+      <a href="/contact" class="link-roll"{{nav.contact}}><span data-text="Contact">Contact</span></a>
+    </nav>
+    <div class="header__actions">
+      <a href="/contact" class="btn btn--small btn--accent header__cta" data-magnetic><span>Démarrer un projet</span></a>
+      <button class="burger" type="button" aria-expanded="false" aria-controls="menu" aria-label="Ouvrir le menu" data-magnetic>
+        <span></span><span></span>
+      </button>
+    </div>
+  </header>
+
+  <div class="menu" id="menu" aria-hidden="true" inert>
+    <div class="menu__bg"></div>
+    <div class="menu__inner">
+      <nav class="menu__nav" aria-label="Menu">
+        <a href="/"{{nav.home}}><span class="mono">01</span><span class="menu__label">Accueil</span></a>
+        <a href="/services"{{nav.services}}><span class="mono">02</span><span class="menu__label">Services</span></a>
+        <a href="/realisations"{{nav.work}}><span class="mono">03</span><span class="menu__label">Réalisations</span></a>
+        <a href="/agence"{{nav.agency}}><span class="mono">04</span><span class="menu__label">Agence</span></a>
+        <a href="/contact"{{nav.contact}}><span class="mono">05</span><span class="menu__label">Contact</span></a>
+      </nav>
+      <div class="menu__aside">
+        <p class="mono">Écrivez-nous</p>
+        <a href="mailto:{{site.contact.email}}" class="menu__mail">{{site.contact.email}}</a>
+        <p class="mono">Suivez-nous</p>
+        <div class="menu__social">
+          <a href="{{site.social.instagram}}" target="_blank" rel="noopener noreferrer">Instagram</a>
+          <a href="{{site.social.linkedin}}" target="_blank" rel="noopener noreferrer">LinkedIn</a>
+          <a href="{{site.social.behance}}" target="_blank" rel="noopener noreferrer">Behance</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <main id="contenu" class="main">

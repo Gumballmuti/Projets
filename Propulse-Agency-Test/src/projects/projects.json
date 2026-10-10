@@ -1,0 +1,128 @@
+[
+  {
+    "slug": "maison-lueur",
+    "name": "Maison Lueur",
+    "category": "E-commerce · Bougies artisanales",
+    "filters": ["ecommerce", "branding"],
+    "year": "2026",
+    "motif": "glow",
+    "palette": ["#1A1410", "#F2A65A", "#F7E9D7"],
+    "summary": "Une boutique en ligne chaleureuse et sensorielle pour une marque de bougies coulées à la main, pensée pour convertir sans jamais brusquer.",
+    "tagline": "Faire ressentir une odeur à travers un écran.",
+    "services": ["Direction artistique", "UI/UX design", "Boutique en ligne", "Photographie produit (direction)", "SEO"],
+    "challenge": [
+      "Vendre un produit olfactif en ligne, c'est vendre une émotion. Le défi : traduire la chaleur d'une flamme et la douceur d'une cire naturelle en interactions numériques.",
+      "Nous avons conçu un parcours lent et immersif sur les pages éditoriales, puis un tunnel d'achat volontairement rapide : trois étapes, aucune distraction."
+    ],
+    "highlights": [
+      { "value": "3", "label": "étapes jusqu'au paiement" },
+      { "value": "0,9 s", "label": "chargement visé (LCP)" },
+      { "value": "100", "label": "score accessibilité visé" }
+    ]
+  },
+  {
+    "slug": "atelier-brume",
+    "name": "Atelier Brume",
+    "category": "Site vitrine · Architecture d'intérieur",
+    "filters": ["vitrine", "branding"],
+    "year": "2026",
+    "motif": "arches",
+    "palette": ["#E9E4DC", "#8C7B6B", "#2B2622"],
+    "summary": "Un site vitrine éditorial, minimal et lumineux pour un studio d'architecture d'intérieur qui laisse ses espaces parler d'eux-mêmes.",
+    "tagline": "Le vide comme matière première.",
+    "services": ["Identité visuelle", "Site vitrine", "Système typographique", "Animations"],
+    "challenge": [
+      "Le studio voulait un site qui respire autant que ses intérieurs. Nous avons construit une grille éditoriale stricte où chaque blanc est intentionnel.",
+      "Les transitions de page reprennent la forme des arches, signature du studio, pour créer une continuité entre la marque et l'expérience."
+    ],
+    "highlights": [
+      { "value": "12", "label": "colonnes de grille éditoriale" },
+      { "value": "2", "label": "familles typographiques" },
+      { "value": "∞", "label": "respiration" }
+    ]
+  },
+  {
+    "slug": "kinetik",
+    "name": "Kinetik",
+    "category": "Plateforme · Coaching sportif",
+    "filters": ["webapp", "uiux"],
+    "year": "2025",
+    "motif": "bars",
+    "palette": ["#0D0F14", "#D4FF3A", "#F4F6F8"],
+    "summary": "Une plateforme de réservation et de suivi pour un réseau de coachs sportifs, avec un design énergique et une interface pensée pour le mobile.",
+    "tagline": "L'énergie d'une salle, la clarté d'un tableau de bord.",
+    "services": ["UX research", "Design system", "Application web", "Tableau de bord", "Prototypage"],
+    "challenge": [
+      "Les coachs jonglaient entre trois outils pour gérer leurs séances. Nous avons cartographié leurs journées pour concevoir un seul espace, rapide et lisible en un coup d'œil.",
+      "Un design system de plus de 60 composants garantit la cohérence entre l'espace client et l'espace coach."
+    ],
+    "highlights": [
+      { "value": "60+", "label": "composants documentés" },
+      { "value": "1", "label": "outil au lieu de trois" },
+      { "value": "AA", "label": "contrastes WCAG" }
+    ]
+  },
+  {
+    "slug": "halo-studio",
+    "name": "Halo Studio",
+    "category": "Portfolio · Photographie",
+    "filters": ["vitrine", "uiux"],
+    "year": "2025",
+    "motif": "rings",
+    "palette": ["#0A0A0A", "#B9A7FF", "#EDEBFF"],
+    "summary": "Un portfolio immersif pour une photographe de mode, où la navigation devient une galerie et chaque image est mise en scène.",
+    "tagline": "Une galerie qui se parcourt comme un film.",
+    "services": ["Direction artistique", "Développement créatif", "WebGL", "Optimisation des images"],
+    "challenge": [
+      "Montrer des centaines de photos haute définition sans sacrifier la vitesse. Nous avons mis en place un chargement progressif et des formats d'image modernes.",
+      "Une navigation au défilement horizontal et des transitions en fondu font de chaque série une véritable exposition."
+    ],
+    "highlights": [
+      { "value": "-70 %", "label": "poids des images" },
+      { "value": "60 fps", "label": "animations fluides" },
+      { "value": "4K", "label": "rendu préservé" }
+    ]
+  },
+  {
+    "slug": "verde-bistrot",
+    "name": "Verde Bistrot",
+    "category": "Restaurant · Réservation en ligne",
+    "filters": ["vitrine", "branding"],
+    "year": "2025",
+    "motif": "leaf",
+    "palette": ["#14251C", "#E7C873", "#F3EFE3"],
+    "summary": "Une identité gourmande et un site qui donne faim, avec carte du jour éditable et réservation intégrée pour un bistrot de quartier.",
+    "tagline": "Donner faim avant même de passer la porte.",
+    "services": ["Branding", "Site vitrine", "Module de réservation", "Référencement local"],
+    "challenge": [
+      "Le bistrot changeait sa carte chaque semaine mais son site n'était jamais à jour. Nous avons créé une carte que l'équipe modifie en deux minutes depuis son téléphone.",
+      "Le référencement local et la fiche d'établissement ont été optimisés pour capter les recherches « restaurant près de chez moi »."
+    ],
+    "highlights": [
+      { "value": "2 min", "label": "pour mettre la carte à jour" },
+      { "value": "24/7", "label": "réservations en ligne" },
+      { "value": "Local", "label": "SEO ciblé" }
+    ]
+  },
+  {
+    "slug": "nordlys",
+    "name": "Nordlys",
+    "category": "SaaS · Landing page & produit",
+    "filters": ["webapp", "uiux"],
+    "year": "2024",
+    "motif": "aurora",
+    "palette": ["#06121F", "#3DE0C0", "#7A5CFF"],
+    "summary": "Une landing page à fort impact et une interface produit pour une start-up qui mesure la consommation énergétique des bâtiments.",
+    "tagline": "Rendre la donnée énergétique belle — et compréhensible.",
+    "services": ["Stratégie de conversion", "Landing page", "Data visualisation", "UI produit"],
+    "challenge": [
+      "Expliquer un produit technique à des gestionnaires immobiliers pressés. Nous avons structuré la page autour de trois bénéfices clairs et de démonstrations animées.",
+      "Les graphiques du produit ont été redessinés pour être lisibles par tous, y compris les personnes daltoniennes."
+    ],
+    "highlights": [
+      { "value": "3", "label": "bénéfices, pas un de plus" },
+      { "value": "12", "label": "types de graphiques" },
+      { "value": "100 %", "label": "responsive" }
+    ]
+  }
+]

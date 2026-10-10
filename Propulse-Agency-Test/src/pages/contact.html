@@ -1,0 +1,94 @@
+<!--meta {"id":"contact","path":"/contact","title":"Contact — Parlons de votre projet | Propulse Agency","description":"Un projet de site web, de boutique en ligne ou d'identité visuelle ? Contactez Propulse Agency pour un premier échange gratuit et sans engagement.","bodyClass":"is-inner"}-->
+    <section class="page-hero page-hero--contact container" aria-labelledby="page-title">
+      <p class="eyebrow mono"><span class="dot"></span> Contact</p>
+      <h1 id="page-title" class="page-hero__title" data-split>Parlons de<br>votre <em>projet</em>.</h1>
+    </section>
+
+    <section class="contact container">
+      <aside class="contact__aside">
+        <p class="contact__intro">Racontez-nous votre idée, même en quelques mots. Nous revenons vers vous sous 24&nbsp;h ouvrables avec une première analyse et les prochaines étapes.</p>
+        <dl class="contact__info">
+          <div><dt class="mono">E-mail</dt><dd><a href="mailto:{{site.contact.email}}" class="link-line">{{site.contact.email}}</a></dd></div>
+          <div><dt class="mono">Téléphone</dt><dd><a href="tel:{{site.contact.phoneHref}}" class="link-line">{{site.contact.phone}}</a></dd></div>
+          <div><dt class="mono">Horaires</dt><dd>{{site.contact.hours}}</dd></div>
+          <div><dt class="mono">Zone</dt><dd>Toute la Belgique, à distance ou sur rendez-vous</dd></div>
+        </dl>
+      </aside>
+
+      <form class="form" action="/api/contact" method="post" novalidate data-contact-form data-mailto="{{site.contact.email}}">
+        <fieldset class="form__group">
+          <legend class="form__legend">Vous êtes intéressé·e par…</legend>
+          <div class="chips">
+            <label class="chip"><input type="checkbox" name="services" value="Site vitrine"><span>Site vitrine</span></label>
+            <label class="chip"><input type="checkbox" name="services" value="E-commerce"><span>E-commerce</span></label>
+            <label class="chip"><input type="checkbox" name="services" value="Web design / UI-UX"><span>Web design / UI-UX</span></label>
+            <label class="chip"><input type="checkbox" name="services" value="Identité visuelle"><span>Identité visuelle</span></label>
+            <label class="chip"><input type="checkbox" name="services" value="SEO"><span>SEO</span></label>
+            <label class="chip"><input type="checkbox" name="services" value="Maintenance"><span>Maintenance</span></label>
+          </div>
+        </fieldset>
+
+        <fieldset class="form__group">
+          <legend class="form__legend">Budget estimé <span class="form__opt">(facultatif)</span></legend>
+          <div class="chips">
+            <label class="chip"><input type="radio" name="budget" value="Moins de 2 500 €"><span>&lt; 2 500 €</span></label>
+            <label class="chip"><input type="radio" name="budget" value="2 500 – 5 000 €"><span>2 500 – 5 000 €</span></label>
+            <label class="chip"><input type="radio" name="budget" value="5 000 – 10 000 €"><span>5 000 – 10 000 €</span></label>
+            <label class="chip"><input type="radio" name="budget" value="Plus de 10 000 €"><span>&gt; 10 000 €</span></label>
+            <label class="chip"><input type="radio" name="budget" value="À définir"><span>À définir</span></label>
+          </div>
+        </fieldset>
+
+        <div class="form__row">
+          <div class="field">
+            <input id="f-name" name="name" type="text" autocomplete="name" required maxlength="100" placeholder=" ">
+            <label for="f-name">Nom et prénom <span aria-hidden="true">*</span></label>
+            <span class="field__error" id="f-name-err" role="alert"></span>
+          </div>
+          <div class="field">
+            <input id="f-email" name="email" type="email" autocomplete="email" required maxlength="160" placeholder=" ">
+            <label for="f-email">Adresse e-mail <span aria-hidden="true">*</span></label>
+            <span class="field__error" id="f-email-err" role="alert"></span>
+          </div>
+        </div>
+        <div class="form__row">
+          <div class="field">
+            <input id="f-company" name="company" type="text" autocomplete="organization" maxlength="120" placeholder=" ">
+            <label for="f-company">Entreprise <span class="form__opt">(facultatif)</span></label>
+          </div>
+          <div class="field">
+            <input id="f-phone" name="phone" type="tel" autocomplete="tel" maxlength="30" placeholder=" ">
+            <label for="f-phone">Téléphone <span class="form__opt">(facultatif)</span></label>
+          </div>
+        </div>
+        <div class="field field--area">
+          <textarea id="f-message" name="message" rows="5" required maxlength="4000" placeholder=" "></textarea>
+          <label for="f-message">Votre projet en quelques mots <span aria-hidden="true">*</span></label>
+          <span class="field__error" id="f-message-err" role="alert"></span>
+        </div>
+
+        <div class="hp" aria-hidden="true">
+          <label for="f-website">Ne pas remplir ce champ</label>
+          <input id="f-website" name="website" type="text" tabindex="-1" autocomplete="off">
+        </div>
+
+        <label class="check">
+          <input type="checkbox" name="privacy" required>
+          <span class="check__box" aria-hidden="true"></span>
+          <span>J'ai pris connaissance de la <a href="/confidentialite" class="link-line">politique de confidentialité</a> et j'accepte que mes données soient utilisées pour répondre à ma demande. <span aria-hidden="true">*</span></span>
+        </label>
+        <span class="field__error" id="f-privacy-err" role="alert"></span>
+
+        <p class="form__notice">
+          Les données envoyées via ce formulaire sont traitées par {{site.name}} uniquement pour répondre à votre demande et, le cas échéant, établir une offre (base légale : mesures précontractuelles prises à votre demande, art. 6.1.b RGPD).
+          Elles ne sont ni vendues ni utilisées à des fins de prospection, et sont conservées au maximum 3 ans après notre dernier échange si aucun contrat n'est conclu.
+          Vous pouvez à tout moment exercer vos droits d'accès, de rectification, d'effacement, de limitation, d'opposition et de portabilité en écrivant à <a href="mailto:{{site.legal.dpoEmail}}" class="link-line">{{site.legal.dpoEmail}}</a>.
+          Plus d'informations dans notre <a href="/confidentialite" class="link-line">politique de confidentialité</a>.
+        </p>
+
+        <div class="form__submit">
+          <button type="submit" class="btn btn--accent btn--lg" data-magnetic><span>Envoyer ma demande</span><i aria-hidden="true">→</i></button>
+          <p class="form__status" role="status" aria-live="polite"></p>
+        </div>
+      </form>
+    </section>
