@@ -5,7 +5,7 @@
     { "src": "/assets/img/favicon.svg", "sizes": "any", "type": "image/svg+xml" },
     { "src": "/assets/img/apple-touch-icon.png", "sizes": "180x180", "type": "image/png" }
   ],
-  "theme_color": "#0B0B0E",
+  "theme_color": "#0B3D39",
   "background_color": "#0B0B0E",
   "display": "standalone"
 }
