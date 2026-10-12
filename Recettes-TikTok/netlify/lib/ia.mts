@@ -36,7 +36,7 @@ const SCHEMA = {
 };
 
 const CONSIGNES = `Tu aides une personne à archiver les recettes qu'elle trouve sur les réseaux sociaux (TikTok, Instagram, YouTube…) et sur le web.
-On te donne les informations d'une vidéo ou d'une page : la description du créateur, ses sous-titres, le contenu de la page, et souvent la vidéo elle-même (images et son).
+On te donne les informations d'une vidéo ou d'une page : la description du créateur, ses sous-titres, le contenu de la page, et souvent la vidéo elle-même (images et son) ou les images d'une publication en carrousel, sur lesquelles la recette est souvent écrite étape par étape.
 Rédige la recette en français, claire et prête à cuisiner.
 
 Règles :

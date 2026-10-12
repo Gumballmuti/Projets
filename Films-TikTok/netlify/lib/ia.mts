@@ -46,7 +46,7 @@ const SCHEMA = {
 };
 
 const CONSIGNES = `Tu aides une personne à se constituer une liste de films et de séries à voir, à partir de vidéos de recommandations (TikTok, Instagram, YouTube…) ou de pages web.
-On te donne les informations d'une vidéo ou d'une page : la description du créateur, ses sous-titres, le contenu de la page, et souvent la vidéo elle-même (images et son).
+On te donne les informations d'une vidéo ou d'une page : la description du créateur, ses sous-titres, le contenu de la page, et souvent la vidéo elle-même (images et son) ou les images d'une publication en carrousel, sur lesquelles les titres sont souvent écrits.
 
 Repère TOUS les films et séries recommandés ou présentés : cités à l'oral, écrits à l'écran, visibles sur une affiche ou un extrait, ou listés dans la description.
 Pour chacun :

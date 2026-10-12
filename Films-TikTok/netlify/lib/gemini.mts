@@ -34,6 +34,16 @@ export async function demanderAGemini<T>(options: {
   const parties: Part[] = [];
   if (video) parties.push(await partieVideo(ai, video));
   else if (infos.youtube) parties.push({ fileData: { fileUri: infos.youtube, mimeType: "video/*" } });
+  if (infos.images.length) {
+    // Carrousel de photos : le texte (recette, liste…) est souvent écrit directement sur les images.
+    parties.push({ text: `Voici les ${infos.images.length} images de la publication, dans l'ordre où on les fait défiler. Lis attentivement le texte écrit dessus :` });
+    let total = 0;
+    for (const image of infos.images) {
+      total += image.donnees.byteLength;
+      if (total > LIMITE_EN_LIGNE) break; // limite de taille d'une requête Gemini
+      parties.push({ inlineData: { mimeType: image.type, data: Buffer.from(image.donnees).toString("base64") } });
+    }
+  }
   parties.push({ text: sources.join("\n\n") });
 
   const reponse = await generer(ai, parties, consignes, schema);

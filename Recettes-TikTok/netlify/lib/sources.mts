@@ -14,6 +14,13 @@ const TAILLE_MAX = 150 * 1024 * 1024;
 
 export class ErreurExtraction extends Error {}
 
+export interface Image {
+  donnees: ArrayBuffer;
+  type: string;
+}
+
+const MAX_IMAGES = 35;
+
 export interface InfosVideo {
   url: string;
   plateforme: string;
@@ -22,7 +29,8 @@ export interface InfosVideo {
   sousTitres: string;
   textePage: string; // contenu utile d'une page web (ex. recette d'un blog)
   duree: number;
-  miniature: { donnees: ArrayBuffer; type: string } | null;
+  miniature: Image | null;
+  images: Image[]; // publications en carrousel de photos (TikTok) ou captures envoyées
   videoUrl: string | null; // fichier vidéo à télécharger
   youtube: string | null; // lien YouTube, que Gemini sait regarder directement
   entetes: Record<string, string>; // pour télécharger la vidéo (cookies, referer)
@@ -30,7 +38,7 @@ export interface InfosVideo {
 
 const infosVides = (url: string, plateforme: string): InfosVideo => ({
   url, plateforme, auteur: "", description: "", sousTitres: "", textePage: "", duree: 0,
-  miniature: null, videoUrl: null, youtube: null, entetes: {},
+  miniature: null, images: [], videoUrl: null, youtube: null, entetes: {},
 });
 
 /** Infos d'une vidéo envoyée en fichier : rien d'autre que la vidéo elle-même. */
@@ -75,7 +83,7 @@ async function lireTiktok(lien: string): Promise<InfosVideo> {
     cookies = page.headers.getSetCookie().map((c) => c.split(";")[0]).join("; ");
     const html = await page.text();
     const m = html.match(/<script id="__UNIVERSAL_DATA_FOR_REHYDRATION__"[^>]*>([\s\S]*?)<\/script>/);
-    if (m) item = JSON.parse(m[1])?.__DEFAULT_SCOPE__?.["webapp.video-detail"]?.itemInfo?.itemStruct ?? null;
+    if (m) item = trouverItem(JSON.parse(m[1])?.__DEFAULT_SCOPE__);
   } catch {
     item = null;
   }
@@ -88,16 +96,43 @@ async function lireTiktok(lien: string): Promise<InfosVideo> {
   const video = item?.video ?? {};
   const auteur = item?.author?.uniqueId ?? oembed?.author_unique_id ?? oembed?.author_name ?? "";
   const entetes = { Referer: "https://www.tiktok.com/", Cookie: cookies };
+  // Publication « photos » : un carrousel d'images (souvent la recette écrite dessus), sans vraie vidéo.
+  const photos: string[] = (item?.imagePost?.images ?? [])
+    .map((i: any) => meilleureUrl(i?.imageURL?.urlList ?? i?.displayImage?.urlList))
+    .filter(Boolean)
+    .slice(0, MAX_IMAGES);
+  const images = (await Promise.all(photos.map((u) => telechargerImage(u, entetes)))).filter(Boolean) as Image[];
+  const genre = photos.length ? "photo" : "video";
   return {
-    ...infosVides(item?.id && auteur ? `https://www.tiktok.com/@${auteur}/video/${item.id}` : url, "TikTok"),
+    ...infosVides(item?.id && auteur ? `https://www.tiktok.com/@${auteur}/${genre}/${item.id}` : url, "TikTok"),
     auteur,
-    description: item?.desc ?? oembed?.title ?? "",
+    description: [item?.imagePost?.title, item?.desc ?? oembed?.title].filter(Boolean).join("\n"),
     sousTitres: await sousTitresTiktok(video.subtitleInfos ?? [], entetes),
     duree: Number(video.duration) || 0,
-    miniature: await telechargerImage(video.cover || video.originCover || oembed?.thumbnail_url, entetes),
-    videoUrl: video.playAddr || video.downloadAddr || null,
+    miniature: images[0]
+      ?? await telechargerImage(video.cover || video.originCover || meilleureUrl(item?.imagePost?.cover?.imageURL?.urlList) || oembed?.thumbnail_url, entetes),
+    images,
+    // Pour un carrousel, la « vidéo » n'est que le diaporama en musique : les images suffisent.
+    videoUrl: photos.length ? null : video.playAddr || video.downloadAddr || null,
     entetes,
   };
+}
+
+/** L'élément publié, où qu'il soit rangé dans les données de la page (vidéo ou photos). */
+function trouverItem(donnees: any, profondeur = 0): any {
+  if (!donnees || typeof donnees !== "object" || profondeur > 6) return null;
+  if (donnees.itemInfo?.itemStruct) return donnees.itemInfo.itemStruct;
+  for (const valeur of Object.values(donnees)) {
+    const trouve = trouverItem(valeur, profondeur + 1);
+    if (trouve) return trouve;
+  }
+  return null;
+}
+
+/** TikTok propose chaque image en plusieurs formats : on préfère JPEG ou WebP, que Gemini lit sans souci. */
+function meilleureUrl(urls: unknown): string {
+  const liste = Array.isArray(urls) ? (urls as string[]) : [];
+  return liste.find((u) => /jpe?g|webp/i.test(u)) ?? liste[0] ?? "";
 }
 
 /** Sous-titres générés par TikTok (ce qui est dit dans la vidéo), en français de préférence. */
@@ -244,7 +279,7 @@ async function lireJson(url: string) {
   return fetch(url, { headers: NAVIGATEUR }).then((r) => (r.ok ? r.json() : null)).catch(() => null);
 }
 
-async function telechargerImage(url: string | undefined, entetes: Record<string, string>) {
+async function telechargerImage(url: string | undefined, entetes: Record<string, string>): Promise<Image | null> {
   if (!url) return null;
   try {
     const r = await fetch(url, { headers: { ...NAVIGATEUR, ...entetes } });

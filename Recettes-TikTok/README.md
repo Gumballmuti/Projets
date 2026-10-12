@@ -57,7 +57,9 @@ TikTok bloque parfois les serveurs. Sur la fiche en erreur :
 - **Lien** : TikTok, YouTube (Shorts compris), Instagram (Reels publics), Facebook, Pinterest, X… et n'importe quelle page web
   (ex. un blog de recettes). L'app lit la description, la page et, quand c'est possible, la vidéo elle-même ;
   pour YouTube, Gemini regarde la vidéo directement à partir du lien.
-- **Fichier** : bouton « 🎞️ Envoyer une vidéo enregistrée » — pour une vidéo enregistrée sur le téléphone
+- **Carrousels de photos TikTok** (publications à faire défiler) : toutes les images sont récupérées et lues,
+  y compris le texte écrit dessus.
+- **Fichier** : bouton « 🎞️ Envoyer une vidéo ou des captures » (une vidéo, ou jusqu'à 35 captures d'écran) — pour une vidéo enregistrée sur le téléphone
   ou un enregistrement d'écran (150 Mo max). Ça marche quelle que soit la plateforme, même quand elle bloque les liens
   (compte privé, Snapchat…). La vidéo est effacée une fois analysée.
 

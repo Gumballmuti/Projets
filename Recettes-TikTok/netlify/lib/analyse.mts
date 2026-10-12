@@ -10,7 +10,7 @@ export async function analyser(id: string) {
 
   try {
     const { infos, video } = await preparerVideo(fiche);
-    const vue = !!video || !!infos.youtube;
+    const vue = !!video || !!infos.youtube || infos.images.length > 0;
     const recette = await redigerRecette(infos, video, fiche.texte ?? "");
     if (!vue && !fiche.fichier && !recette.complete) {
       recette.remarque = [recette.remarque, "La vidéo n'a pas pu être regardée, seule la description a été lue."]
@@ -28,7 +28,8 @@ export async function analyser(id: string) {
       plateforme: infos.plateforme,
       titre: recette.titre,
       auteur: infos.auteur || fiche.auteur,
-      source: fiche.fichier ? "vidéo envoyée" : vue ? "description + vidéo" : "description",
+      source: fiche.fichier ? (video ? "vidéo envoyée" : "captures envoyées")
+        : infos.images.length ? "description + images" : vue ? "description + vidéo" : "description",
       donnees: recette as unknown as Record<string, unknown>,
       image: fiche.image || !!infos.miniature,
     });

@@ -3,7 +3,7 @@ import { randomBytes } from "node:crypto";
 import { type Fiche, cleFiche, cleImage, ecrireFiche, json, lireFiche, magasin } from "../lib/commun.mts";
 import { cleInterne, migrerAnciennesDonnees, pour, routesComptes, sessionDe } from "../lib/comptes.mts";
 import { analyser } from "../lib/analyse.mts";
-import { effacerFichier, recevoirMorceau } from "../lib/fichiers.mts";
+import { effacerFichier, recevoirImage, recevoirMorceau } from "../lib/fichiers.mts";
 import { ErreurExtraction, extraireUrl } from "../lib/sources.mts";
 
 async function lancerAnalyse(req: Request, proprio: string, id: string) {
@@ -94,6 +94,15 @@ async function routesRecettes(req: Request, [ressource, id, action, numero]: str
   if (action === "morceau" && req.method === "PUT") {
     try {
       await recevoirMorceau(id, Number(numero) || 0, req);
+    } catch (e) {
+      return json({ erreur: (e as Error).message }, 413);
+    }
+    return json({ ok: true });
+  }
+
+  if (action === "image" && req.method === "PUT") {
+    try {
+      await recevoirImage(id, Number(numero) || 0, req);
     } catch (e) {
       return json({ erreur: (e as Error).message }, 413);
     }

@@ -96,8 +96,8 @@ ol.etapes li.faite::before { background: var(--ok); content: "✓"; }
       <button type="button" id="coller" title="Coller depuis le presse-papiers">📋</button>
       <button class="principal" id="ajouter">Ajouter</button>
     </div>
-    <button type="button" class="fichier" id="choisirVideo">🎞️ Envoyer une vidéo enregistrée</button>
-    <input type="file" id="fichierVideo" accept="video/*" hidden>
+    <button type="button" class="fichier" id="choisirVideo">🎞️ Envoyer une vidéo ou des captures</button>
+    <input type="file" id="fichierVideo" accept="video/*,image/*" multiple hidden>
     <div class="message" id="message"></div>
   </form>
 
@@ -324,14 +324,14 @@ $("#grille").addEventListener("click", e => {
 $("#formAjout").addEventListener("submit", e => { e.preventDefault(); if ($("#lien").value.trim()) ajouter($("#lien").value); });
 $("#choisirVideo").addEventListener("click", () => $("#fichierVideo").click());
 $("#fichierVideo").addEventListener("change", async e => {
-  const fichier = e.target.files[0];
+  const fichiers = [...e.target.files];
   e.target.value = "";
-  if (!fichier) return;
+  if (!fichiers.length) return;
   const message = $("#message");
   message.className = "message info";
   $("#choisirVideo").disabled = true;
   try {
-    await envoyerVideo(fichier, "/api/recettes", p => { message.textContent = `Envoi de la vidéo… ${p} %`; });
+    await envoyerFichiers(fichiers, "/api/recettes", p => { message.textContent = `Envoi… ${p} %`; });
     message.textContent = "";
     await charger();
   } catch (err) {
