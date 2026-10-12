@@ -16,6 +16,11 @@ export async function analyser(id: string) {
       recette.remarque = [recette.remarque, "La vidéo n'a pas pu être regardée, seule la description a été lue."]
         .filter(Boolean).join(" ");
     }
+    if (!recette.complete && infos.lecture.startsWith("aperçu")) {
+      recette.remarque = [recette.remarque,
+        "TikTok n'a donné que l'aperçu de cette publication. Envoie des captures d'écran des images avec le bouton « 🎞️ Envoyer une vidéo ou des captures »."]
+        .filter(Boolean).join(" ");
+    }
     if (infos.miniature) {
       await magasin().set(cleImage(id), infos.miniature.donnees, { metadata: { type: infos.miniature.type } });
     }
@@ -26,6 +31,7 @@ export async function analyser(id: string) {
       erreur: null,
       url: infos.url || fiche.url,
       plateforme: infos.plateforme,
+      lecture: infos.lecture,
       titre: recette.titre,
       auteur: infos.auteur || fiche.auteur,
       source: fiche.fichier ? (video ? "vidéo envoyée" : "captures envoyées")

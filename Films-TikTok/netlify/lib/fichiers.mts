@@ -52,13 +52,14 @@ export async function effacerFichier(id: string) {
  * Rassemble de quoi analyser : la vidéo envoyée en fichier, ou les infos du lien
  * et la vidéo téléchargée quand c'est possible (YouTube est regardé directement par Gemini).
  */
-export async function preparerVideo(element: { id: string; url: string; fichier?: boolean }) {
+export async function preparerVideo(element: { id: string; url: string; lien?: string; fichier?: boolean }) {
   if (element.fichier) {
     const infos = infosFichier();
     infos.images = await lireImages(element.id);
     return { infos, video: await assemblerFichier(element.id) };
   }
-  const infos = await infosVideo(element.url);
+  // Le lien d'origine d'abord : l'adresse reconstruite après une analyse ratée peut être fausse.
+  const infos = await infosVideo(element.lien || element.url);
   let video: Buffer | null = null;
   if (!infos.youtube) {
     try {

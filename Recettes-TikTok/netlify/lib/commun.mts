@@ -18,6 +18,7 @@ export interface Fiche {
   etape?: "televersement" | "attente" | "analyse"; // « analyse » dès qu'une fonction a commencé le travail
   fichier?: boolean; // vidéo envoyée en fichier plutôt qu'un lien
   plateforme?: string;
+  lecture?: string; // comment la publication a pu être lue
   texte?: string; // recette collée à la main, le cas échéant
 }
 

@@ -34,11 +34,12 @@ export interface InfosVideo {
   videoUrl: string | null; // fichier vidéo à télécharger
   youtube: string | null; // lien YouTube, que Gemini sait regarder directement
   entetes: Record<string, string>; // pour télécharger la vidéo (cookies, referer)
+  lecture: string; // comment la publication a pu être lue (affiché dans la fiche, utile en cas de souci)
 }
 
 const infosVides = (url: string, plateforme: string): InfosVideo => ({
   url, plateforme, auteur: "", description: "", sousTitres: "", textePage: "", duree: 0,
-  miniature: null, images: [], videoUrl: null, youtube: null, entetes: {},
+  miniature: null, images: [], videoUrl: null, youtube: null, entetes: {}, lecture: "",
 });
 
 /** Infos d'une vidéo envoyée en fichier : rien d'autre que la vidéo elle-même. */
@@ -74,48 +75,101 @@ export async function infosVideo(lien: string): Promise<InfosVideo> {
 // ---------- TikTok ----------
 
 async function lireTiktok(lien: string): Promise<InfosVideo> {
-  let item: any = null;
-  let url = lien;
-  let cookies = "";
-  try {
-    const page = await fetch(lien, { headers: NAVIGATEUR, redirect: "follow" });
-    url = page.url || lien;
-    cookies = page.headers.getSetCookie().map((c) => c.split(";")[0]).join("; ");
-    const html = await page.text();
-    const m = html.match(/<script id="__UNIVERSAL_DATA_FOR_REHYDRATION__"[^>]*>([\s\S]*?)<\/script>/);
-    if (m) item = trouverItem(JSON.parse(m[1])?.__DEFAULT_SCOPE__);
-  } catch {
-    item = null;
+  // 1) La page TikTok elle-même (description, sous-titres, vidéo ou images du carrousel)
+  let { item, url, cookies } = await pageTiktok(lien);
+  // Une publication « photos » ouverte avec une adresse « /video/ » (ou l'inverse) ne donne rien : on essaie l'autre.
+  if (!item && /\/(video|photo)\/\d+/.test(url)) {
+    const autre = url.includes("/video/") ? url.replace("/video/", "/photo/") : url.replace("/photo/", "/video/");
+    ({ item, url, cookies } = await pageTiktok(autre).then((r) => (r.item ? r : { item, url, cookies })));
+  }
+  const entetes = { Referer: "https://www.tiktok.com/", Cookie: cookies };
+  if (item) {
+    const infos = await depuisItem(item, url, entetes);
+    // Carrousel dont les images n'ont pas pu être téléchargées : on retente par tikwm.com.
+    const attendues = item.imagePost?.images?.length ?? 0;
+    if (!attendues || infos.images.length) return infos;
+    const tikwm = await lireJson(`https://www.tikwm.com/api/?hd=1&url=${encodeURIComponent(lien)}`);
+    if (tikwm?.code === 0 && tikwm.data?.images?.length) {
+      const secours = await depuisTikwm(tikwm.data, infos.url);
+      if (secours.images.length) return { ...secours, description: infos.description || secours.description, sousTitres: infos.sousTitres };
+    }
+    return infos;
   }
 
-  // Plan B : l'API publique oEmbed de TikTok (description + miniature, pas de vidéo).
-  let oembed: any = null;
-  if (!item) oembed = await lireJson(`https://www.tiktok.com/oembed?url=${encodeURIComponent(url)}`);
-  if (!item && !oembed) throw new ErreurExtraction("TikTok n'a pas voulu donner les informations de cette vidéo.");
+  // 2) Page bloquée (TikTok filtre parfois les serveurs) : le service public tikwm.com donne vidéo et images.
+  const tikwm = await lireJson(`https://www.tikwm.com/api/?hd=1&url=${encodeURIComponent(lien)}`);
+  if (tikwm?.code === 0 && tikwm.data) return depuisTikwm(tikwm.data, url);
 
-  const video = item?.video ?? {};
-  const auteur = item?.author?.uniqueId ?? oembed?.author_unique_id ?? oembed?.author_name ?? "";
-  const entetes = { Referer: "https://www.tiktok.com/", Cookie: cookies };
+  // 3) Dernier recours : l'API oEmbed de TikTok (description + miniature seulement).
+  const oembed = await lireJson(`https://www.tiktok.com/oembed?url=${encodeURIComponent(url)}`);
+  if (!oembed) throw new ErreurExtraction("TikTok n'a pas voulu donner les informations de cette publication.");
+  return {
+    ...infosVides(url, "TikTok"),
+    auteur: oembed.author_unique_id ?? oembed.author_name ?? "",
+    description: oembed.title ?? "",
+    miniature: await telechargerImage(oembed.thumbnail_url, entetes),
+    lecture: "aperçu TikTok seulement (page bloquée)",
+  };
+}
+
+async function pageTiktok(lien: string): Promise<{ item: any; url: string; cookies: string }> {
+  try {
+    const page = await fetch(lien, { headers: NAVIGATEUR, redirect: "follow" });
+    const cookies = page.headers.getSetCookie().map((c) => c.split(";")[0]).join("; ");
+    const html = await page.text();
+    const m = html.match(/<script id="__UNIVERSAL_DATA_FOR_REHYDRATION__"[^>]*>([\s\S]*?)<\/script>/);
+    return { item: m ? trouverItem(JSON.parse(m[1])?.__DEFAULT_SCOPE__) : null, url: page.url || lien, cookies };
+  } catch {
+    return { item: null, url: lien, cookies: "" };
+  }
+}
+
+async function depuisItem(item: any, url: string, entetes: Record<string, string>): Promise<InfosVideo> {
+  const video = item.video ?? {};
+  const auteur = item.author?.uniqueId ?? "";
   // Publication « photos » : un carrousel d'images (souvent la recette écrite dessus), sans vraie vidéo.
-  const photos: string[] = (item?.imagePost?.images ?? [])
+  const photos: string[] = (item.imagePost?.images ?? [])
     .map((i: any) => meilleureUrl(i?.imageURL?.urlList ?? i?.displayImage?.urlList))
     .filter(Boolean)
     .slice(0, MAX_IMAGES);
-  const images = (await Promise.all(photos.map((u) => telechargerImage(u, entetes)))).filter(Boolean) as Image[];
+  const images = await telechargerImages(photos, entetes);
   const genre = photos.length ? "photo" : "video";
   return {
-    ...infosVides(item?.id && auteur ? `https://www.tiktok.com/@${auteur}/${genre}/${item.id}` : url, "TikTok"),
+    ...infosVides(item.id && auteur ? `https://www.tiktok.com/@${auteur}/${genre}/${item.id}` : url, "TikTok"),
     auteur,
-    description: [item?.imagePost?.title, item?.desc ?? oembed?.title].filter(Boolean).join("\n"),
+    description: [item.imagePost?.title, item.desc].filter(Boolean).join("\n"),
     sousTitres: await sousTitresTiktok(video.subtitleInfos ?? [], entetes),
     duree: Number(video.duration) || 0,
     miniature: images[0]
-      ?? await telechargerImage(video.cover || video.originCover || meilleureUrl(item?.imagePost?.cover?.imageURL?.urlList) || oembed?.thumbnail_url, entetes),
+      ?? await telechargerImage(video.cover || video.originCover || meilleureUrl(item.imagePost?.cover?.imageURL?.urlList), entetes),
     images,
     // Pour un carrousel, la « vidéo » n'est que le diaporama en musique : les images suffisent.
     videoUrl: photos.length ? null : video.playAddr || video.downloadAddr || null,
     entetes,
+    lecture: photos.length ? `page TikTok, ${images.length}/${photos.length} images` : "page TikTok",
   };
+}
+
+async function depuisTikwm(d: any, url: string): Promise<InfosVideo> {
+  const absolue = (u: string) => (u && u.startsWith("/") ? `https://www.tikwm.com${u}` : u);
+  const photos: string[] = (Array.isArray(d.images) ? d.images : []).map(absolue).filter(Boolean).slice(0, MAX_IMAGES);
+  const images = await telechargerImages(photos, {});
+  const auteur = d.author?.unique_id ?? "";
+  const genre = photos.length ? "photo" : "video";
+  return {
+    ...infosVides(d.id && auteur ? `https://www.tiktok.com/@${auteur}/${genre}/${d.id}` : url, "TikTok"),
+    auteur,
+    description: d.title ?? "",
+    duree: Number(d.duration) || 0,
+    miniature: images[0] ?? await telechargerImage(absolue(d.origin_cover || d.cover), {}),
+    images,
+    videoUrl: photos.length ? null : absolue(d.hdplay || d.play) || null,
+    lecture: photos.length ? `tikwm.com, ${images.length}/${photos.length} images` : "tikwm.com",
+  };
+}
+
+async function telechargerImages(urls: string[], entetes: Record<string, string>): Promise<Image[]> {
+  return (await Promise.all(urls.map((u) => telechargerImage(u, entetes)))).filter(Boolean) as Image[];
 }
 
 /** L'élément publié, où qu'il soit rangé dans les données de la page (vidéo ou photos). */
