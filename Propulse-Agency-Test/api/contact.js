@@ -65,7 +65,7 @@ export default async function handler(req, res) {
       method: 'POST',
       headers: { Authorization: `Bearer ${apiKey}`, 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        from: process.env.CONTACT_FROM || 'Site Propulse <onboarding@resend.dev>',
+        from: process.env.CONTACT_FROM || 'ProPulse Agency <onboarding@resend.dev>',
         to: to.split(',').map((s) => s.trim()),
         reply_to: data.email,
         subject: `Nouvelle demande de projet — ${data.name}`,

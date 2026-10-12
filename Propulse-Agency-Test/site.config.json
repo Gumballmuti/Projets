@@ -10,14 +10,15 @@
     "zone": "Partout en Belgique"
   },
   "legal": {
-    "company": "[Dénomination sociale ou nom et prénom de l'exploitant]",
-    "form": "[Forme juridique : personne physique, SRL, …]",
-    "address": "[Adresse complète du siège / de l'établissement]",
-    "bce": "[Numéro d'entreprise BCE : 0XXX.XXX.XXX]",
-    "vat": "[Numéro de TVA : BE0XXX.XXX.XXX]",
-    "publisher": "[Nom du responsable de la publication]",
+    "company": "Emmanuelle Frerot",
+    "form": "Personne physique (entreprise individuelle)",
+    "address": "Amay, Belgique — adresse complète communiquée sur simple demande",
+    "bce": "En cours d'attribution",
+    "vat": "Non applicable",
+    "publisher": "Emmanuelle Frerot, fondatrice",
     "dpoEmail": "mail.propulse.agency@gmail.com",
-    "updated": "12 octobre 2026"
+    "updated": "12 octobre 2026",
+    "city": "Amay, Belgique"
   },
   "hosting": {
     "name": "Vercel Inc.",
