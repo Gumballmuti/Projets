@@ -17,7 +17,8 @@
   <meta property="og:url" content="{{page.canonical}}">
   <meta property="og:image" content="{{site.url}}/assets/img/og.png">
   <meta name="twitter:card" content="summary_large_image">
-  <link rel="icon" href="/assets/img/favicon.svg" type="image/svg+xml">
+  <link rel="icon" href="/favicon.ico" sizes="16x16 32x32 48x48">
+  <link rel="icon" href="/assets/img/icon-192.png" type="image/png" sizes="192x192">
   <link rel="apple-touch-icon" href="/assets/img/apple-touch-icon.png">
   <link rel="manifest" href="/site.webmanifest">
   <link rel="preload" href="/assets/fonts/syne-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
@@ -30,7 +31,7 @@
 
   <div class="preloader" aria-hidden="true">
     <div class="preloader__inner">
-      <span class="preloader__word">ProPulse</span>
+      <span class="preloader__word">Pro<span class="preloader__gold">Pulse</span></span>
       <span class="preloader__count mono"><span data-count>0</span>%</span>
     </div>
     <div class="preloader__bar"><span></span></div>
@@ -50,8 +51,7 @@
 
   <header class="header">
     <a class="logo" href="/#top" aria-label="{{site.name}} — accueil" data-magnetic>
-      {{> logo}}
-      <span class="logo__word">propulse<span class="logo__dot">.</span></span>
+      <img class="logo__img" src="/assets/img/logo-header.png" alt="ProPulse Agency" width="200" height="48">
     </a>
     <nav class="header__nav" aria-label="Navigation principale">
       <a href="/#services" class="link-roll"><span data-text="Services">Services</span></a>

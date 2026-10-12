@@ -250,10 +250,6 @@ em { font-style: normal; }
 .menu-open .header { background: transparent; border-color: transparent; backdrop-filter: none; -webkit-backdrop-filter: none; transform: none; }
 
 .logo { display: inline-flex; align-items: center; gap: 10px; font-family: var(--f-display); font-weight: 700; font-size: 1.35rem; letter-spacing: -0.04em; }
-.logo__mark { color: var(--fg); }
-.logo__arrow { transition: transform .6s var(--ease); transform-origin: 26px 24px; }
-.logo:hover .logo__arrow { transform: translate(2px, -2px); }
-.logo__dot { color: var(--accent); }
 
 .header__nav { display: flex; gap: clamp(20px, 2.6vw, 40px); font-weight: 600; font-size: 0.95rem; }
 .header__actions { display: flex; align-items: center; gap: 14px; }
@@ -776,3 +772,9 @@ section[id] { scroll-margin-top: var(--header-h); }
   .agency__visual { order: -1; }
   .contact-block .footer__title { font-size: clamp(2.2rem, 11vw, 4rem); }
 }
+
+/* ---------- Logo ProPulse ---------- */
+.logo__img { display: block; height: 46px; width: auto; }
+.logo--footer img { display: block; width: clamp(180px, 18vw, 240px); height: auto; }
+.preloader__gold { color: #DFA414; }
+@media (max-width: 860px) { .logo__img { height: 38px; } }

@@ -60,7 +60,13 @@ for (const f of readdirSync(join(src, 'static'))) cpSync(join(src, 'static', f),
 const urls = [];
 for (const f of readdirSync(join(src, 'pages'))) {
   const { meta, body } = readPage(join(src, 'pages', f));
-  writeFileSync(join(out, f), render(`{{> layout-top}}${body}{{> layout-bottom}}`, pageCtx(meta)));
+  const html = render(`{{> layout-top}}${body}{{> layout-bottom}}`, pageCtx(meta));
+  writeFileSync(join(out, f), html);
+  // Copie en dossier (/page/index.html) : la page répond aussi à « /page/ », quel que soit l'hébergeur
+  if (meta.path !== '/' && f !== '404.html') {
+    mkdirSync(join(out, meta.path), { recursive: true });
+    writeFileSync(join(out, meta.path, 'index.html'), html);
+  }
   if (!meta.noindex) urls.push(meta.path);
 }
 
