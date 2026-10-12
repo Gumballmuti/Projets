@@ -196,6 +196,9 @@ em { font-style: normal; }
 .preloader__bar { position: absolute; left: var(--gutter); right: var(--gutter); bottom: 40px; height: 1px; background: var(--line); }
 .preloader__bar span { display: block; height: 100%; width: 100%; background: var(--accent); transform: scaleX(0); transform-origin: left; }
 .no-js .preloader, .preloader.is-done { display: none; }
+/* Filet de sécurité sans JavaScript fonctionnel : l'écran de chargement s'efface seul */
+.js .preloader { animation: preloader-failsafe .5s 7s forwards; }
+@keyframes preloader-failsafe { to { opacity: 0; visibility: hidden; } }
 
 /* ---------- Transition de page ---------- */
 .transition { position: fixed; inset: 0; z-index: 110; display: flex; pointer-events: none; }

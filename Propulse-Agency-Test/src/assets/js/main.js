@@ -6,6 +6,16 @@
   root.classList.remove('no-js');
   root.classList.add('js');
 
+  // Filet de sécurité : si une animation échoue, le contenu s'affiche quand même
+  window.setTimeout(function () {
+    var pre = document.querySelector('.preloader');
+    if (pre && !pre.classList.contains('is-done')) {
+      pre.classList.add('is-done');
+      document.body.classList.remove('is-loading');
+      root.classList.add('no-anim');
+    }
+  }, 6000);
+
   var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   var finePointer = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
   var hasGsap = typeof window.gsap !== 'undefined' && typeof window.ScrollTrigger !== 'undefined';
