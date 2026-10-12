@@ -134,8 +134,8 @@ em { font-style: normal; }
 .section-head { display: grid; gap: 22px; margin-bottom: clamp(40px, 6vw, 90px); max-width: 1100px; }
 .section-head--center { text-align: center; margin-inline: auto; justify-items: center; }
 
-/* Découpe de texte (SplitText) */
-.split-line { overflow: hidden; padding-bottom: 0.08em; margin-bottom: -0.08em; }
+/* Découpe de texte (SplitText) : marge autour de chaque ligne pour ne pas rogner cédilles, jambages et accents */
+.split-line-inner-mask { padding: 0.12em 0 0.2em; margin: -0.12em 0 -0.2em; }
 
 /* ---------- Boutons ---------- */
 .btn {

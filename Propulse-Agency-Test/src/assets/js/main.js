@@ -314,7 +314,7 @@
   if (animate && window.SplitText) {
     $$('[data-split]').forEach(function (el) {
       var split = new window.SplitText(el, { type: 'lines', linesClass: 'split-line-inner', mask: 'lines' });
-      gsap.set(split.lines, { yPercent: 105 });
+      gsap.set(split.lines, { yPercent: 135 });
       splitTitles.push({ el: el, inner: split.lines });
     });
   }
