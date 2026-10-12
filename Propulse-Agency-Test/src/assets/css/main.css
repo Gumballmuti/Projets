@@ -310,12 +310,13 @@ em { font-style: normal; }
 }
 .hero__pill-inner { position: absolute; inset: 12%; left: 8%; width: .56em; height: auto; aspect-ratio: 1; border-radius: 50%; background: var(--fg); animation: pill 3.6s var(--ease-in-out) infinite; }
 @keyframes pill { 0%, 100% { left: 8%; } 50% { left: calc(92% - .56em); } }
-.rotator { display: inline-block; height: 1em; overflow: hidden; vertical-align: bottom; color: var(--yellow); }
+.rotator { display: inline-block; height: 1.25em; margin-bottom: -0.25em; overflow: hidden; vertical-align: bottom; color: var(--yellow); }
 .rotator__track { display: flex; flex-direction: column; animation: rotate-words 10s var(--ease-in-out) infinite; }
-.rotator__track span { display: block; height: 1em; line-height: 1; }
+/* Chaque mot dispose d'un espace sous la ligne : les jambages (g, p, q) ne sont plus rognés */
+.rotator__track span { display: block; height: 1.25em; line-height: 1; padding-top: 0; }
 @keyframes rotate-words {
-  0%, 18% { transform: translateY(0); } 25%, 43% { transform: translateY(-1em); } 50%, 68% { transform: translateY(-2em); }
-  75%, 93% { transform: translateY(-3em); } 100% { transform: translateY(-4em); }
+  0%, 18% { transform: translateY(0); } 25%, 43% { transform: translateY(-1.25em); } 50%, 68% { transform: translateY(-2.5em); }
+  75%, 93% { transform: translateY(-3.75em); } 100% { transform: translateY(-5em); }
 }
 .hero__bottom { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-end; gap: 28px; margin-top: clamp(28px, 5vh, 56px); }
 .hero__lead { max-width: 460px; color: var(--fg-2); font-size: clamp(1rem, 1.2vw, 1.15rem); }
