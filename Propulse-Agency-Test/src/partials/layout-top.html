@@ -23,14 +23,14 @@
   <link rel="preload" href="/assets/fonts/syne-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="/assets/fonts/manrope-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="/assets/css/main.css">
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"ProfessionalService","name":"{{site.name}}","description":"{{site.tagline}}","url":"{{site.url}}","email":"{{site.contact.email}}","areaServed":"BE","knowsLanguage":"fr"}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"ProfessionalService","name":"{{site.name}}","description":"{{site.tagline}}","slogan":"{{site.slogan}}","url":"{{site.url}}","email":"{{site.contact.email}}","areaServed":"BE","knowsLanguage":"fr"}</script>
 </head>
 <body class="{{page.bodyClass}}" data-page="{{page.id}}">
   <a class="skip-link" href="#contenu">Aller au contenu</a>
 
   <div class="preloader" aria-hidden="true">
     <div class="preloader__inner">
-      <span class="preloader__word">Propulse</span>
+      <span class="preloader__word">ProPulse</span>
       <span class="preloader__count mono"><span data-count>0</span>%</span>
     </div>
     <div class="preloader__bar"><span></span></div>
@@ -49,18 +49,18 @@
   <div class="scroll-progress" aria-hidden="true"><span></span></div>
 
   <header class="header">
-    <a class="logo" href="/" aria-label="{{site.name}} — accueil" data-magnetic>
+    <a class="logo" href="/#top" aria-label="{{site.name}} — accueil" data-magnetic>
       {{> logo}}
       <span class="logo__word">propulse<span class="logo__dot">.</span></span>
     </a>
     <nav class="header__nav" aria-label="Navigation principale">
-      <a href="/services" class="link-roll"{{nav.services}}><span data-text="Services">Services</span></a>
-      <a href="/realisations" class="link-roll"{{nav.work}}><span data-text="Réalisations">Réalisations</span></a>
-      <a href="/agence" class="link-roll"{{nav.agency}}><span data-text="Agence">Agence</span></a>
-      <a href="/contact" class="link-roll"{{nav.contact}}><span data-text="Contact">Contact</span></a>
+      <a href="/#services" class="link-roll"><span data-text="Services">Services</span></a>
+      <a href="/#agence" class="link-roll"><span data-text="L'agence">L'agence</span></a>
+      <a href="/#methode" class="link-roll"><span data-text="Méthode">Méthode</span></a>
+      <a href="/#contact" class="link-roll"><span data-text="Contact">Contact</span></a>
     </nav>
     <div class="header__actions">
-      <a href="/contact" class="btn btn--small btn--accent header__cta" data-magnetic><span>Démarrer un projet</span></a>
+      <a href="/#contact" class="btn btn--small btn--accent header__cta" data-magnetic><span>Discutons de votre projet</span></a>
       <button class="burger" type="button" aria-expanded="false" aria-controls="menu" aria-label="Ouvrir le menu" data-magnetic>
         <span></span><span></span>
       </button>
@@ -71,21 +71,17 @@
     <div class="menu__bg"></div>
     <div class="menu__inner">
       <nav class="menu__nav" aria-label="Menu">
-        <a href="/"{{nav.home}}><span class="mono">01</span><span class="menu__label">Accueil</span></a>
-        <a href="/services"{{nav.services}}><span class="mono">02</span><span class="menu__label">Services</span></a>
-        <a href="/realisations"{{nav.work}}><span class="mono">03</span><span class="menu__label">Réalisations</span></a>
-        <a href="/agence"{{nav.agency}}><span class="mono">04</span><span class="menu__label">Agence</span></a>
-        <a href="/contact"{{nav.contact}}><span class="mono">05</span><span class="menu__label">Contact</span></a>
+        <a href="/#top"><span class="mono">01</span><span class="menu__label">Accueil</span></a>
+        <a href="/#services"><span class="mono">02</span><span class="menu__label">Services</span></a>
+        <a href="/#agence"><span class="mono">03</span><span class="menu__label">L'agence</span></a>
+        <a href="/#methode"><span class="mono">04</span><span class="menu__label">Méthode</span></a>
+        <a href="/#contact"><span class="mono">05</span><span class="menu__label">Contact</span></a>
       </nav>
       <div class="menu__aside">
         <p class="mono">Écrivez-nous</p>
         <a href="mailto:{{site.contact.email}}" class="menu__mail">{{site.contact.email}}</a>
-        <p class="mono">Suivez-nous</p>
-        <div class="menu__social">
-          <a href="{{site.social.instagram}}" target="_blank" rel="noopener noreferrer">Instagram</a>
-          <a href="{{site.social.linkedin}}" target="_blank" rel="noopener noreferrer">LinkedIn</a>
-          <a href="{{site.social.behance}}" target="_blank" rel="noopener noreferrer">Behance</a>
-        </div>
+        <p class="mono">Zone d'intervention</p>
+        <p class="menu__zone">{{site.contact.zone}}, à distance ou sur place</p>
       </div>
     </div>
   </div>

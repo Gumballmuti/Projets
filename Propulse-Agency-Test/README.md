@@ -1,19 +1,18 @@
-# Propulse Agency — site vitrine & portfolio
+# ProPulse Agency — site vitrine
 
-Site multipage de Propulse Agency : accueil, services, réalisations (avec études de cas), agence, contact et pages légales (mentions légales, confidentialité, cookies).
+Site une page de ProPulse Agency (web design, consultance & coaching digital) : accueil, services, l'agence, méthode, FAQ et contact, plus les pages légales obligatoires (mentions légales, confidentialité, cookies).
 
 Site statique généré par un petit script Node (aucune dépendance), avec une fonction serveur pour le formulaire de contact.
 
 ## Structure
 
 ```
-site.config.json      Coordonnées, informations légales, réseaux sociaux
+site.config.json      Coordonnées, slogan et informations légales
 build.mjs             Génère le site final dans dist/
 serve.mjs             Aperçu local
 api/contact.js        Réception du formulaire (envoi par e-mail)
-src/pages/            Pages du site
+src/pages/            Page d'accueil (page unique) et pages légales
 src/partials/         En-tête, pied de page, bandeau cookies, logo
-src/projects/         Données des projets, modèle d'étude de cas, illustrations
 src/assets/           CSS, JS, polices et librairies (hébergées localement)
 ```
 
@@ -31,8 +30,6 @@ Dans `site.config.json`, remplacer les valeurs entre crochets (obligatoires en B
 - `legal.company`, `legal.form`, `legal.address` : dénomination, forme juridique, adresse ;
 - `legal.bce`, `legal.vat` : numéro d'entreprise BCE et numéro de TVA ;
 - `legal.publisher` : responsable de la publication ;
-- `contact.phone` / `contact.phoneHref` : numéro de téléphone ;
-- `social.*` : liens vers les profils Instagram, LinkedIn et Behance ;
 - `url` : adresse définitive du site (balises canoniques et sitemap).
 
 Puis relancer `npm run build` (Vercel le fait automatiquement à chaque déploiement).
@@ -44,7 +41,7 @@ Le formulaire envoie les demandes par e-mail via [Resend](https://resend.com). V
 | Variable | Exemple |
 | --- | --- |
 | `RESEND_API_KEY` | clé API Resend |
-| `CONTACT_TO` | `contact@propulse-agency.be` |
+| `CONTACT_TO` | `mail.propulse.agency@gmail.com` |
 | `CONTACT_FROM` | `Site Propulse <site@propulse-agency.be>` (domaine vérifié chez Resend) |
 
 Tant que ces variables ne sont pas définies, le formulaire ouvre automatiquement la messagerie du visiteur avec le message pré-rempli : aucune demande n'est perdue.

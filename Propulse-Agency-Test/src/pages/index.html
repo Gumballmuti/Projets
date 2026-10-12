@@ -1,24 +1,27 @@
-<!--meta {"id":"home","path":"/","title":"Propulse Agency — Agence de design & développement web en Belgique","description":"Propulse Agency conçoit des sites web sur mesure, des identités visuelles et des expériences digitales qui marquent les esprits et font grandir votre activité.","bodyClass":"is-home"}-->
-    <section class="hero" aria-labelledby="hero-title">
+<!--meta {"id":"home","path":"/","title":"ProPulse Agency — Web Design, Consultance & Coaching Digital","description":"ProPulse Agency accompagne les entreprises partout en Belgique avec des solutions digitales sur mesure : création de sites web, consultance digitale et coaching.","bodyClass":"is-home"}-->
+    <section class="hero" id="top" aria-labelledby="hero-title">
       <canvas class="hero__gl" aria-hidden="true"></canvas>
       <div class="hero__fallback" aria-hidden="true"></div>
       <div class="hero__content container">
-        <p class="eyebrow mono hero__eyebrow"><span class="dot"></span> Agence web — Belgique</p>
+        <p class="eyebrow mono hero__eyebrow"><span class="dot"></span> Solutions digitales · Partout en Belgique</p>
         <h1 id="hero-title" class="hero__title">
-          <span class="line"><span>Nous</span> <span class="hero__outline">propulsons</span></span>
-          <span class="line"><span>votre marque</span> <span class="hero__pill" aria-hidden="true"><span class="hero__pill-inner"></span></span></span>
-          <span class="line"><span>au-delà du</span> <span class="sr-only">web.</span><span class="rotator" aria-hidden="true"><span class="rotator__track"><span>web.</span><span>bruit.</span><span>banal.</span><span>attendu.</span><span>web.</span></span></span></span>
+          <span class="line"><span>L'agence qui</span> <span class="hero__pill" aria-hidden="true"><span class="hero__pill-inner"></span></span></span>
+          <span class="line"><span class="hero__outline">propulse</span> <span>votre</span></span>
+          <span class="line"><span>présence</span> <span class="sr-only">digitale.</span><span class="rotator" aria-hidden="true"><span class="rotator__track"><span>digitale.</span><span>en ligne.</span><span>sur le web.</span><span>locale.</span><span>digitale.</span></span></span></span>
         </h1>
         <div class="hero__bottom">
-          <p class="hero__lead">Design, développement et stratégie digitale. Nous créons des sites sur mesure qui captivent vos visiteurs et les transforment en clients.</p>
+          <div>
+            <p class="hero__slogan">{{site.slogan}}</p>
+            <p class="hero__lead">ProPulse Agency conçoit des sites web sur mesure, accompagne votre stratégie digitale et coache vos équipes pour qu'elles montent en compétence — le tout avec une approche claire, humaine et efficace.</p>
+          </div>
           <div class="hero__ctas">
-            <a href="/contact" class="btn btn--accent" data-magnetic><span>Démarrer un projet</span><i aria-hidden="true">→</i></a>
-            <a href="/realisations" class="btn btn--ghost" data-magnetic><span>Voir nos réalisations</span></a>
+            <a href="#services" class="btn btn--accent" data-magnetic><span>Je découvre les services</span><i aria-hidden="true">→</i></a>
+            <a href="#contact" class="btn btn--ghost" data-magnetic><span>Parlons de votre projet</span></a>
           </div>
         </div>
       </div>
       <div class="hero__meta container mono">
-        <span>Design · Développement · Stratégie</span>
+        <span>Web design · Consultance · Coaching</span>
         <span class="hero__scroll"><span class="hero__scroll-line"></span>Défiler</span>
         <span>Belgique — <time data-clock>--:--</time></span>
       </div>
@@ -26,146 +29,116 @@
 
     <div class="marquee" data-marquee aria-hidden="true">
       <div class="marquee__track">
-        <span>Sites vitrines</span><b>✦</b><span>E-commerce</span><b>✦</b><span>Identité visuelle</span><b>✦</b><span>UI / UX design</span><b>✦</b><span>Référencement</span><b>✦</b><span>Motion design</span><b>✦</b>
+        <span>Web design</span><b>✦</b><span>Consultance digitale</span><b>✦</b><span>Coaching</span><b>✦</b><span>Stratégie</span><b>✦</b><span>Sur mesure</span><b>✦</b><span>Partout en Belgique</span><b>✦</b>
       </div>
     </div>
 
     <section class="manifesto container" aria-labelledby="manifesto-title">
-      <p class="eyebrow mono" id="manifesto-title">(Manifeste)</p>
+      <p class="eyebrow mono" id="manifesto-title">({{site.slogan}})</p>
       <p class="manifesto__text" data-words>
-        Un site web n'est pas une brochure. C'est votre meilleur commercial, ouvert jour et nuit. Nous le concevons comme une expérience&nbsp;: claire, rapide, mémorable — et pensée pour faire grandir votre activité.
+        Beaucoup d'entreprises belges ont besoin d'un vrai partenaire digital — pas juste d'un prestataire qui livre un site et disparaît. On combine création web, stratégie et transmission de compétences pour que vos outils continuent de vous servir bien après la mise en ligne.
       </p>
-      <div class="manifesto__foot">
-        <a href="/agence" class="link-arrow" data-magnetic>Découvrir l'agence <span aria-hidden="true">→</span></a>
-      </div>
     </section>
 
-    <section class="services-teaser container" aria-labelledby="services-title">
+    <section class="services-teaser container" id="services" aria-labelledby="services-title">
       <header class="section-head">
-        <p class="eyebrow mono">(01) — Expertises</p>
-        <h2 id="services-title" class="h2" data-split>Tout ce qu'il faut pour <em>briller</em> en ligne.</h2>
+        <p class="eyebrow mono">(01) — Ce qu'on fait</p>
+        <h2 id="services-title" class="h2" data-split>Trois façons de <em>propulser</em> votre activité.</h2>
       </header>
       <ul class="srv-list">
-        <li class="srv" data-cursor="Découvrir">
-          <a href="/services#web-design">
+        <li class="srv" data-cursor="Contact">
+          <a href="#contact">
             <span class="srv__num mono">01</span>
-            <span class="srv__title">Web design &amp; UI/UX</span>
-            <span class="srv__desc">Des interfaces uniques, pensées pour vos utilisateurs et fidèles à votre marque.</span>
+            <span class="srv__title">Web Design</span>
+            <span class="srv__desc">Sites vitrines, e-commerce et plateformes sur mesure, pensés pour convertir vos visiteurs en clients. Design soigné, rapide et responsive du premier au dernier pixel.<strong class="srv__cta">Enfin, un site à votre image →</strong></span>
             <span class="srv__icon" aria-hidden="true">↗</span>
           </a>
         </li>
-        <li class="srv" data-cursor="Découvrir">
-          <a href="/services#developpement">
+        <li class="srv" data-cursor="Contact">
+          <a href="#contact">
             <span class="srv__num mono">02</span>
-            <span class="srv__title">Développement web</span>
-            <span class="srv__desc">Sites vitrines et applications rapides, accessibles et optimisés pour Google.</span>
+            <span class="srv__title">Consultance digitale</span>
+            <span class="srv__desc">Audit de votre présence en ligne, stratégie digitale et accompagnement dans votre transformation numérique. On pose un diagnostic clair et un plan d'action concret.<strong class="srv__cta">On clarifie votre stratégie →</strong></span>
             <span class="srv__icon" aria-hidden="true">↗</span>
           </a>
         </li>
-        <li class="srv" data-cursor="Découvrir">
-          <a href="/services#e-commerce">
+        <li class="srv" data-cursor="Contact">
+          <a href="#contact">
             <span class="srv__num mono">03</span>
-            <span class="srv__title">E-commerce</span>
-            <span class="srv__desc">Des boutiques en ligne qui donnent envie d'acheter et simplifient votre gestion.</span>
-            <span class="srv__icon" aria-hidden="true">↗</span>
-          </a>
-        </li>
-        <li class="srv" data-cursor="Découvrir">
-          <a href="/services#branding">
-            <span class="srv__num mono">04</span>
-            <span class="srv__title">Identité visuelle</span>
-            <span class="srv__desc">Logo, couleurs, typographies : une image forte et cohérente sur tous vos supports.</span>
-            <span class="srv__icon" aria-hidden="true">↗</span>
-          </a>
-        </li>
-        <li class="srv" data-cursor="Découvrir">
-          <a href="/services#seo">
-            <span class="srv__num mono">05</span>
-            <span class="srv__title">SEO &amp; performance</span>
-            <span class="srv__desc">Être trouvé, charger en un éclair et grimper dans les résultats de recherche.</span>
-            <span class="srv__icon" aria-hidden="true">↗</span>
-          </a>
-        </li>
-        <li class="srv" data-cursor="Découvrir">
-          <a href="/services#maintenance">
-            <span class="srv__num mono">06</span>
-            <span class="srv__title">Maintenance &amp; suivi</span>
-            <span class="srv__desc">Mises à jour, sécurité, évolutions : on reste à vos côtés après la mise en ligne.</span>
+            <span class="srv__title">Coaching</span>
+            <span class="srv__desc">Un accompagnement personnalisé pour vous et vos équipes : outils digitaux, montée en compétence et autonomie sur le long terme. On vous transmet le savoir-faire, pas juste un livrable.<strong class="srv__cta">Je monte en compétence →</strong></span>
             <span class="srv__icon" aria-hidden="true">↗</span>
           </a>
         </li>
       </ul>
     </section>
 
-    <section class="hscroll" aria-labelledby="work-title">
-      <div class="hscroll__pin">
-        <div class="hscroll__head container">
-          <p class="eyebrow mono">(02) — Sélection de projets</p>
-          <h2 id="work-title" class="h2">Réalisations</h2>
+    <section class="agency container" id="agence" aria-labelledby="agency-title">
+      <div class="agency__text">
+        <p class="eyebrow mono">(02) — L'agence</p>
+        <h2 id="agency-title" class="h2 h2--md" data-split>Des solutions digitales pensées pour les <em>entreprises</em>, pas pour les portfolios de designers.</h2>
+        <p>ProPulse Agency est née d'un constat simple : beaucoup d'entreprises belges ont besoin d'un vrai partenaire digital — pas juste d'un prestataire qui livre un site et disparaît. On combine création web, stratégie et transmission de compétences pour que vos outils digitaux continuent de vous servir bien après la mise en ligne.</p>
+        <p>Basés en Belgique, on travaille avec des indépendants, PME et associations dans tout le pays — à distance ou sur place selon vos besoins.</p>
+        <ul class="agency__points">
+          <li class="reveal-up"><span class="mono">01</span>Approche sur mesure, sans template recyclé</li>
+          <li class="reveal-up"><span class="mono">02</span>Explications claires, sans jargon technique inutile</li>
+          <li class="reveal-up"><span class="mono">03</span>Un interlocuteur unique du premier échange au lancement</li>
+        </ul>
+      </div>
+      <div class="agency__visual" aria-hidden="true">
+        <div class="orbit">
+          <span class="orbit__ring orbit__ring--1"><i></i></span>
+          <span class="orbit__ring orbit__ring--2"><i></i></span>
+          <span class="orbit__ring orbit__ring--3"><i></i></span>
+          <span class="orbit__core"><span><b>100%</b>Belge &amp;<br>sur mesure</span></span>
         </div>
-        <div class="hscroll__track">
-          <div class="hslide hslide--intro">
-            <p class="hslide__intro">Chaque projet est une histoire unique. Voici quelques concepts qui illustrent notre façon de penser le web.</p>
-            <a href="/realisations" class="link-arrow" data-magnetic>Tous les projets <span aria-hidden="true">→</span></a>
-          </div>
-          {{blocks.projectSlides}}
-          <a class="hslide hslide--more" href="/realisations" data-cursor="Tout voir">
-            <span class="hslide__more-circle"><span>Voir tous<br>les projets</span></span>
-          </a>
-        </div>
-        <div class="hscroll__progress container" aria-hidden="true"><span></span></div>
       </div>
     </section>
 
-    <section class="stats container" aria-label="Notre engagement en chiffres">
+    <section class="stats container" aria-label="ProPulse en bref">
       <div class="stat-card">
-        <span class="stat-card__num"><span data-counter="100">0</span><sup>/100</sup></span>
-        <span class="stat-card__label">Score de performance visé sur chaque site livré</span>
+        <span class="stat-card__num"><span data-counter="3">0</span></span>
+        <span class="stat-card__label">Expertises complémentaires : web design, consultance et coaching</span>
       </div>
       <div class="stat-card">
         <span class="stat-card__num"><span data-counter="100">0</span><sup>%</sup></span>
-        <span class="stat-card__label">Design sur mesure, jamais de thème générique</span>
+        <span class="stat-card__label">Belge &amp; sur mesure, sans template recyclé</span>
       </div>
       <div class="stat-card">
-        <span class="stat-card__num">&lt;<span data-counter="2">0</span><sup>s</sup></span>
-        <span class="stat-card__label">Temps de chargement cible, même sur mobile</span>
+        <span class="stat-card__num"><span data-counter="1">0</span></span>
+        <span class="stat-card__label">Interlocuteur unique, du premier échange au lancement</span>
       </div>
       <div class="stat-card">
-        <span class="stat-card__num"><span data-counter="24">0</span><sup>h</sup></span>
-        <span class="stat-card__label">Délai de réponse à votre demande de devis</span>
+        <span class="stat-card__num"><span data-counter="0">0</span></span>
+        <span class="stat-card__label">Jargon technique inutile, des explications claires</span>
       </div>
     </section>
 
-    <section class="process container" aria-labelledby="process-title">
+    <section class="process container" id="methode" aria-labelledby="process-title">
       <header class="section-head section-head--center">
-        <p class="eyebrow mono">(03) — Méthode</p>
-        <h2 id="process-title" class="h2" data-split>Du premier café à la <em>mise en orbite</em>.</h2>
+        <p class="eyebrow mono">(03) — Comment ça marche</p>
+        <h2 id="process-title" class="h2" data-split>Du premier café au <em>lancement</em>.</h2>
       </header>
       <div class="stack">
         <article class="stack__card" style="--i:0">
           <span class="stack__num">01</span>
-          <div><h3>Découverte</h3><p>Nous apprenons à connaître votre activité, vos clients et vos objectifs. Un échange franc pour poser les bonnes bases.</p></div>
-          <span class="stack__tag mono">Atelier · Brief</span>
+          <div><h3>On discute</h3><p>Un échange sans engagement pour comprendre vos objectifs, votre activité et vos contraintes.</p></div>
+          <span class="stack__tag mono">Sans engagement</span>
         </article>
         <article class="stack__card" style="--i:1">
           <span class="stack__num">02</span>
-          <div><h3>Stratégie</h3><p>Arborescence, parcours utilisateurs, contenus et mots-clés : nous construisons le plan de vol de votre futur site.</p></div>
-          <span class="stack__tag mono">Arborescence · SEO</span>
+          <div><h3>On propose</h3><p>Une proposition claire : ce qu'on fait, comment, en combien de temps et pour quel budget.</p></div>
+          <span class="stack__tag mono">Clair &amp; chiffré</span>
         </article>
         <article class="stack__card" style="--i:2">
           <span class="stack__num">03</span>
-          <div><h3>Design</h3><p>Maquettes sur mesure, prototypes interactifs et animations. Vous validez chaque écran avant le moindre développement.</p></div>
-          <span class="stack__tag mono">Maquettes · Prototype</span>
+          <div><h3>On construit</h3><p>Design, développement ou coaching — avec des points d'étape réguliers, pas de surprise à la fin.</p></div>
+          <span class="stack__tag mono">Points d'étape</span>
         </article>
         <article class="stack__card" style="--i:3">
           <span class="stack__num">04</span>
-          <div><h3>Développement</h3><p>Un code propre, rapide et accessible. Votre site est testé sur tous les écrans et navigateurs.</p></div>
-          <span class="stack__tag mono">Code · Tests</span>
-        </article>
-        <article class="stack__card" style="--i:4">
-          <span class="stack__num">05</span>
-          <div><h3>Lancement &amp; suivi</h3><p>Mise en ligne, formation, puis accompagnement : nous mesurons, optimisons et faisons évoluer votre site.</p></div>
-          <span class="stack__tag mono">Mise en ligne · Suivi</span>
+          <div><h3>On propulse</h3><p>Mise en ligne, transmission des clés et suivi pour que ça continue de fonctionner sans vous.</p></div>
+          <span class="stack__tag mono">Lancement &amp; suivi</span>
         </article>
       </div>
     </section>
@@ -177,8 +150,8 @@
       </header>
       <div class="bento__grid">
         <article class="bento__cell bento__cell--spot" data-spotlight>
-          <p class="mono">Interactions</p>
-          <h3>Des micro-animations qui guident le regard</h3>
+          <p class="mono">Expérience</p>
+          <h3>Des interactions qui guident vos visiteurs</h3>
           <p>Survolez cette carte : la lumière suit votre curseur. Chaque mouvement a une intention.</p>
         </article>
         <article class="bento__cell bento__cell--perf">
@@ -190,23 +163,23 @@
           <h3>Rapide par nature</h3>
         </article>
         <article class="bento__cell bento__cell--type">
-          <p class="mono">Typographie</p>
+          <p class="mono">Identité</p>
           <p class="bento__type" data-cursor="Aa">Aa<span>Gg</span></p>
-          <h3>Une voix visuelle propre à votre marque</h3>
+          <h3>Un site à votre image, pas un template</h3>
         </article>
-        <article class="bento__cell bento__cell--theme" data-theme-demo>
-          <p class="mono">Responsive &amp; accessible</p>
+        <article class="bento__cell bento__cell--theme">
+          <p class="mono">Responsive</p>
           <div class="devices" aria-hidden="true"><span class="devices__desk"></span><span class="devices__tab"></span><span class="devices__phone"></span></div>
-          <h3>Parfait sur tous les écrans, lisible par tous</h3>
+          <h3>Parfait sur tous les écrans</h3>
         </article>
         <article class="bento__cell bento__cell--seo">
-          <p class="mono">Référencement</p>
+          <p class="mono">Visibilité</p>
           <div class="serp" aria-hidden="true">
             <span class="serp__url">votre-site.be</span>
             <span class="serp__title">Votre entreprise — en première page</span>
             <span class="serp__line"></span><span class="serp__line serp__line--short"></span>
           </div>
-          <h3>Pensé pour Google dès la première ligne</h3>
+          <h3>Pensé pour être trouvé sur Google</h3>
         </article>
       </div>
     </section>
@@ -218,24 +191,106 @@
       </header>
       <div class="faq__list">
         <details class="faq__item">
-          <summary><span>Combien coûte un site web ?</span><i aria-hidden="true"></i></summary>
-          <div class="faq__body"><p>Chaque projet est unique : le prix dépend du nombre de pages, des fonctionnalités et du niveau de personnalisation. Après un premier échange gratuit, nous vous remettons un devis détaillé et transparent, sans surprise.</p></div>
+          <summary><span>Combien coûte un projet avec ProPulse ?</span><i aria-hidden="true"></i></summary>
+          <div class="faq__body"><p>Chaque projet est différent. Après un premier échange sans engagement, on vous remet une proposition claire : ce qu'on fait, comment, en combien de temps et pour quel budget. Pas de surprise à la fin.</p></div>
         </details>
         <details class="faq__item">
-          <summary><span>Combien de temps faut-il pour créer mon site ?</span><i aria-hidden="true"></i></summary>
-          <div class="faq__body"><p>Comptez généralement de 3 à 6 semaines pour un site vitrine et de 6 à 12 semaines pour un e-commerce ou une plateforme sur mesure. Un planning précis est établi dès le lancement du projet.</p></div>
+          <summary><span>Où intervenez-vous ?</span><i aria-hidden="true"></i></summary>
+          <div class="faq__body"><p>Partout en Belgique. On travaille avec des indépendants, PME et associations dans tout le pays, à distance ou sur place selon vos besoins.</p></div>
         </details>
         <details class="faq__item">
-          <summary><span>Pourrai-je modifier mon site moi-même ?</span><i aria-hidden="true"></i></summary>
-          <div class="faq__body"><p>Oui. Selon vos besoins, nous intégrons une interface d'administration simple et nous vous formons à son utilisation. Vous restez autonome pour vos textes, images et actualités.</p></div>
+          <summary><span>Pourrai-je gérer mon site moi-même ?</span><i aria-hidden="true"></i></summary>
+          <div class="faq__body"><p>Oui, c'est tout l'esprit de ProPulse : à la mise en ligne, on vous transmet les clés et le savoir-faire. Et si vous voulez aller plus loin, le coaching vous rend autonome sur vos outils digitaux.</p></div>
+        </details>
+        <details class="faq__item">
+          <summary><span>À qui s'adresse le coaching ?</span><i aria-hidden="true"></i></summary>
+          <div class="faq__body"><p>À vous comme à vos équipes. L'accompagnement est personnalisé selon votre niveau et vos outils, avec un objectif : la montée en compétence et l'autonomie sur le long terme.</p></div>
         </details>
         <details class="faq__item">
           <summary><span>Mon site sera-t-il conforme au RGPD ?</span><i aria-hidden="true"></i></summary>
-          <div class="faq__body"><p>Absolument. Mentions légales, politique de confidentialité, gestion du consentement aux cookies et formulaires conformes : la conformité fait partie de chaque livraison.</p></div>
+          <div class="faq__body"><p>Oui. Mentions légales, politique de confidentialité, gestion du consentement aux cookies et formulaires conformes font partie de chaque projet.</p></div>
         </details>
-        <details class="faq__item">
-          <summary><span>Proposez-vous un suivi après la mise en ligne ?</span><i aria-hidden="true"></i></summary>
-          <div class="faq__body"><p>Oui, nous proposons des formules de maintenance : mises à jour, sauvegardes, surveillance de la sécurité et petites évolutions. Vous n'êtes jamais seul face à votre site.</p></div>
-        </details>
+      </div>
+    </section>
+
+    <section class="contact-block" id="contact" aria-labelledby="contact-title">
+      <div class="container">
+        <header class="contact-block__head">
+          <p class="eyebrow mono"><span class="dot"></span> (06) — Contact</p>
+          <h2 id="contact-title" class="footer__title" data-split>Un projet en tête ? <em>Parlons-en.</em></h2>
+        </header>
+        <div class="contact">
+          <aside class="contact__aside">
+            <p class="contact__intro">Que vous ayez besoin d'un site, d'un regard extérieur sur votre stratégie digitale ou d'un coaching pour votre équipe, on vous répond sous peu.</p>
+            <dl class="contact__info">
+              <div><dt class="mono">E-mail</dt><dd><a href="mailto:{{site.contact.email}}" class="link-line">{{site.contact.email}}</a></dd></div>
+              <div><dt class="mono">Zone</dt><dd>{{site.contact.zone}}, à distance ou sur place</dd></div>
+            </dl>
+          </aside>
+
+          <form class="form" action="/api/contact" method="post" novalidate data-contact-form data-mailto="{{site.contact.email}}">
+            <fieldset class="form__group">
+              <legend class="form__legend">Vous êtes intéressé·e par…</legend>
+              <div class="chips">
+                <label class="chip"><input type="checkbox" name="services" value="Web Design"><span>Web Design</span></label>
+                <label class="chip"><input type="checkbox" name="services" value="Consultance digitale"><span>Consultance digitale</span></label>
+                <label class="chip"><input type="checkbox" name="services" value="Coaching"><span>Coaching</span></label>
+              </div>
+            </fieldset>
+
+            <div class="form__row">
+              <div class="field">
+                <input id="f-name" name="name" type="text" autocomplete="name" required maxlength="100" placeholder=" ">
+                <label for="f-name">Nom <span aria-hidden="true">*</span></label>
+                <span class="field__error" id="f-name-err" role="alert"></span>
+              </div>
+              <div class="field">
+                <input id="f-email" name="email" type="email" autocomplete="email" required maxlength="160" placeholder=" ">
+                <label for="f-email">E-mail <span aria-hidden="true">*</span></label>
+                <span class="field__error" id="f-email-err" role="alert"></span>
+              </div>
+            </div>
+            <div class="form__row">
+              <div class="field">
+                <input id="f-company" name="company" type="text" autocomplete="organization" maxlength="120" placeholder=" ">
+                <label for="f-company">Entreprise <span class="form__opt">(facultatif)</span></label>
+              </div>
+              <div class="field">
+                <input id="f-phone" name="phone" type="tel" autocomplete="tel" maxlength="30" placeholder=" ">
+                <label for="f-phone">Téléphone <span class="form__opt">(facultatif)</span></label>
+              </div>
+            </div>
+            <div class="field field--area">
+              <textarea id="f-message" name="message" rows="5" required maxlength="4000" placeholder=" "></textarea>
+              <label for="f-message">Votre projet en quelques mots <span aria-hidden="true">*</span></label>
+              <span class="field__error" id="f-message-err" role="alert"></span>
+            </div>
+
+            <div class="hp" aria-hidden="true">
+              <label for="f-website">Ne pas remplir ce champ</label>
+              <input id="f-website" name="website" type="text" tabindex="-1" autocomplete="off">
+            </div>
+
+            <label class="check">
+              <input type="checkbox" name="privacy" required>
+              <span class="check__box" aria-hidden="true"></span>
+              <span>J'ai pris connaissance de la <a href="/confidentialite" class="link-line">politique de confidentialité</a> et j'accepte que mes données soient utilisées pour répondre à ma demande. <span aria-hidden="true">*</span></span>
+            </label>
+            <span class="field__error" id="f-privacy-err" role="alert"></span>
+
+            <p class="form__notice">
+              Les informations saisies servent uniquement à répondre à votre demande. Responsable du traitement : {{site.name}}.
+              Base légale : mesures précontractuelles prises à votre demande (art. 6.1.b RGPD). Vos données ne sont ni vendues ni utilisées à des fins de prospection,
+              et sont conservées au maximum 3 ans après notre dernier échange si aucun contrat n'est conclu. Vous pouvez exercer vos droits (accès, rectification, effacement, opposition…)
+              en écrivant à <a href="mailto:{{site.legal.dpoEmail}}" class="link-line">{{site.legal.dpoEmail}}</a>.
+              Détails dans notre <a href="/confidentialite" class="link-line">politique de confidentialité</a>.
+            </p>
+
+            <div class="form__submit">
+              <button type="submit" class="btn btn--accent btn--lg" data-magnetic><span>Envoyer le message</span><i aria-hidden="true">→</i></button>
+              <p class="form__status" role="status" aria-live="polite"></p>
+            </div>
+          </form>
+        </div>
       </div>
     </section>

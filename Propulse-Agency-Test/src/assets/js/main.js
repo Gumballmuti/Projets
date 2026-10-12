@@ -51,14 +51,19 @@
     }
   }
 
+  // Ancres de la page courante (« #services » ou « /#services ») : défilement fluide
   document.addEventListener('click', function (e) {
-    var a = e.target.closest('a[href^="#"]');
-    if (!a || a.getAttribute('href') === '#') return;
-    var target = document.getElementById(decodeURIComponent(a.getAttribute('href').slice(1)));
-    if (!target) return;
+    var a = e.target.closest('a[href*="#"]');
+    if (!a || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+    var url = new URL(a.href, window.location.href);
+    if (url.origin !== window.location.origin || url.pathname !== window.location.pathname || !url.hash) return;
+    var id = decodeURIComponent(url.hash.slice(1));
+    var target = id === 'top' ? 0 : document.getElementById(id);
+    if (target === null) return;
     e.preventDefault();
+    if (typeof closeMenu === 'function') closeMenu();
     scrollToTarget(target);
-    history.replaceState(null, '', a.getAttribute('href'));
+    history.replaceState(null, '', url.hash);
   });
 
   var toTop = $('[data-to-top]');
@@ -79,7 +84,7 @@
     playIntro();
     if (window.location.hash) {
       var t = document.getElementById(decodeURIComponent(window.location.hash.slice(1)));
-      if (t) setTimeout(function () { scrollToTarget(t); }, 200);
+      if (t && t.id !== 'top') setTimeout(function () { scrollToTarget(t); }, 200);
     }
   }
 
@@ -119,7 +124,7 @@
     if (!href || href.charAt(0) === '#' || /^(mailto:|tel:|javascript:)/i.test(href)) return false;
     var url = new URL(a.href, window.location.href);
     if (url.origin !== window.location.origin) return false;
-    if (url.pathname === window.location.pathname && url.hash) return false;
+    if (url.pathname === window.location.pathname) return false;
     return true;
   }
 
@@ -302,7 +307,7 @@
 
   function revealTitles() {
     splitTitles.forEach(function (s) {
-      var inHero = s.el.closest('.page-hero, .case-hero');
+      var inHero = s.el.closest('.page-hero');
       gsap.to(s.inner, {
         yPercent: 0, duration: 1.1, ease: 'power4.out', stagger: 0.09, delay: inHero ? 0.1 : 0,
         scrollTrigger: inHero ? null : { trigger: s.el, start: 'top 85%' }
@@ -324,11 +329,9 @@
         scrollTrigger: { trigger: hero, start: 'top top', end: 'bottom top', scrub: true }
       });
     }
-    $$('.page-hero .eyebrow, .page-hero__lead, .page-hero__badge, .legal-updated, .case-hero .eyebrow, .case-hero__tagline, .case-meta, .link-arrow--back').forEach(function (el, i) {
+    $$('.page-hero .eyebrow, .page-hero__lead, .legal-updated').forEach(function (el, i) {
       gsap.from(el, { y: 30, opacity: 0, duration: 1, ease: 'power3.out', delay: 0.25 + i * 0.06 });
     });
-    var caseMedia = $('.case-hero__media img');
-    if (caseMedia) gsap.from(caseMedia, { clipPath: 'inset(30% 10% 0 10% round 34px)', scale: 1.15, duration: 1.6, ease: 'expo.out', delay: 0.3 });
     ScrollTrigger.refresh();
   }
 
@@ -354,7 +357,7 @@
       gsap.fromTo(el, { yPercent: 0 }, { yPercent: amt, ease: 'none', scrollTrigger: { trigger: el.parentElement, start: 'top bottom', end: 'bottom top', scrub: true } });
     });
 
-    $$('.srv, .sd, .faq__item, .stat-card, .bento__cell, .value, .footer__grid > *').forEach(function (el) {
+    $$('.srv, .faq__item, .stat-card, .bento__cell, .footer__grid > *').forEach(function (el) {
       gsap.from(el, { y: 50, opacity: 0, duration: 1, ease: 'power3.out', scrollTrigger: { trigger: el, start: 'top 92%' } });
     });
 
@@ -394,29 +397,6 @@
       track.style.transform = 'translate3d(' + x + 'px,0,0) skewX(' + (dir * -boost * 0.6) + 'deg)';
     });
   });
-
-  /* ---------------------------------------------------------------
-     Projets en défilement horizontal
-     --------------------------------------------------------------- */
-  var hs = $('.hscroll');
-  if (hs && animate) {
-    var mm = gsap.matchMedia();
-    mm.add('(min-width: 861px)', function () {
-      var track = $('.hscroll__track', hs);
-      var dist = function () { return track.scrollWidth - window.innerWidth; };
-      var tween = gsap.to(track, {
-        x: function () { return -dist(); }, ease: 'none',
-        scrollTrigger: {
-          trigger: hs, pin: '.hscroll__pin', start: 'top top', end: function () { return '+=' + dist(); },
-          scrub: 0.8, invalidateOnRefresh: true, anticipatePin: 1
-        }
-      });
-      gsap.to('.hscroll__progress span', { scaleX: 1, ease: 'none', scrollTrigger: { trigger: hs, start: 'top top', end: function () { return '+=' + dist(); }, scrub: true } });
-      $$('.hslide__media img', hs).forEach(function (img) {
-        gsap.fromTo(img, { scale: 1.2 }, { scale: 1, ease: 'none', scrollTrigger: { trigger: img, containerAnimation: tween, start: 'left right', end: 'right left', scrub: true } });
-      });
-    });
-  }
 
   /* ---------------------------------------------------------------
      Cartes empilées (méthode)
@@ -478,66 +458,6 @@
     var tick = function () { clock.textContent = fmt.format(new Date()); };
     tick();
     setInterval(tick, 15000);
-  }
-
-  /* ---------------------------------------------------------------
-     Réalisations : filtres, vues et aperçu au survol
-     --------------------------------------------------------------- */
-  var grid = $('[data-work-grid]');
-  if (grid) {
-    var list = $('[data-work-list]');
-    var current = 'all';
-    var applyFilter = function () {
-      $$('.pcard', grid).forEach(function (c) {
-        var show = current === 'all' || c.getAttribute('data-filter').split(' ').indexOf(current) !== -1;
-        c.classList.toggle('is-hidden', !show);
-      });
-      var shownSlugs = $$('.pcard:not(.is-hidden)', grid).map(function (c) { return c.getAttribute('href'); });
-      $$('.work-row', list).forEach(function (r) { r.classList.toggle('is-hidden', shownSlugs.indexOf(r.getAttribute('href')) === -1); });
-      if (animate) {
-        gsap.fromTo($$('.pcard:not(.is-hidden)', grid), { opacity: 0, y: 40 }, { opacity: 1, y: 0, duration: 0.7, ease: 'power3.out', stagger: 0.06 });
-        ScrollTrigger.refresh();
-      }
-    };
-    $$('[data-filter-btn]').forEach(function (b) {
-      b.addEventListener('click', function () {
-        current = b.getAttribute('data-filter-btn');
-        $$('[data-filter-btn]').forEach(function (o) { o.classList.toggle('is-active', o === b); o.setAttribute('aria-pressed', String(o === b)); });
-        applyFilter();
-      });
-    });
-    $$('[data-view]').forEach(function (b) {
-      b.addEventListener('click', function () {
-        var v = b.getAttribute('data-view');
-        $$('[data-view]').forEach(function (o) { o.classList.toggle('is-active', o === b); o.setAttribute('aria-pressed', String(o === b)); });
-        grid.hidden = v !== 'grid';
-        list.hidden = v !== 'list';
-        if (animate) {
-          gsap.fromTo(v === 'grid' ? $$('.pcard:not(.is-hidden)', grid) : $$('.work-row:not(.is-hidden)', list), { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: 0.6, stagger: 0.05, ease: 'power3.out' });
-          ScrollTrigger.refresh();
-        }
-      });
-    });
-
-    var preview = $('.preview-follow');
-    if (preview && finePointer) {
-      var pimg = $('img', preview);
-      var px = 0, py = 0, cx = 0, cy = 0, rot = 0, active = false;
-      $$('.work-row', list).forEach(function (row) {
-        row.addEventListener('pointerenter', function () { pimg.src = row.getAttribute('data-preview'); preview.classList.add('is-visible'); active = true; });
-        row.addEventListener('pointerleave', function () { preview.classList.remove('is-visible'); active = false; });
-      });
-      window.addEventListener('pointermove', function (e) { px = e.clientX; py = e.clientY; }, { passive: true });
-      (function follow() {
-        var dx = px - cx;
-        cx += dx * 0.12; cy += (py - cy) * 0.12;
-        rot += ((active ? dx * 0.04 : 0) - rot) * 0.1;
-        preview.style.left = (cx - 180) + 'px';
-        preview.style.top = (cy - 120) + 'px';
-        preview.style.rotate = Math.max(-12, Math.min(12, rot)) + 'deg';
-        requestAnimationFrame(follow);
-      })();
-    }
   }
 
   /* ---------------------------------------------------------------

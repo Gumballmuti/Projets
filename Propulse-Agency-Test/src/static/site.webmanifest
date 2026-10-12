@@ -1,6 +1,6 @@
 {
-  "name": "Propulse Agency",
-  "short_name": "Propulse",
+  "name": "ProPulse Agency",
+  "short_name": "ProPulse",
   "icons": [
     { "src": "/assets/img/favicon.svg", "sizes": "any", "type": "image/svg+xml" },
     { "src": "/assets/img/apple-touch-icon.png", "sizes": "180x180", "type": "image/png" }
