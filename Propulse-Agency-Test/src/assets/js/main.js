@@ -609,7 +609,8 @@
           status.classList.add('is-success');
           status.textContent = 'Merci ! Votre message est bien parti. Nous revenons vers vous très vite.';
           if (animate) gsap.fromTo(status, { y: 10, opacity: 0 }, { y: 0, opacity: 1, duration: 0.6 });
-        } else if (r.status === 503) {
+        } else if (r.status !== 422 && r.status !== 502) {
+          // Envoi en ligne indisponible (non configuré ou absent chez l'hébergeur) : messagerie du visiteur
           status.textContent = 'Ouverture de votre messagerie…';
           mailtoFallback(data);
         } else {
