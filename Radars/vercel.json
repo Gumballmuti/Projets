@@ -1,7 +1,0 @@
-{
-  "outputDirectory": "public",
-  "headers": [
-    { "source": "/(.*)", "headers": [{ "key": "Permissions-Policy", "value": "geolocation=(self), screen-wake-lock=(self)" }] },
-    { "source": "/sw.js", "headers": [{ "key": "Cache-Control", "value": "no-cache" }] }
-  ]
-}
