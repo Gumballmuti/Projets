@@ -38,11 +38,20 @@ function readPage(file) {
   return { meta: JSON.parse(m[1]), body: raw.slice(m[0].length) };
 }
 
+// Liens vers les réseaux sociaux (affichés seulement s'ils sont renseignés dans site.config.json)
+const FB_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill="currentColor" d="M13.5 22v-8.2h2.8l.4-3.2h-3.2V8.5c0-.9.3-1.6 1.6-1.6h1.7V4.1c-.3 0-1.3-.1-2.5-.1-2.5 0-4.1 1.5-4.1 4.2v2.4H7.4v3.2h2.8V22h3.3z"/></svg>';
+const fb = site.social && site.social.facebook;
+const socialHtml = fb
+  ? `<div class="social"><a class="social__link" href="${fb}" target="_blank" rel="noopener noreferrer" aria-label="${site.name} sur Facebook (nouvel onglet)"><span class="social__icon">${FB_ICON}</span>Facebook</a></div>`
+  : '';
+const social = { footer: socialHtml, menu: socialHtml ? `<p class="mono">Suivez-nous</p>${socialHtml}` : '' };
+
 function pageCtx(meta) {
   const path = meta.path;
   return {
     site,
     year,
+    social,
     page: {
       ...meta,
       canonical: site.url + path,

@@ -494,13 +494,6 @@ em { font-style: normal; }
 .footer__col ul { display: grid; gap: 10px; }
 .footer__head { color: var(--muted); margin-bottom: 18px; }
 .footer__baseline { color: var(--muted); margin-top: 18px; max-width: 320px; }
-.footer__giant { padding-inline: var(--gutter); line-height: .74; pointer-events: none; user-select: none; }
-.footer__giant span {
-  display: block; text-align: center; font-family: var(--f-display); font-weight: 800; letter-spacing: -0.07em;
-  font-size: 23.5vw; color: transparent; -webkit-text-stroke: 1px var(--line-strong);
-  background: linear-gradient(180deg, rgba(77, 217, 190, .35), transparent 75%) text; -webkit-background-clip: text; background-clip: text;
-  transform: translateY(12%);
-}
 .footer__legal {
   position: relative; display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 16px 30px;
   padding: 26px var(--gutter); border-top: 1px solid var(--line); color: var(--muted); font-size: .88rem; background: var(--bg-2);
@@ -778,3 +771,13 @@ section[id] { scroll-margin-top: var(--header-h); }
 .logo--footer img { display: block; width: clamp(180px, 18vw, 240px); height: auto; }
 .preloader__gold { color: #DFA414; }
 @media (max-width: 860px) { .logo__img { height: 38px; } }
+
+/* ---------- Réseaux sociaux ---------- */
+.social { display: flex; gap: 12px; margin-top: 22px; }
+.social__link {
+  display: inline-flex; align-items: center; gap: 10px; height: 46px; padding: 0 18px 0 6px; border-radius: 999px;
+  border: 1px solid var(--line-strong); font-weight: 600; transition: background-color .3s, border-color .3s, color .3s;
+}
+.social__icon { display: grid; place-items: center; width: 34px; height: 34px; border-radius: 50%; background: #1877F2; color: #fff; }
+.social__icon svg { width: 18px; height: 18px; }
+.social__link:hover, .social__link:focus-visible { border-color: var(--accent); color: var(--accent); }

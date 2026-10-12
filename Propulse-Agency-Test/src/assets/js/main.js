@@ -375,10 +375,6 @@
       gsap.from(el, { y: 50, opacity: 0, duration: 1, ease: 'power3.out', scrollTrigger: { trigger: el, start: 'top 92%' } });
     });
 
-    var giant = $('.footer__giant span');
-    if (giant) gsap.fromTo(giant, { yPercent: 60 }, { yPercent: 12, ease: 'none', scrollTrigger: { trigger: '.footer__giant', start: 'top bottom', end: 'bottom bottom', scrub: true } });
-    var footerTitle = $('.footer__title');
-    if (footerTitle) gsap.fromTo(footerTitle, { scale: 0.85 }, { scale: 1, ease: 'none', scrollTrigger: { trigger: '.footer__cta', start: 'top bottom', end: 'center center', scrub: true } });
   }
 
   /* ---------------------------------------------------------------
