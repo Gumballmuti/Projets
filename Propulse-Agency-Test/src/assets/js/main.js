@@ -371,42 +371,11 @@
       gsap.fromTo(el, { yPercent: 0 }, { yPercent: amt, ease: 'none', scrollTrigger: { trigger: el.parentElement, start: 'top bottom', end: 'bottom top', scrub: true } });
     });
 
-    $$('.srv, .faq__item, .stat-card, .bento__cell, .footer__grid > *').forEach(function (el) {
+    $$('.srv, .faq__item, .stat-card, .footer__grid > *').forEach(function (el) {
       gsap.from(el, { y: 50, opacity: 0, duration: 1, ease: 'power3.out', scrollTrigger: { trigger: el, start: 'top 92%' } });
     });
 
   }
-
-  /* ---------------------------------------------------------------
-     Bandeaux défilants (vitesse liée au défilement)
-     --------------------------------------------------------------- */
-  $$('[data-marquee]').forEach(function (m) {
-    var track = $('.marquee__track', m);
-    track.innerHTML += track.innerHTML + track.innerHTML;
-    if (!animate) return;
-    var x = 0;
-    var dir = -1;
-    var speed = 0.6;
-    var boost = 0;
-    var third = 0;
-    var measure = function () { third = track.scrollWidth / 3; };
-    measure();
-    window.addEventListener('resize', measure);
-    ScrollTrigger.create({
-      trigger: m, start: 'top bottom', end: 'bottom top',
-      onUpdate: function (self) {
-        dir = self.direction === 1 ? -1 : 1;
-        boost = Math.min(Math.abs(self.getVelocity()) / 120, 14);
-      }
-    });
-    gsap.ticker.add(function () {
-      boost *= 0.94;
-      x += dir * (speed + boost);
-      if (x <= -third) x += third;
-      if (x > 0) x -= third;
-      track.style.transform = 'translate3d(' + x + 'px,0,0) skewX(' + (dir * -boost * 0.6) + 'deg)';
-    });
-  });
 
   /* ---------------------------------------------------------------
      Cartes empilées (méthode)
@@ -434,7 +403,7 @@
      Mode doux (« réduire les animations ») : simples fondus, sans mouvement
      --------------------------------------------------------------- */
   if (hasGsap && reduceMotion) {
-    var soft = '.section-head, .manifesto__text, .srv, .agency__text, .agency__visual, .stat-card, .stack__card, .bento__cell, .faq__item, .contact > *';
+    var soft = '.section-head, .manifesto__text, .srv, .agency__text, .agency__visual, .stat-card, .stack__card, .faq__item, .contact > *';
     gsap.set(soft, { opacity: 0 });
     ScrollTrigger.batch(soft, {
       start: 'top 92%',
