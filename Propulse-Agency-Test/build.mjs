@@ -44,7 +44,7 @@ const fb = site.social && site.social.facebook;
 const socialHtml = fb
   ? `<div class="social"><a class="social__link" href="${fb}" target="_blank" rel="noopener noreferrer" aria-label="${site.name} sur Facebook (nouvel onglet)"><span class="social__icon">${FB_ICON}</span>Facebook</a></div>`
   : '';
-const social = { footer: socialHtml, menu: socialHtml ? `<p class="mono">Suivez-nous</p>${socialHtml}` : '' };
+const social = { footer: socialHtml, menu: socialHtml };
 
 function pageCtx(meta) {
   const path = meta.path;
