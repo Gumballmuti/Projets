@@ -371,7 +371,7 @@
       gsap.fromTo(el, { yPercent: 0 }, { yPercent: amt, ease: 'none', scrollTrigger: { trigger: el.parentElement, start: 'top bottom', end: 'bottom top', scrub: true } });
     });
 
-    $$('.srv, .faq__item, .stat-card, .footer__grid > *').forEach(function (el) {
+    $$('.srv, .faq__chat, .stat-card, .footer__grid > *').forEach(function (el) {
       gsap.from(el, { y: 50, opacity: 0, duration: 1, ease: 'power3.out', scrollTrigger: { trigger: el, start: 'top 92%' } });
     });
 
@@ -421,7 +421,7 @@
      Mode doux (« réduire les animations ») : simples fondus, sans mouvement
      --------------------------------------------------------------- */
   if (hasGsap && reduceMotion) {
-    var soft = '.section-head, .manifesto__text, .srv, .agency__text, .agency__visual, .stat-card, .stack__card, .faq__item, .contact > *';
+    var soft = '.section-head, .manifesto__text, .srv, .agency__text, .agency__visual, .stat-card, .stack__card, .faq__chat, .contact > *';
     gsap.set(soft, { opacity: 0 });
     ScrollTrigger.batch(soft, {
       start: 'top 92%',
@@ -457,23 +457,198 @@
   });
 
   /* ---------------------------------------------------------------
-     FAQ : ouverture animée
+     FAQ : conversation (questions suggérées, réponse après saisie)
+     Sans JavaScript, toutes les questions et réponses restent affichées.
      --------------------------------------------------------------- */
-  $$('.faq__item').forEach(function (d) {
-    var summary = $('summary', d);
-    var body = $('.faq__body', d);
-    summary.addEventListener('click', function (e) {
-      if (!animate) return;
-      e.preventDefault();
-      if (d.open) {
-        gsap.to(body, { height: 0, duration: 0.5, ease: 'power3.inOut', onComplete: function () { d.open = false; body.style.height = ''; ScrollTrigger.refresh(); } });
-        d.classList.remove('is-open');
-      } else {
-        d.open = true;
-        gsap.fromTo(body, { height: 0 }, { height: 'auto', duration: 0.6, ease: 'power3.out', onComplete: function () { ScrollTrigger.refresh(); } });
-      }
+  var faqChat = $('[data-faq]');
+  if (faqChat) initFaq(faqChat);
+
+  function initFaq(chat) {
+    var section = chat.closest('.faq') || chat;
+    var log = $('.faq__log', chat);
+    var composer = $('.faq__composer', chat);
+    var more = $('.faq__more', composer);
+    var turns = $$('.faq__turn', log);
+    var total = turns.length;
+    if (total < 2 || !composer || !more) return;
+    var asked = 1;
+    var queue = [];
+    var busy = false;
+    var items = [];
+
+    // La première question reste répondue ; les suivantes deviennent des suggestions
+    var hint = document.createElement('p');
+    hint.className = 'faq__hint mono';
+    hint.id = 'faq-hint';
+    hint.textContent = 'Choisissez une question';
+    var chips = document.createElement('div');
+    chips.className = 'faq__chips';
+    chips.setAttribute('role', 'group');
+    chips.setAttribute('aria-labelledby', 'faq-hint');
+    turns.forEach(function (turn, i) {
+      var answer = $('.faq__msg--pp', turn);
+      items[i] = { turn: turn, answer: answer };
+      if (i === 0) return;
+      turn.removeChild(answer);
+      log.removeChild(turn);
+      var chip = document.createElement('button');
+      chip.type = 'button';
+      chip.className = 'faq__chip';
+      chip.setAttribute('data-q', i);
+      chip.innerHTML = '<span></span><span class="faq__chip-send" aria-hidden="true">↑</span>';
+      // Même libellé que la question (mots composés insécables compris)
+      $$('.faq__msg--you .faq__bubble', turn)[0].childNodes.forEach(function (n) { chip.firstChild.appendChild(n.cloneNode(true)); });
+      chips.appendChild(chip);
     });
-  });
+    composer.insertBefore(hint, more);
+    composer.insertBefore(chips, more);
+    section.classList.add('faq--live');
+    progress();
+
+    if (animate) {
+      gsap.from($$('.faq__msg', log).concat(hint, $$('.faq__chip', chips), more), {
+        y: 22, opacity: 0, duration: 0.8, ease: 'power3.out', stagger: 0.08, clearProps: 'transform,opacity',
+        scrollTrigger: { trigger: chat, start: 'top 75%' }
+      });
+    }
+
+    chips.addEventListener('click', function (e) {
+      var chip = e.target.closest('.faq__chip');
+      if (chip && chip.parentNode === chips) ask(chip);
+    });
+
+    function ask(chip) {
+      var list = $$('.faq__chip', chips);
+      var idx = list.indexOf(chip);
+      var hadFocus = document.activeElement === chip;
+      var from = animate && !busy ? chip.getBoundingClientRect() : null;
+      var before = animate ? list.map(function (c) { return c.getBoundingClientRect(); }) : null;
+      chips.removeChild(chip);
+      var rest = $$('.faq__chip', chips);
+      // Les suggestions restantes glissent à leur nouvelle place
+      if (animate) {
+        rest.forEach(function (c) {
+          var r0 = before[list.indexOf(c)];
+          var r1 = c.getBoundingClientRect();
+          if (Math.abs(r0.left - r1.left) > 1 || Math.abs(r0.top - r1.top) > 1) {
+            gsap.fromTo(c, { x: r0.left - r1.left, y: r0.top - r1.top }, { x: 0, y: 0, duration: 0.6, ease: 'power3.inOut', clearProps: 'transform' });
+          }
+        });
+      }
+      if (!rest.length) {
+        composer.removeChild(hint);
+        composer.removeChild(chips);
+        section.classList.add('faq--done');
+      }
+      // Le focus clavier passe à la suggestion suivante (ou au lien de contact)
+      if (hadFocus) {
+        var target = rest[Math.min(idx, rest.length - 1)] || $('a', more);
+        if (target) target.focus({ preventScroll: true });
+      }
+      queue.push({ item: items[+chip.getAttribute('data-q')], chip: chip, from: from });
+      if (!busy) next();
+    }
+
+    function next() {
+      var job = queue.shift();
+      if (!job) { busy = false; return; }
+      busy = true;
+      var turn = job.item.turn;
+      var answer = job.item.answer;
+      if (!animate) {
+        log.appendChild(turn);
+        turn.appendChild(answer);
+        finish(turn, 0);
+        return;
+      }
+      var q = $('.faq__msg--you', turn);
+      var typing = typingMsg();
+      var h0 = log.offsetHeight;
+      log.appendChild(turn);
+      turn.appendChild(typing);
+      grow(h0);
+      if (job.from) fly(job.chip, job.from, $('.faq__bubble', q));
+      else gsap.from($('.faq__bubble', q), { y: 20, opacity: 0, duration: 0.6, ease: 'power3.out', clearProps: 'transform,opacity' });
+      gsap.from($('.faq__who', q), { opacity: 0, duration: 0.4, delay: 0.45, clearProps: 'opacity' });
+      gsap.from(typing, { opacity: 0, y: 10, duration: 0.45, delay: 0.55, ease: 'power2.out' });
+      setTimeout(function () {
+        var h1 = log.offsetHeight;
+        turn.replaceChild(answer, typing);
+        var pending = grow(h1);
+        gsap.from($('.faq__bubble', answer), { opacity: 0, y: 12, scale: 0.98, transformOrigin: '0% 100%', duration: 0.7, ease: 'power3.out', clearProps: 'transform,opacity' });
+        finish(turn, pending);
+      }, 1700);
+    }
+
+    function finish(turn, pending) {
+      asked++;
+      progress();
+      follow(turn, pending);
+      if (animate) setTimeout(next, 500); else next();
+    }
+
+    function progress() {
+      chat.style.setProperty('--p', asked / total);
+    }
+
+    function typingMsg() {
+      var m = document.createElement('div');
+      m.className = 'faq__msg faq__msg--pp';
+      m.setAttribute('aria-hidden', 'true');
+      m.innerHTML = '<span class="faq__avatar"></span><span class="faq__who mono">ProPulse</span><div class="faq__bubble faq__typing"><span></span><span></span><span></span></div>';
+      return m;
+    }
+
+    // Hauteur du fil animée : la zone des suggestions glisse au lieu de sauter
+    function grow(h0) {
+      gsap.killTweensOf(log);
+      log.style.height = '';
+      log.style.overflow = '';
+      var h1 = log.offsetHeight;
+      if (Math.abs(h1 - h0) < 2) return 0;
+      log.style.overflow = 'hidden';
+      gsap.fromTo(log, { height: h0 }, {
+        height: h1, duration: 0.65, ease: 'power3.inOut',
+        onComplete: function () { log.style.height = ''; log.style.overflow = ''; ScrollTrigger.refresh(); }
+      });
+      return h1 - h0;
+    }
+
+    // La suggestion « s'envoie » : elle rejoint la place de la question dans le fil
+    function fly(chip, from, bubble) {
+      var to = bubble.getBoundingClientRect();
+      var ghost = chip.cloneNode(true);
+      ghost.classList.add('is-ghost');
+      ghost.removeAttribute('data-q');
+      ghost.setAttribute('aria-hidden', 'true');
+      ghost.tabIndex = -1;
+      ghost.style.cssText = 'left:' + from.left + 'px;top:' + from.top + 'px;width:' + from.width + 'px;height:' + from.height + 'px;';
+      document.body.appendChild(ghost);
+      gsap.set(bubble, { opacity: 0 });
+      var tl = gsap.timeline({ onComplete: function () { ghost.remove(); gsap.set(bubble, { clearProps: 'opacity,transform' }); } });
+      var k = Math.max(0.9, Math.min(to.height / from.height, 1.2));
+      tl.to(ghost, { x: to.right - from.right, y: to.bottom - from.bottom, scale: k, transformOrigin: '100% 100%', duration: 0.7, ease: 'power3.inOut' }, 0)
+        .to(ghost, { borderColor: 'rgba(255, 248, 225, .46)', color: '#FFF8E1', duration: 0.4 }, 0)
+        .to($('.faq__chip-send', ghost), { scale: 0.4, opacity: 0, duration: 0.3, ease: 'power2.in' }, 0.05)
+        .to(ghost, { opacity: 0, duration: 0.18 }, 0.56)
+        .fromTo(bubble, { opacity: 0, scale: 0.97, transformOrigin: '100% 100%' }, { opacity: 1, scale: 1, duration: 0.3, ease: 'power2.out' }, 0.54);
+    }
+
+    // Garde la nouvelle réponse (et les suggestions suivantes) à l'écran
+    function follow(turn, pending) {
+      var header = $('.header');
+      var minTop = (header ? header.offsetHeight : 0) + 16;
+      var top = turn.getBoundingClientRect().top;
+      var anchor = chips.parentNode ? chips : more;
+      var want = anchor.getBoundingClientRect().top + (pending || 0) + Math.min(anchor.offsetHeight, 120);
+      var d = 0;
+      if (top < minTop) d = top - minTop;
+      else if (want > window.innerHeight - 20) d = Math.min(want - (window.innerHeight - 20), top - minTop);
+      if (Math.abs(d) < 4) return;
+      if (lenis) lenis.scrollTo(window.scrollY + d, { duration: 1 });
+      else window.scrollTo({ top: window.scrollY + d, behavior: reduceMotion ? 'auto' : 'smooth' });
+    }
+  }
 
   /* ---------------------------------------------------------------
      Horloge (heure belge)
