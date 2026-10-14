@@ -399,17 +399,6 @@
     });
   }
 
-  /* ---------------------------------------------------------------
-     Traits sous les mots-clés des titres : dessinés à l'arrivée à l'écran
-     --------------------------------------------------------------- */
-  var swooshes = $$('.h2 em, .footer__title em, .page-hero__title em');
-  if (hasGsap && swooshes.length) {
-    root.classList.add('draw-ready');
-    swooshes.forEach(function (em) {
-      ScrollTrigger.create({ trigger: em, start: 'top 88%', once: true, onEnter: function () { em.classList.add('is-drawn'); } });
-    });
-  }
-
   /* Jauge de la méthode : se remplit quand l'étape apparaît */
   if (animate) {
     $$('.stack__track span').forEach(function (bar) {
