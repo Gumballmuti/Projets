@@ -23,51 +23,51 @@
       <article class="prose">
         <p class="prose__lead">Cette politique explique quelles données personnelles sont traitées lorsque vous visitez ce site ou nous contactez, pourquoi, et quels sont vos droits, conformément au Règlement (UE) 2016/679 (RGPD) et à la loi belge du 30 juillet 2018.</p>
 
-        <h2 id="responsable">1. Responsable du traitement</h2>
+        <h2 id="responsable">Responsable du traitement</h2>
         <dl class="legal-card">
           <div><dt>Responsable du traitement</dt><dd>{{site.legal.company}} — {{site.name}}</dd></div>
           <div><dt>Adresse</dt><dd>{{site.legal.address}}</dd></div>
           <div><dt>E-mail</dt><dd><a href="mailto:{{site.legal.dpoEmail}}">{{site.legal.dpoEmail}}</a></dd></div>
         </dl>
 
-        <h2 id="donnees">2. Données traitées, finalités et bases légales</h2>
+        <h2 id="donnees">Données traitées, finalités et bases légales</h2>
         <div class="table-wrap">
           <table>
             <thead><tr><th scope="col">Finalité</th><th scope="col">Données</th><th scope="col">Base légale</th><th scope="col">Conservation</th></tr></thead>
             <tbody>
-              <tr><td>Fonctionnement et sécurité du site</td><td>Adresse IP, date et heure, pages consultées, type de navigateur et d'appareil (journaux techniques générés par l'hébergeur)</td><td>Intérêt légitime (art. 6.1.f RGPD) : assurer la sécurité et le bon fonctionnement du site</td><td>Selon la politique de l'hébergeur (Vercel)</td></tr>
-              <tr><td>Répondre à votre demande envoyée via le formulaire de contact ou par e-mail</td><td>Nom, adresse e-mail et contenu de votre message ; si vous les indiquez : entreprise, téléphone et services souhaités</td><td>Mesures précontractuelles prises à votre demande (art. 6.1.b RGPD) ; à défaut, intérêt légitime de répondre aux demandes reçues (art. 6.1.f RGPD)</td><td>12 mois après le dernier échange</td></tr>
+              <tr><td data-label="Finalité">Fonctionnement et sécurité du site</td><td data-label="Données">Adresse IP, date et heure, pages consultées, type de navigateur et d'appareil (journaux techniques générés par l'hébergeur)</td><td data-label="Base légale">Intérêt légitime (art. 6.1.f RGPD) : assurer la sécurité et le bon fonctionnement du site</td><td data-label="Conservation">Selon la politique de l'hébergeur (Vercel)</td></tr>
+              <tr><td data-label="Finalité">Répondre à votre demande envoyée via le formulaire de contact ou par e-mail</td><td data-label="Données">Nom, adresse e-mail et contenu de votre message ; si vous les indiquez : entreprise, téléphone et services souhaités</td><td data-label="Base légale">Mesures précontractuelles prises à votre demande (art. 6.1.b RGPD) ; à défaut, intérêt légitime de répondre aux demandes reçues (art. 6.1.f RGPD)</td><td data-label="Conservation">12&nbsp;mois après le dernier échange</td></tr>
             </tbody>
           </table>
         </div>
         <p>Vos données ne sont utilisées ni pour de la prospection commerciale, ni pour du profilage, ni pour des décisions automatisées. Elles ne sont pas vendues.</p>
         <p>Vous nous contactez via le formulaire de contact ou par e-mail : ces échanges sont volontaires, et nous ne collectons que les informations que vous choisissez de nous communiquer.</p>
 
-        <h2 id="destinataires">3. Destinataires</h2>
+        <h2 id="destinataires">Destinataires</h2>
         <ul>
           <li>Hébergeur : {{site.hosting.name}} (sous-traitant), qui héberge le site et journalise les connexions.</li>
           <li>{{site.mail.name}} (sous-traitant) : acheminement par e-mail des messages envoyés via le formulaire de contact. Les messages ne sont pas stockés sur le serveur du site.</li>
           <li>Le fournisseur de messagerie utilisé par {{site.name}} pour recevoir les messages (Gmail — Google).</li>
         </ul>
 
-        <h2 id="transferts">4. Transferts hors de l'Union européenne</h2>
+        <h2 id="transferts">Transferts hors de l'Union européenne</h2>
         <p>Vercel Inc., Resend et Google sont établis aux États-Unis : les données techniques de connexion et les messages envoyés via le formulaire peuvent y être traités. Garanties applicables : clauses contractuelles types de l'Union européenne et/ou cadre de protection des données UE–États-Unis (EU-US Data Privacy Framework), selon les mécanismes mis en œuvre par ces prestataires.</p>
 
-        <h2 id="cookies">5. Cookies et traceurs</h2>
+        <h2 id="cookies">Cookies et traceurs</h2>
         <p>Ce site <strong>n'utilise aucun cookie ni traceur soumis à consentement</strong> : pas de statistiques de fréquentation, pas de publicité, pas de réseau social ou de carte intégrés. Les polices de caractères et les scripts sont hébergés sur le site lui-même et non chez un tiers.</p>
         <p>Seul votre choix en matière de cookies est mémorisé dans votre navigateur, ce qui est strictement nécessaire et ne requiert pas de consentement. Le détail figure dans la <a href="/cookies">politique cookies</a>.</p>
         <p>Ce site ne contient aucun lien vers un service tiers susceptible de recevoir vos données à l'ouverture d'une page.</p>
 
-        <h2 id="droits">6. Vos droits</h2>
+        <h2 id="droits">Vos droits</h2>
         <p>Vous disposez, dans les conditions prévues par le RGPD, des droits suivants : accès à vos données, rectification, effacement, limitation du traitement, opposition au traitement fondé sur l'intérêt légitime et, lorsque le traitement repose sur votre consentement ou sur un contrat et est automatisé, portabilité.</p>
         <p>Pour exercer ces droits, contactez-nous par e-mail à <a href="mailto:{{site.legal.dpoEmail}}">{{site.legal.dpoEmail}}</a>. Nous répondons dans un délai d'un mois (prolongeable de deux mois en cas de demande complexe). En cas de doute raisonnable sur votre identité, nous pouvons vous demander un justificatif.</p>
         <p>Si vous estimez que vos droits ne sont pas respectés, vous pouvez introduire une réclamation auprès de l'autorité belge de contrôle :</p>
         <p>Autorité de protection des données (APD), Rue de la Presse 35, 1000 Bruxelles — +32 (0)2 274 48 00 — <a href="mailto:contact@apd-gba.be">contact@apd-gba.be</a> — <a href="https://www.autoriteprotectiondonnees.be" target="_blank" rel="noopener noreferrer">www.autoriteprotectiondonnees.be</a></p>
 
-        <h2 id="securite">7. Sécurité</h2>
+        <h2 id="securite">Sécurité</h2>
         <p>Le site est diffusé via une connexion chiffrée (HTTPS). L'éditeur met en œuvre des mesures techniques et organisationnelles raisonnables pour protéger les données reçues, et limite leur accès aux personnes qui en ont besoin.</p>
 
-        <h2 id="modification">8. Modification de cette politique</h2>
+        <h2 id="modification">Modification de cette politique</h2>
         <p>Cette politique peut être mise à jour, notamment si le site évolue. La date de dernière mise à jour figure en haut de cette page.</p>
       </article>
     </div>

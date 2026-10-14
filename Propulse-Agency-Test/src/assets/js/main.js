@@ -336,7 +336,7 @@
     if (hero) {
       var tl = gsap.timeline();
       tl.from('.hero__title .line', { yPercent: 100, opacity: 0, duration: 1.2, ease: 'power4.out', stagger: 0.1 })
-        .from('.hero__eyebrow, .hero__slogan, .hero__lead, .hero__ctas > *', { y: 30, opacity: 0, duration: 0.9, ease: 'power3.out', stagger: 0.06 }, '-=0.8')
+        .from('.hero__eyebrow, .hero__lead, .hero__ctas > *', { y: 30, opacity: 0, duration: 0.9, ease: 'power3.out', stagger: 0.06 }, '-=0.8')
         .from('.hero__pill', { scaleX: 0, duration: 1, ease: 'expo.out' }, '-=1');
       gsap.to('.hero__content', {
         yPercent: -18, opacity: 0.2, ease: 'none',
@@ -481,6 +481,7 @@
     hint.className = 'faq__hint mono';
     hint.id = 'faq-hint';
     hint.textContent = 'Choisissez une question';
+    hint.setAttribute('aria-hidden', 'true');
     var chips = document.createElement('div');
     chips.className = 'faq__chips';
     chips.setAttribute('role', 'group');
@@ -636,6 +637,8 @@
 
     // Garde la nouvelle réponse (et les suggestions suivantes) à l'écran
     function follow(turn, pending) {
+      var box = chat.getBoundingClientRect();
+      if (box.bottom < 0 || box.top > window.innerHeight) return;
       var header = $('.header');
       var minTop = (header ? header.offsetHeight : 0) + 16;
       var top = turn.getBoundingClientRect().top;
@@ -701,21 +704,26 @@
       return !msg;
     };
 
+    // Une règle par champ : chaque champ n'est vérifié que lorsqu'on le quitte
+    var rules = {
+      name: function (v) { return v.length < 2 ? 'Merci d\'indiquer votre nom.' : ''; },
+      email: function (v) { return !emailRe.test(v) ? 'Merci d\'indiquer une adresse e-mail valide.' : ''; },
+      message: function (v) { return v.length < 10 ? 'Décrivez votre projet en quelques mots (10 caractères minimum).' : ''; }
+    };
+
     var validate = function () {
       var ok = true;
-      var name = form.elements.name.value.trim();
-      var email = form.elements.email.value.trim();
-      var message = form.elements.message.value.trim();
-      ok = setError('name', name.length < 2 ? 'Merci d\'indiquer votre nom.' : '') && ok;
-      ok = setError('email', !emailRe.test(email) ? 'Merci d\'indiquer une adresse e-mail valide.' : '') && ok;
-      ok = setError('message', message.length < 10 ? 'Décrivez votre projet en quelques mots (10 caractères minimum).' : '') && ok;
+      Object.keys(rules).forEach(function (n) { ok = setError(n, rules[n](form.elements[n].value.trim())) && ok; });
       ok = setError('privacy', !form.elements.privacy.checked ? 'Merci de confirmer avoir pris connaissance de la politique de confidentialité.' : '') && ok;
       return ok;
     };
 
-    ['name', 'email', 'message'].forEach(function (n) {
-      form.elements[n].addEventListener('blur', function () { if (form.elements[n].value) validate(); });
+    Object.keys(rules).forEach(function (n) {
+      var el = form.elements[n];
+      el.addEventListener('blur', function () { var v = el.value.trim(); if (v) setError(n, rules[n](v)); });
+      el.addEventListener('input', function () { if (el.getAttribute('aria-invalid') === 'true' && !rules[n](el.value.trim())) setError(n, ''); });
     });
+    form.elements.privacy.addEventListener('change', function () { if (this.checked) setError('privacy', ''); });
 
     var collect = function () {
       return {
