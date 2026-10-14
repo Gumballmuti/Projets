@@ -2,27 +2,21 @@
 
   <footer class="footer">
     <div class="footer__grid">
-      <div class="footer__col">
+      <div class="footer__brand">
         <a class="logo logo--footer" href="/#top" aria-label="{{site.name}} — accueil">
           <img src="/assets/img/logo-full.png" alt="ProPulse Agency" width="240" height="161" loading="lazy">
         </a>
         <p class="footer__baseline">{{site.slogan}}<br>Web design, consultance &amp; coaching digital.</p>
       </div>
-      <div class="footer__col">
-        <p class="mono footer__head">Navigation</p>
-        <ul>
-          <li><a href="/#services" class="link-line">Services</a></li>
-          <li><a href="/#agence" class="link-line">L'agence</a></li>
-          <li><a href="/#methode" class="link-line">Méthode</a></li>
-          <li><a href="/#contact" class="link-line">Contact</a></li>
-        </ul>
-      </div>
-      <div class="footer__col">
-        <p class="mono footer__head">Contact</p>
-        <ul>
-          <li><a href="mailto:{{site.contact.email}}" class="link-line">{{site.contact.email}}</a></li>
-          <li>À distance ou sur place</li>
-        </ul>
+      <nav class="footer__nav" aria-label="Navigation du pied de page">
+        <a href="/#services">Services</a>
+        <a href="/#agence">L'agence</a>
+        <a href="/#methode">Méthode</a>
+        <a href="/#contact">Contact</a>
+      </nav>
+      <div class="footer__card">
+        <a href="mailto:{{site.contact.email}}" class="footer__mail">{{site.contact.email}}<i aria-hidden="true">↗</i></a>
+        <p class="footer__meet">Rendez-vous à distance ou sur place</p>
         {{social.footer}}
       </div>
     </div>

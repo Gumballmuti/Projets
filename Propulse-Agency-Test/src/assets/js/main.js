@@ -196,9 +196,9 @@
     menu.setAttribute('aria-hidden', 'false');
     if (lenis) lenis.stop();
     if (animate) {
-      gsap.killTweensOf(['.menu__bg', '.menu__label', '.menu__aside > *']);
+      gsap.killTweensOf(['.menu__bg', '.menu__tile', '.menu__aside > *']);
       gsap.fromTo('.menu__bg', { clipPath: menuCircle(0) }, { clipPath: menuCircle(150), duration: 0.9, ease: 'power3.inOut' });
-      gsap.fromTo('.menu__label', { yPercent: 110 }, { yPercent: 0, duration: 0.8, ease: 'power4.out', stagger: 0.06, delay: 0.3 });
+      gsap.fromTo('.menu__tile', { opacity: 0, y: 30, scale: 0.96 }, { opacity: 1, y: 0, scale: 1, duration: 0.8, ease: 'power4.out', stagger: 0.05, delay: 0.3 });
       gsap.fromTo('.menu__aside > *', { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.6, stagger: 0.04, delay: 0.5 });
     } else {
       $('.menu__bg').style.clipPath = 'circle(150% at 100% 0)';
@@ -217,7 +217,7 @@
     if (lenis) lenis.start();
     var done = function () { document.body.classList.remove('menu-open'); };
     if (animate && !instant) {
-      gsap.to('.menu__label', { yPercent: -110, duration: 0.4, ease: 'power3.in', stagger: 0.03 });
+      gsap.to('.menu__tile, .menu__aside > *', { opacity: 0, y: -16, duration: 0.35, ease: 'power3.in', stagger: 0.02 });
       gsap.to('.menu__bg', { clipPath: menuCircle(0), duration: 0.7, ease: 'power3.inOut', delay: 0.2, onComplete: function () { done(); gsap.set('.menu__bg', { clearProps: 'clipPath' }); } });
     } else if (!instant) {
       $('.menu__bg').style.clipPath = '';
@@ -396,6 +396,24 @@
       cards.forEach(function (card) {
         gsap.from(card, { y: 50, opacity: 0, duration: 0.9, ease: 'power3.out', scrollTrigger: { trigger: card, start: 'top 88%' } });
       });
+    });
+  }
+
+  /* ---------------------------------------------------------------
+     Traits sous les mots-clés des titres : dessinés à l'arrivée à l'écran
+     --------------------------------------------------------------- */
+  var swooshes = $$('.h2 em, .footer__title em, .page-hero__title em');
+  if (hasGsap && swooshes.length) {
+    root.classList.add('draw-ready');
+    swooshes.forEach(function (em) {
+      ScrollTrigger.create({ trigger: em, start: 'top 88%', once: true, onEnter: function () { em.classList.add('is-drawn'); } });
+    });
+  }
+
+  /* Jauge de la méthode : se remplit quand l'étape apparaît */
+  if (animate) {
+    $$('.stack__track span').forEach(function (bar) {
+      gsap.from(bar, { scaleX: 0, duration: 1.4, ease: 'power3.out', scrollTrigger: { trigger: bar, start: 'top 92%' } });
     });
   }
 
