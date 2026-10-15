@@ -23,5 +23,6 @@
         "repo": "heygen-com/hyperframes"
       }
     }
-  }
+  },
+  "enableAllProjectMcpServers": true
 }
