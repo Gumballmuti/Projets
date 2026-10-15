@@ -339,7 +339,7 @@
         .from('.hero__eyebrow, .hero__lead, .hero__ctas > *', { y: 30, opacity: 0, duration: 0.9, ease: 'power3.out', stagger: 0.06 }, '-=0.8')
         .from('.hero__pill', { scaleX: 0, duration: 1, ease: 'expo.out' }, '-=1');
       gsap.to('.hero__content', {
-        yPercent: -18, opacity: 0.2, ease: 'none',
+        yPercent: -6, opacity: 0.4, ease: 'none',
         scrollTrigger: { trigger: hero, start: 'top top', end: 'bottom top', scrub: true }
       });
     }
