@@ -9,17 +9,25 @@ lecture aléatoire, répétition, lecteur plein écran sur téléphone.
 - **Le catalogue** (titres, artistes, albums, playlists, classements, genres) vient de l'API publique de **Deezer** :
   les mêmes artistes que sur Spotify.
 - **Le son** est lu par le **lecteur officiel de YouTube**, caché : on n'entend que le son, sans vidéo.
-  Chaque titre est retrouvé sur YouTube Music / YouTube grâce à **Odesli (song.link)** ; la réponse est gardée
-  pour ne chercher chaque titre qu'une fois.
-- **Secours** : si un titre n'est pas trouvé sur YouTube, l'app joue l'extrait officiel de 30 s de Deezer.
+  Chaque titre est retrouvé grâce à la **recherche YouTube officielle** (clé gratuite `YOUTUBE_API_KEY`) :
+  on garde la vidéo dont la durée colle au titre, et la réponse est gardée pour ne chercher chaque titre qu'une fois.
+- **Pubs** : le lecteur YouTube peut insérer des pubs audio (c'est ce qui paie les artistes) ; l'app n'en ajoute aucune.
+- **Secours** : si un titre n'est pas trouvé sur YouTube (ou sans clé), l'app joue l'extrait officiel de 30 s de Deezer.
 
 À savoir :
 - Sur iPhone, Safari ne laisse pas une page lancer le son toute seule la première fois : si la lecture ne démarre pas,
   la vidéo s'affiche avec « Touche la vidéo pour lancer le son ». Un toucher suffit, la suite s'enchaîne ensuite.
 - Le lecteur YouTube s'arrête quand l'écran de l'iPhone est verrouillé ou que l'app passe en arrière-plan
   (limite de YouTube dans Safari).
-- Odesli accepte environ 10 recherches par minute. Pour aller plus vite, on peut ajouter une clé YouTube gratuite
-  (`YOUTUBE_API_KEY`, voir plus bas).
+- Le quota gratuit de YouTube permet de chercher environ **100 nouveaux titres par jour** (pour tous les comptes ensemble) ;
+  un titre déjà trouvé ne coûte plus rien. Au-delà, les nouveaux titres passent en extrait de 30 s jusqu'au lendemain.
+
+### Créer la clé YouTube (gratuit, 5 minutes)
+
+1. Va sur https://console.cloud.google.com → crée un projet (ex. « Yfitops »).
+2. Menu **API et services → Bibliothèque** → cherche **YouTube Data API v3** → **Activer**.
+3. **API et services → Identifiants → Créer des identifiants → Clé API**. Copie la clé.
+4. Dans Vercel : projet **yfitops → Settings → Environment Variables** → `YOUTUBE_API_KEY` = la clé, puis redéploie.
 
 ## Hébergement (Vercel)
 
@@ -27,7 +35,7 @@ lecture aléatoire, répétition, lecteur plein écran sur téléphone.
 - `api/index.ts` : le point d'entrée du serveur ; `vercel.json` y envoie toutes les adresses `/api/...`.
 - `serveur/comptes.ts` : les comptes, **mêmes règles** que les apps de recettes et de films.
 - `serveur/bibliotheque.ts` : la bibliothèque de chaque compte ; `serveur/stockage.ts` : rangée dans **Vercel Blob** (privé).
-- `serveur/deezer.ts` : le relais vers le catalogue Deezer ; `serveur/youtube.ts` : la recherche des titres sur YouTube.
+- `serveur/deezer.ts` : le relais vers le catalogue Deezer ; `serveur/youtube.ts` : la recherche des titres sur YouTube. `/api/sante` : diagnostic (Deezer, YouTube, stockage).
 
 Réglages du projet Vercel :
 - **Root Directory** : `Yfitops` (framework Vite, détecté tout seul ; fonctions à Paris, `cdg1`).
@@ -36,7 +44,7 @@ Réglages du projet Vercel :
   | Nom | Valeur |
   |---|---|
   | `APP_PASSWORD` | le mot de passe du compte admin (**obligatoire**) |
-  | `YOUTUBE_API_KEY` | facultatif : clé « YouTube Data API v3 » gratuite (console.cloud.google.com), utilisée si Odesli ne trouve pas un titre |
+  | `YOUTUBE_API_KEY` | clé « YouTube Data API v3 » gratuite : **nécessaire pour les morceaux complets** (sinon extraits de 30 s) |
 
 ## Comptes
 

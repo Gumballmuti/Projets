@@ -44,7 +44,9 @@ async function sante() {
   };
   return json({
     deezer: await essai("https://api.deezer.com/chart/0/tracks?limit=1"),
-    odesli: await essai("https://api.song.link/v1-alpha.1/links?userCountry=FR&url=https%3A%2F%2Fwww.deezer.com%2Ftrack%2F3135556"),
+    youtube: process.env.YOUTUBE_API_KEY
+      ? await essai(`https://www.googleapis.com/youtube/v3/videos?part=id&id=jNQXAC9IVRw&key=${process.env.YOUTUBE_API_KEY}`).then((r) => r.status)
+      : "clé YOUTUBE_API_KEY absente",
     stockage: !!process.env.BLOB_READ_WRITE_TOKEN,
   });
 }

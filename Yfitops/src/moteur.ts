@@ -32,7 +32,7 @@ const videosConnues = new Map<string, Promise<string[]>>();
 export function chercherVideos(t: Titre): Promise<string[]> {
   let p = videosConnues.get(t.id);
   if (!p) {
-    p = appel<{ ids?: string[] }>(`youtube?${new URLSearchParams({ id: t.id, titre: t.titre, artiste: t.artiste })}`).then((r) => r.ids ?? []);
+    p = appel<{ ids?: string[] }>(`youtube?${new URLSearchParams({ id: t.id, titre: t.titre, artiste: t.artiste, duree: String(t.duree) })}`).then((r) => r.ids ?? []);
     p.catch(() => videosConnues.delete(t.id));
     videosConnues.set(t.id, p);
   }
