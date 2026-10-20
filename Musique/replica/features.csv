@@ -1,0 +1,28 @@
+feature,area,priority,original,clone,notes
+Comptes identifiant + mot de passe,compte,must,yes,yes,même système que recettes et films
+Accueil avec étagères,decouverte,must,yes,yes,tendances / playlists / pépites / genres
+Accès rapide et écoutés récemment,decouverte,must,yes,yes,synchronisés entre appareils
+Recherche titres artistes playlists albums,recherche,must,yes,yes,meilleur résultat + onglets
+Parcourir par genre,recherche,should,yes,yes,32 genres
+Recherches récentes,recherche,could,yes,yes,par appareil
+Lecture / pause / suivant / précédent,lecteur,must,yes,yes,
+Barre de progression et volume,lecteur,must,yes,yes,
+Aléatoire et répétition (liste / titre),lecteur,must,yes,yes,
+File d'attente,lecteur,must,yes,yes,ajout / retrait / vider
+Vue En cours de lecture,lecteur,should,yes,yes,avec « À propos de l'artiste »
+Lecteur plein écran mobile + mini-lecteur,lecteur,must,yes,yes,
+Commandes écran verrouillé,lecteur,should,yes,yes,Media Session
+Reprise à la même position,lecteur,should,yes,yes,
+Titres likés,bibliotheque,must,yes,yes,
+Créer / renommer / décrire / supprimer une playlist,bibliotheque,must,yes,yes,
+Ajouter / retirer / réordonner des titres,bibliotheque,must,yes,yes,glisser-déposer sur ordinateur
+Recommandations dans une playlist,bibliotheque,should,yes,yes,selon le genre dominant
+Suivre un artiste,bibliotheque,must,yes,yes,
+Enregistrer playlists et albums,bibliotheque,must,yes,yes,
+Bibliothèque filtres tri recherche,bibliotheque,should,yes,yes,
+Pages artiste album playlist,catalogue,must,yes,yes,
+Menus contextuels,interface,must,yes,yes,clic droit / « … » / volet mobile
+Catalogue des majors,catalogue,skip,yes,no,droits : impossible gratuitement et légalement
+Paroles,lecteur,skip,yes,no,non fournies par Audius
+Mode hors-ligne,lecteur,skip,yes,no,
+Playlists collaboratives / amis,social,skip,yes,no,
