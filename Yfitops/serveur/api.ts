@@ -8,6 +8,7 @@ const json = (donnees: unknown, status = 200) => Response.json(donnees, { status
 /** Toute l'API : chemin = ce qui suit /api/ (ex. ["playlists", "abc", "titres"]). */
 export async function traiter(req: Request, chemin: string[]): Promise<Response> {
   try {
+    if (chemin[0] === "sante" && req.method === "GET") return await sante();
     const session = await sessionDe(req);
     const reponse = await routesComptes(req, chemin, session);
     if (reponse) return reponse;
@@ -34,3 +35,16 @@ async function routesMusique(req: Request, chemin: string[]) {
 }
 
 export const cheminDe = (texte: string) => texte.replace(/^\/+|\/+$/g, "").split("/").filter(Boolean).map(decodeURIComponent);
+
+/** Diagnostic sans connexion : le catalogue et la recherche YouTube répondent-ils depuis le serveur ? */
+async function sante() {
+  const essai = async (url: string) => {
+    const r = await fetch(url).catch((e) => ({ ok: false, status: String(e) }) as const);
+    return "json" in r ? { status: r.status, extrait: (await r.text()).slice(0, 300) } : r;
+  };
+  return json({
+    deezer: await essai("https://api.deezer.com/chart/0/tracks?limit=1"),
+    odesli: await essai("https://api.song.link/v1-alpha.1/links?userCountry=FR&url=https%3A%2F%2Fwww.deezer.com%2Ftrack%2F3135556"),
+    stockage: !!process.env.BLOB_READ_WRITE_TOKEN,
+  });
+}
