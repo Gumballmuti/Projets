@@ -1,0 +1,8 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "regions": ["cdg1"],
+  "rewrites": [
+    { "source": "/api/:chemin*", "destination": "/api?chemin=:chemin*" },
+    { "source": "/((?!api).*)", "destination": "/index.html" }
+  ]
+}
