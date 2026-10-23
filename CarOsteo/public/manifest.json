@@ -1,0 +1,13 @@
+{
+  "name": "CarOstéo",
+  "short_name": "CarOstéo",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#FAF5EC",
+  "theme_color": "#10494C",
+  "lang": "fr",
+  "icons": [
+    { "src": "/icone-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "/icone-512.png", "sizes": "512x512", "type": "image/png" }
+  ]
+}
