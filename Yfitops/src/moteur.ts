@@ -43,6 +43,12 @@ const EVENEMENTS_AUDIO = ["play", "pause", "ended", "timeupdate", "durationchang
 
 export class Moteur extends EventTarget {
   private audio = new Audio();
+  /**
+   * Un son silencieux joué dans la page pendant que YouTube joue : ainsi c'est Yfitops (et non la vidéo cachée)
+   * que le téléphone, la voiture en Bluetooth ou le casque voient comme lecteur. Leurs boutons précédent/suivant
+   * arrivent alors à l'app, avec le titre et l'artiste du catalogue.
+   */
+  private gardien = Object.assign(new Audio("/silence.mp3"), { loop: true, preload: "auto" });
   private lecteurYT: any = null;
   private pretYT: Promise<any> | null = null;
   private boite: HTMLDivElement | null = null;
@@ -112,6 +118,7 @@ export class Moteur extends EventTarget {
     if (etat === 1) {
       clearTimeout(this.surveillance);
       this.debloquer(false);
+      this.garder(true);
       this.paused = false;
       this.emettre("play");
       this.emettre("playing");
@@ -143,6 +150,13 @@ export class Moteur extends EventTarget {
     } else {
       this.lancerApercu(0);
     }
+  }
+
+  /** Lance (ou relance, pour redevenir le lecteur le plus récent) le son silencieux, ou l'arrête. */
+  private garder(oui: boolean) {
+    if (!oui) return this.gardien.pause();
+    this.gardien.pause();
+    this.gardien.play().catch(() => {});
   }
 
   private suivreTemps(oui: boolean) {
@@ -227,6 +241,7 @@ export class Moteur extends EventTarget {
 
   private lancerApercu(depart: number) {
     this.debloquer(false);
+    this.garder(false); // l'extrait est lu dans la page : il sert lui-même de lecteur
     if (!this.titre?.apercu) {
       this.mode = "aucun";
       this.emettre("error");
@@ -242,6 +257,7 @@ export class Moteur extends EventTarget {
   play(): Promise<void> {
     this.veutJouer = true;
     if (this.mode === "youtube") {
+      this.garder(true); // pendant le toucher : le téléphone l'autorise ensuite pour la suite
       this.lecteurYT?.playVideo?.();
       this.surveiller();
       return Promise.resolve();
@@ -252,6 +268,7 @@ export class Moteur extends EventTarget {
 
   pause() {
     this.veutJouer = false;
+    this.garder(false);
     clearTimeout(this.surveillance);
     this.debloquer(false);
     if (this.mode === "youtube") this.lecteurYT?.pauseVideo?.();
@@ -280,6 +297,7 @@ export class Moteur extends EventTarget {
 
   vider() {
     this.jeton++;
+    this.garder(false);
     this.arreter();
     this.debloquer(false);
     this.idCourant = null;

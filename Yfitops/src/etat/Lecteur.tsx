@@ -224,15 +224,19 @@ function useValeur() {
     if (!("mediaSession" in navigator)) return;
     const t = etat.enCours;
     navigator.mediaSession.metadata = t
-      ? new MediaMetadata({ title: t.titre, artist: t.artiste, album: etat.contexte?.nom ?? "", artwork: t.image ? [{ src: t.image, sizes: "480x480" }] : [] })
+      ? new MediaMetadata({ title: t.titre, artist: t.artiste, album: t.album ?? etat.contexte?.nom ?? "", artwork: t.image ? [{ src: t.image, sizes: "500x500", type: "image/jpeg" }] : [] })
       : null;
     const actions: [MediaSessionAction, MediaSessionActionHandler][] = [
-      ["play", () => basculerLecture()], ["pause", () => basculerLecture()],
+      ["play", () => { if (audio.paused) basculerLecture(); }], ["pause", () => { if (!audio.paused) basculerLecture(); }],
       ["previoustrack", () => precedent()], ["nexttrack", () => suivant(false)],
       ["seekto", (d) => { if (d.seekTime !== undefined) audio.currentTime = d.seekTime; }],
     ];
     for (const [a, f] of actions) try { navigator.mediaSession.setActionHandler(a, f); } catch {}
   }, [etat.enCours, etat.contexte, audio, basculerLecture, precedent, suivant]);
+
+  useEffect(() => {
+    if ("mediaSession" in navigator) navigator.mediaSession.playbackState = enLecture ? "playing" : "paused";
+  }, [enLecture]);
 
   useEffect(() => {
     const t = etat.enCours;
@@ -258,7 +262,17 @@ export function FournisseurLecteur({ children }: { children: ReactNode }) {
 function Temps({ audio, children }: { audio: Moteur; children: ReactNode }) {
   const [t, setT] = useState({ temps: 0, duree: 0 });
   useEffect(() => {
-    const maj = () => setT({ temps: audio.currentTime || 0, duree: Number.isFinite(audio.duration) ? audio.duration : 0 });
+    let dernier = 0;
+    const maj = () => {
+      const temps = audio.currentTime || 0;
+      const duree = Number.isFinite(audio.duration) ? audio.duration : 0;
+      setT({ temps, duree });
+      // Position affichée sur l'écran verrouillé et dans la voiture (sinon ce serait celle du son silencieux)
+      if ("mediaSession" in navigator && duree > 0 && Math.abs(temps - dernier) > 2) {
+        dernier = temps;
+        try { navigator.mediaSession.setPositionState({ duration: duree, position: Math.min(temps, duree), playbackRate: 1 }); } catch {}
+      }
+    };
     const evenements = ["timeupdate", "durationchange", "loadedmetadata", "seeked", "emptied"];
     evenements.forEach((e) => audio.addEventListener(e, maj));
     return () => evenements.forEach((e) => audio.removeEventListener(e, maj));
