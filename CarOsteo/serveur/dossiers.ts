@@ -151,9 +151,55 @@ async function enregistrer(d: Dossier): Promise<Dossier> {
   return d;
 }
 
-/** Routes /api/patients/... et /api/export. */
+const cleNom = (nom: string, prenom: string) =>
+  `${nom} ${prenom}`.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase().replace(/[^a-z]/g, "");
+
+/**
+ * Import de dossiers (reprise des anciennes fiches, ou fichier d'export CarOstéo).
+ * Chaque fiche et chaque séance passent par le même filtrage qu'une saisie normale.
+ * Un patient dont le nom + prénom existe déjà est ignoré : importer deux fois ne crée pas de doublons.
+ */
+async function importer(corps: Corps) {
+  const entrants = Array.isArray(corps.dossiers) ? corps.dossiers.slice(0, 3000) : null;
+  if (!entrants) throw new ErreurDossier("Fichier d'import invalide.");
+  const index = await lireIndex();
+  const connus = new Set(index.map((r) => cleNom(r.last_name, r.first_name)));
+  const nouveaux: Dossier[] = [];
+  const erreurs: string[] = [];
+  let ignores = 0;
+  for (const [n, brut] of entrants.entries()) {
+    const d = (brut && typeof brut === "object" ? brut : {}) as Corps;
+    try {
+      const patient = nettoyerPatient((d.patient ?? {}) as Corps);
+      const cle = cleNom(patient.last_name, patient.first_name);
+      if (connus.has(cle)) { ignores++; continue; }
+      connus.add(cle);
+      const seances = (Array.isArray(d.seances) ? d.seances.slice(0, 500) : []).map((s) => nettoyerSeance((s ?? {}) as Corps, patient.id));
+      nouveaux.push({ patient, seances: trier(seances) });
+    } catch (e) {
+      erreurs.push(`Dossier n°${n + 1} : ${(e as Error).message}`);
+    }
+  }
+  // écriture par petits paquets en parallèle, puis l'index une seule fois
+  for (let i = 0; i < nouveaux.length; i += 8) {
+    await Promise.all(nouveaux.slice(i, i + 8).map((d) => magasin().ecrire(`p/${d.patient.id}.json`, d)));
+  }
+  const complet = [...index, ...nouveaux.map(resume)];
+  complet.sort((a, b) => a.last_name.localeCompare(b.last_name, "fr") || a.first_name.localeCompare(b.first_name, "fr"));
+  await magasin().ecrire("index.json", complet);
+  return {
+    importes: nouveaux.length,
+    seances: nouveaux.reduce((n, d) => n + d.seances.length, 0),
+    ignores,
+    erreurs: erreurs.slice(0, 20),
+  };
+}
+
+/** Routes /api/patients/..., /api/import et /api/export. */
 export async function routesDossiers(methode: string, chemin: string[], corps: Corps): Promise<unknown> {
   const [ressource, id, sous, seanceId] = chemin;
+
+  if (ressource === "import" && methode === "POST") return importer(corps);
 
   if (ressource === "export" && methode === "GET") {
     const index = await lireIndex();

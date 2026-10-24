@@ -2,6 +2,8 @@ import { pour, routesComptes, sessionDe } from "./comptes.js";
 import { ErreurDossier, routesDossiers } from "./dossiers.js";
 
 const TAILLE_MAX = 256 * 1024;
+const TAILLE_MAX_IMPORT = 4 * 1024 * 1024;
+const tailleMax = (chemin: string[]) => (chemin[0] === "import" ? TAILLE_MAX_IMPORT : TAILLE_MAX);
 
 const json = (donnees: unknown, status = 200) => Response.json(donnees, { status });
 
@@ -19,7 +21,7 @@ export async function traiter(req: Request, chemin: string[]): Promise<Response>
     if (req.method !== "GET") {
       const typeJson = (req.headers.get("content-type") ?? "").startsWith("application/json");
       if (req.headers.get("x-carosteo") !== "1" || !typeJson) return json({ erreur: "Requête refusée" }, 403);
-      if (Number(req.headers.get("content-length") ?? 0) > TAILLE_MAX) return json({ erreur: "Envoi trop volumineux" }, 413);
+      if (Number(req.headers.get("content-length") ?? 0) > tailleMax(chemin)) return json({ erreur: "Envoi trop volumineux" }, 413);
     }
     const session = await sessionDe(req);
     const reponse = (await routesComptes(req, chemin, session)) ?? (await routesPrivees(req, chemin, session));
@@ -41,7 +43,7 @@ async function routesPrivees(req: Request, chemin: string[], session: Awaited<Re
   if (session.admin) return json({ erreur: "Le compte admin n'a pas accès aux dossiers patients." }, 403);
   try {
     const texte = req.method === "GET" || req.method === "DELETE" ? "" : await req.text();
-    if (texte.length > TAILLE_MAX) return json({ erreur: "Envoi trop volumineux" }, 413);
+    if (texte.length > tailleMax(chemin)) return json({ erreur: "Envoi trop volumineux" }, 413);
     const corps = texte ? JSON.parse(texte) : {};
     if (typeof corps !== "object" || corps === null || Array.isArray(corps)) return json({ erreur: "Requête invalide" }, 400);
     return json(await pour(session.identifiant, () => routesDossiers(req.method, chemin, corps)));

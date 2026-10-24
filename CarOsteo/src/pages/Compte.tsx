@@ -1,4 +1,4 @@
-import { Download, KeyRound, LogOut, Trash2, UserPlus } from "lucide-react";
+import { Download, KeyRound, LogOut, Trash2, Upload, UserPlus } from "lucide-react";
 import { useEffect, useState, type FormEvent } from "react";
 import { appel } from "../api";
 import { useMoi } from "../App";
@@ -74,12 +74,70 @@ function MonCompte() {
         <div><button className="bouton"><KeyRound size={18} />Changer le mot de passe</button></div>
       </form>
 
+      <Import />
+
       <section className="carte pile">
         <h2>Sauvegarde</h2>
         <p className="discret" style={{ margin: 0 }}>Télécharge tous tes dossiers patients dans un fichier. Garde-le dans un endroit sûr : il contient des données de santé en clair.</p>
         <div><button className="bouton leger" onClick={exporter}><Download size={18} />Exporter mes dossiers</button></div>
       </section>
     </>
+  );
+}
+
+/** Import d'un fichier de dossiers (reprise des anciennes fiches ou sauvegarde CarOstéo). */
+function Import() {
+  const [fichier, setFichier] = useState<{ nom: string; dossiers: unknown[]; seances: number } | null>(null);
+  const [msg, setMsg] = useState<{ erreur?: string; ok?: string }>({});
+  const [envoi, setEnvoi] = useState(false);
+
+  const choisir = async (f: File | undefined) => {
+    setMsg({});
+    setFichier(null);
+    if (!f) return;
+    try {
+      const contenu = JSON.parse(await f.text());
+      const dossiers = Array.isArray(contenu?.dossiers) ? contenu.dossiers : null;
+      if (!dossiers?.length) throw new Error();
+      const seances = dossiers.reduce((n: number, d: { seances?: unknown[] }) => n + (Array.isArray(d?.seances) ? d.seances.length : 0), 0);
+      setFichier({ nom: f.name, dossiers, seances });
+    } catch {
+      setMsg({ erreur: "Ce fichier n'est pas un fichier de dossiers CarOstéo." });
+    }
+  };
+
+  const importer = async () => {
+    if (!fichier) return;
+    setEnvoi(true);
+    try {
+      const r = await appel<{ importes: number; seances: number; ignores: number; erreurs: string[] }>("import", "POST", { dossiers: fichier.dossiers });
+      const details = [
+        `${r.importes} dossier${r.importes > 1 ? "s" : ""} et ${r.seances} séance${r.seances > 1 ? "s" : ""} importés.`,
+        r.ignores ? `${r.ignores} patient${r.ignores > 1 ? "s" : ""} déjà présent${r.ignores > 1 ? "s" : ""}, ignoré${r.ignores > 1 ? "s" : ""}.` : "",
+        r.erreurs.length ? `Problèmes : ${r.erreurs.join(" ; ")}` : "",
+      ].filter(Boolean).join(" ");
+      setMsg({ ok: details });
+      setFichier(null);
+    } catch (err) {
+      setMsg({ erreur: (err as Error).message });
+    } finally {
+      setEnvoi(false);
+    }
+  };
+
+  return (
+    <section className="carte pile">
+      <h2>Importer des dossiers</h2>
+      <p className="discret" style={{ margin: 0 }}>Reprise des anciennes fiches ou d'une sauvegarde. Les patients déjà présents (même nom et prénom) ne sont pas importés une deuxième fois.</p>
+      <input type="file" accept=".json,application/json" onChange={(e) => choisir(e.target.files?.[0])} />
+      {fichier && (
+        <div className="ligne">
+          <span><b>{fichier.dossiers.length}</b> dossiers et <b>{fichier.seances}</b> séances dans « {fichier.nom} »</span>
+          <button className="bouton" onClick={importer} disabled={envoi}><Upload size={18} />{envoi ? "Import en cours…" : "Importer"}</button>
+        </div>
+      )}
+      <Message {...msg} />
+    </section>
   );
 }
 
