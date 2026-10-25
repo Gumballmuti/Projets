@@ -3,7 +3,8 @@ import { useEffect, useState } from "react";
 import { Link, NavLink } from "react-router-dom";
 import { useInterface } from "../etat/Interface";
 import { useLecteur, useTemps } from "../etat/Lecteur";
-import { teinte } from "../outils";
+import { angle, teinte } from "../outils";
+import Aurora from "./Aurore/Aurora";
 import { Coeur } from "./Coeur";
 import { Commandes, Progression } from "./Commandes";
 import { useMenuTitre } from "./Menus";
@@ -54,8 +55,11 @@ export function LecteurPleinEcran() {
   }, [t, ui]);
   if (!t || !ui.pleinEcran) return null;
   const fermer = () => { ui.setPleinEcran(false); setFile(false); };
+  const h = angle(t.artisteId || t.id);
   return (
     <div className="plein-ecran" style={{ "--couleur": teinte(t.artisteId || t.id) } as React.CSSProperties}>
+      <Aurora className="plein-ecran-aurore" colorStops={[`hsl(${h} 70% 50%)`, `hsl(${(h + 60) % 360} 75% 55%)`, `hsl(${h} 70% 50%)`]}
+        layers={3} amplitude={1.4} height={0.38} blend={0.3} opacity={0.8} mouseInteraction={false} paused={!l.enLecture} />
       <header>
         <button className="icone" aria-label="Fermer" onClick={fermer}><ChevronDown size={28} /></button>
         <div className="plein-ecran-source">

@@ -592,6 +592,8 @@ a.panneau-titre:hover { text-decoration: underline; }
     background: linear-gradient(var(--couleur), color-mix(in srgb, var(--couleur) 25%, #121212) 70%, #121212);
     animation: monte .25s ease-out;
   }
+  .plein-ecran .plein-ecran-aurore { position: absolute; inset: 0 0 auto 0; height: 65%; z-index: 0; pointer-events: none; }
+  .plein-ecran > :not(.plein-ecran-aurore) { position: relative; z-index: 1; }
   .plein-ecran header { display: flex; align-items: center; justify-content: space-between; gap: 8px; height: 56px; }
   .plein-ecran header .icone { color: #fff; width: 40px; height: 40px; }
   .plein-ecran-source { display: flex; flex-direction: column; align-items: center; min-width: 0; font-size: 11px; text-transform: uppercase; letter-spacing: .1em; }
