@@ -24,11 +24,16 @@ export function dateRelative(iso?: string) {
   return new Date(iso).toLocaleDateString("fr-FR", { day: "numeric", month: "short", year: "numeric" });
 }
 
-/** Une couleur stable pour chaque playlist ou artiste (fond dégradé des en-têtes). */
-export function teinte(cle: string) {
+/** Un angle de couleur (0-359) stable pour chaque playlist ou artiste. */
+export function angle(cle: string) {
   let h = 0;
   for (const c of cle) h = (h * 31 + c.charCodeAt(0)) % 360;
-  return `hsl(${h} 42% 36%)`;
+  return h;
+}
+
+/** Une couleur stable pour chaque playlist ou artiste (fond dégradé des en-têtes). */
+export function teinte(cle: string) {
+  return `hsl(${angle(cle)} 42% 36%)`;
 }
 
 export function melanger<T>(liste: T[]): T[] {
