@@ -6,15 +6,6 @@
   root.classList.remove('no-js');
   root.classList.add('js');
 
-  // Filet de sécurité : si une animation échoue, le contenu s'affiche quand même
-  window.setTimeout(function () {
-    var pre = document.querySelector('.preloader');
-    if (pre && !pre.classList.contains('is-done')) {
-      pre.classList.add('is-done');
-      document.body.classList.remove('is-loading');
-    }
-  }, 10000);
-
   var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   var finePointer = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
   var hasGsap = typeof window.gsap !== 'undefined' && typeof window.ScrollTrigger !== 'undefined';
@@ -81,10 +72,8 @@
   /* ---------------------------------------------------------------
      Préchargement & transitions de page
      --------------------------------------------------------------- */
-  var preloader = $('.preloader');
   var panels = $$('.transition__panel');
   var cameFromTransition = store('sessionStorage', 'pa_transition') === '1';
-  var firstVisit = store('sessionStorage', 'pa_visited') !== '1';
   store('sessionStorage', 'pa_transition', null);
   store('sessionStorage', 'pa_visited', '1');
 
@@ -98,33 +87,13 @@
   }
 
   function runPreloader() {
-    if (!animate) { preloader.classList.add('is-done'); introDone(); return; }
-    if (!firstVisit || cameFromTransition) {
-      preloader.classList.add('is-done');
-      if (cameFromTransition) {
-        gsap.set(panels, { scaleY: 1, transformOrigin: 'top' });
-        gsap.to(panels, { scaleY: 0, duration: 0.7, ease: 'power3.inOut', stagger: 0.05, delay: 0.05 });
-        setTimeout(introDone, 350);
-      } else introDone();
+    if (animate && cameFromTransition) {
+      gsap.set(panels, { scaleY: 1, transformOrigin: 'top' });
+      gsap.to(panels, { scaleY: 0, duration: 0.7, ease: 'power3.inOut', stagger: 0.05, delay: 0.05 });
+      setTimeout(introDone, 350);
       return;
     }
-    document.body.classList.add('is-loading');
-    if (lenis) lenis.stop();
-    var count = $('[data-count]', preloader);
-    var obj = { v: 0 };
-    var tl = gsap.timeline({
-      onComplete: function () {
-        preloader.classList.add('is-done');
-        if (lenis) lenis.start();
-        introDone();
-      }
-    });
-    tl.from('.preloader__word', { yPercent: 110, duration: 0.9, ease: 'power4.out' })
-      .to(obj, { v: 100, duration: 1.4, ease: 'power2.inOut', onUpdate: function () { count.textContent = Math.round(obj.v); } }, 0.1)
-      .to('.preloader__bar span', { scaleX: 1, duration: 1.4, ease: 'power2.inOut' }, 0.1)
-      .to('.preloader__word', { yPercent: -110, duration: 0.7, ease: 'power4.in' }, '+=0.1')
-      .to('.preloader__count, .preloader__bar', { opacity: 0, duration: 0.3 }, '<')
-      .to(preloader, { clipPath: 'inset(0 0 100% 0)', duration: 0.9, ease: 'power4.inOut' }, '-=0.15');
+    introDone();
   }
 
   function isInternal(a) {
@@ -233,43 +202,9 @@
   }
 
   /* ---------------------------------------------------------------
-     Curseur personnalisé & effets magnétiques
+     Effets magnétiques
      --------------------------------------------------------------- */
   if (finePointer && !reduceMotion) {
-    var cursor = $('.cursor');
-    var dot = $('.cursor__dot');
-    var ring = $('.cursor__ring');
-    var label = $('.cursor__label');
-    var pos = { x: -100, y: -100 };
-    var ringPos = { x: -100, y: -100 };
-    document.body.classList.add('has-cursor');
-
-    window.addEventListener('pointermove', function (e) {
-      pos.x = e.clientX; pos.y = e.clientY;
-      dot.style.transform = 'translate3d(' + pos.x + 'px,' + pos.y + 'px,0)';
-    }, { passive: true });
-
-    (function loop() {
-      ringPos.x += (pos.x - ringPos.x) * 0.18;
-      ringPos.y += (pos.y - ringPos.y) * 0.18;
-      ring.style.transform = 'translate3d(' + ringPos.x + 'px,' + ringPos.y + 'px,0)';
-      requestAnimationFrame(loop);
-    })();
-
-    document.addEventListener('pointerover', function (e) {
-      var labeled = e.target.closest('[data-cursor]');
-      var hidden = e.target.closest('[data-cursor-hide]');
-      var interactive = e.target.closest('a, button, label, summary, [data-magnetic]');
-      cursor.classList.toggle('is-label', !!labeled);
-      cursor.classList.toggle('is-hidden', !!hidden);
-      cursor.classList.toggle('is-hover', !!interactive && !labeled);
-      if (labeled) label.textContent = labeled.getAttribute('data-cursor');
-    });
-    document.addEventListener('pointerdown', function () { cursor.classList.add('is-down'); });
-    document.addEventListener('pointerup', function () { cursor.classList.remove('is-down'); });
-    document.addEventListener('pointerleave', function () { cursor.classList.add('is-hidden'); });
-    document.addEventListener('pointerenter', function () { cursor.classList.remove('is-hidden'); });
-
     if (hasGsap) {
       $$('[data-magnetic]').forEach(function (el) {
         var strength = el.classList.contains('btn-orb') ? 0.45 : 0.3;
@@ -371,7 +306,7 @@
       gsap.fromTo(el, { yPercent: 0 }, { yPercent: amt, ease: 'none', scrollTrigger: { trigger: el.parentElement, start: 'top bottom', end: 'bottom top', scrub: true } });
     });
 
-    $$('.srv, .faq__chat, .stat-card, .footer__grid > *').forEach(function (el) {
+    $$('.srv, .faq__chat, .stat-card, .mental__card, .mental__for, .mental__intro, .case__visual, .case__body, .footer__grid > *').forEach(function (el) {
       gsap.from(el, { y: 50, opacity: 0, duration: 1, ease: 'power3.out', scrollTrigger: { trigger: el, start: 'top 92%' } });
     });
 
@@ -410,7 +345,7 @@
      Mode doux (« réduire les animations ») : simples fondus, sans mouvement
      --------------------------------------------------------------- */
   if (hasGsap && reduceMotion) {
-    var soft = '.section-head, .manifesto__text, .srv, .agency__text, .agency__visual, .stat-card, .stack__card, .faq__chat, .contact > *';
+    var soft = '.section-head, .manifesto__text, .srv, .agency__text, .agency__visual, .stat-card, .stack__card, .faq__chat, .mental__card, .mental__for, .mental__intro, .case__visual, .case__body, .contact > *';
     gsap.set(soft, { opacity: 0 });
     ScrollTrigger.batch(soft, {
       start: 'top 92%',
@@ -788,7 +723,7 @@
      Démarrage
      --------------------------------------------------------------- */
   var start = function () {
-    if (preloader) runPreloader(); else introDone();
+    runPreloader();
   };
   if (document.fonts && document.fonts.ready) {
     Promise.race([document.fonts.ready, new Promise(function (r) { setTimeout(r, 1200); })]).then(start);

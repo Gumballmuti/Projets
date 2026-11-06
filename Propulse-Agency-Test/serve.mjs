@@ -7,7 +7,7 @@ const dist = join(process.cwd(), 'dist');
 const port = Number(process.env.PORT) || 4173;
 const types = {
   '.html': 'text/html; charset=utf-8', '.css': 'text/css', '.js': 'text/javascript', '.svg': 'image/svg+xml',
-  '.png': 'image/png', '.woff2': 'font/woff2', '.json': 'application/json', '.xml': 'application/xml',
+  '.png': 'image/png', '.jpg': 'image/jpeg', '.webp': 'image/webp', '.woff2': 'font/woff2', '.json': 'application/json', '.xml': 'application/xml',
   '.txt': 'text/plain', '.webmanifest': 'application/manifest+json',
 };
 
