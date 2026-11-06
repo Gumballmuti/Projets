@@ -708,7 +708,7 @@
           mailtoFallback(data);
         } else {
           status.classList.add('is-error');
-          status.textContent = (r.json && r.json.error) || 'Une erreur est survenue. Vous pouvez aussi nous écrire directement par e-mail.';
+          status.textContent = (r.json && r.json.error) || 'Une erreur est survenue. Merci de réessayer dans un instant.';
         }
       }).catch(function () {
         submit.classList.remove('is-loading');
