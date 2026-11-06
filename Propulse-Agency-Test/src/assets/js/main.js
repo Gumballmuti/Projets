@@ -271,8 +271,7 @@
     if (hero) {
       var tl = gsap.timeline();
       tl.from('.hero__title .line', { yPercent: 100, opacity: 0, duration: 1.2, ease: 'power4.out', stagger: 0.1 })
-        .from('.hero__eyebrow, .hero__lead, .hero__ctas > *', { y: 30, opacity: 0, duration: 0.9, ease: 'power3.out', stagger: 0.06 }, '-=0.8')
-        .from('.hero__pill', { scaleX: 0, duration: 1, ease: 'expo.out' }, '-=1');
+        .from('.hero__eyebrow, .hero__lead, .hero__ctas > *', { y: 30, opacity: 0, duration: 0.9, ease: 'power3.out', stagger: 0.06 }, '-=0.8');
       gsap.to('.hero__content', {
         yPercent: -6, opacity: 0.4, ease: 'none',
         scrollTrigger: { trigger: hero, start: 'top top', end: 'bottom top', scrub: true }
