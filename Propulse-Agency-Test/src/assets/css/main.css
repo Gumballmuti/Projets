@@ -475,7 +475,7 @@ a.menu__card:hover, a.menu__card:focus-visible { border-color: var(--accent); ba
 .faq__avatar--lg { width: 46px; height: 46px; font-size: 1.2rem; }
 .faq__id { display: grid; gap: 3px; min-width: 0; margin-right: auto; }
 .faq__name { font-family: var(--f-display); font-weight: 700; font-size: 1.12rem; letter-spacing: -0.02em; line-height: 1.15; }
-.faq__name span { color: #DFA414; }
+.faq__name span { color: transparent; background: linear-gradient(110deg, var(--accent), var(--yellow)) text; -webkit-background-clip: text; background-clip: text; }
 .faq__status { display: inline-flex; align-items: center; gap: 8px; color: var(--muted); font-size: .68rem; }
 .faq__status .dot { width: 6px; height: 6px; }
 
